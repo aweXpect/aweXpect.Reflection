@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Source\aweXpect.T6e\aweXpect.T6e.csproj"/>
+	</ItemGroup>
+
+</Project>
