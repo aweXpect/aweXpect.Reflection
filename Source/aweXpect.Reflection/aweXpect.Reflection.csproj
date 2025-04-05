@@ -5,7 +5,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="aweXpect.Reflection.Tests" PublicKey="$(PublicKey)" />
+		<InternalsVisibleTo Include="aweXpect.Reflection.Internal.Tests" PublicKey="$(PublicKey)" />
 	</ItemGroup>
 
 </Project>
