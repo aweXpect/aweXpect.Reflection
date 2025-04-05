@@ -17,6 +17,7 @@ partial class Build
 	Project[] UnitTestProjects =>
 	[
 		Solution.Tests.aweXpect_Reflection_Tests,
+		Solution.Tests.aweXpect_Reflection_Internal_Tests,
 	];
 
 	Target DotNetUnitTests => _ => _
@@ -32,7 +33,6 @@ partial class Build
 					.SetConfiguration(Configuration)
 					.SetProcessEnvironmentVariable("DOTNET_CLI_UI_LANGUAGE", "en-US")
 					.EnableNoBuild()
-					.SetDataCollector("XPlat Code Coverage")
 					.SetResultsDirectory(TestResultsDirectory)
 					.CombineWith(
 						UnitTestProjects,
@@ -42,7 +42,11 @@ partial class Build
 								project.GetTargetFrameworks()?.Except(excludedFrameworks),
 								(frameworkSettings, framework) => frameworkSettings
 									.SetFramework(framework)
-									.AddLoggers($"trx;LogFileName={project.Name}_{framework}.trx")
+									.When(s => s.Framework != "net48",
+										// https://github.com/dotnet/reactive/issues/984
+										c => c
+											.SetDataCollector("XPlat Code Coverage")
+											.AddLoggers($"trx;LogFileName={project.Name}_{framework}.trx"))
 							)
 					), completeOnFailure: true
 			);
