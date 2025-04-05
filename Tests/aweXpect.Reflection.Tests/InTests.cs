@@ -9,7 +9,7 @@ public class InTests
 	[Fact]
 	public async Task AllLoadedAssemblies_ShouldContainMultipleAssemblies()
 	{
-		FilteredAssemblies sut = In.AllLoadedAssemblies();
+		Filtered.Assemblies sut = In.AllLoadedAssemblies();
 
 		await That(sut).HasCount().Between(5).And(7);
 		await That(sut).All().Satisfy(x => !x.FullName!.StartsWith("System."));
@@ -18,7 +18,7 @@ public class InTests
 	[Fact]
 	public async Task AllLoadedAssemblies_WithoutInclusionFilter()
 	{
-		FilteredAssemblies sut = In.AllLoadedAssemblies(applyExclusionFilters: false);
+		Filtered.Assemblies sut = In.AllLoadedAssemblies(applyExclusionFilters: false);
 
 		await That(sut).HasCount().AtLeast(8);
 		await That(sut).AtLeast(1).Satisfy(x => x.FullName!.StartsWith("System."));
@@ -27,7 +27,7 @@ public class InTests
 	[Fact]
 	public async Task AllLoadedAssemblies_WithPredicate_ShouldApplyPredicate()
 	{
-		FilteredAssemblies sut = In.AllLoadedAssemblies(assembly => !assembly.FullName!.StartsWith("aweXpect."));
+		Filtered.Assemblies sut = In.AllLoadedAssemblies(assembly => !assembly.FullName!.StartsWith("aweXpect."));
 
 		await That(sut).HasCount().Between(2).And(4);
 	}
@@ -37,7 +37,7 @@ public class InTests
 	{
 		Assembly[] assemblies = [typeof(In).Assembly, typeof(InTests).Assembly,];
 
-		FilteredAssemblies sut = In.Assemblies(assemblies);
+		Filtered.Assemblies sut = In.Assemblies(assemblies);
 
 		await That(sut).IsEqualTo(assemblies);
 	}
@@ -47,7 +47,7 @@ public class InTests
 	{
 		IEnumerable<Assembly> assemblies = [typeof(In).Assembly, typeof(InTests).Assembly,];
 
-		FilteredAssemblies sut = In.Assemblies(assemblies);
+		Filtered.Assemblies sut = In.Assemblies(assemblies);
 
 		await That(sut).IsEqualTo(assemblies);
 	}
@@ -55,7 +55,7 @@ public class InTests
 	[Fact]
 	public async Task AssemblyContaining_WithGeneric_ShouldContainAssemblyOfProvidedType()
 	{
-		FilteredAssemblies sut = In.AssemblyContaining<InTests>();
+		Filtered.Assemblies sut = In.AssemblyContaining<InTests>();
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(typeof(InTests).Assembly);
@@ -64,7 +64,7 @@ public class InTests
 	[Fact]
 	public async Task AssemblyContaining_WithType_ShouldContainAssemblyOfProvidedType()
 	{
-		FilteredAssemblies sut = In.AssemblyContaining(typeof(In));
+		Filtered.Assemblies sut = In.AssemblyContaining(typeof(In));
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(typeof(In).Assembly);
@@ -75,7 +75,7 @@ public class InTests
 	{
 		Assembly? expectedAssembly = Assembly.GetEntryAssembly();
 
-		FilteredAssemblies sut = In.EntryAssembly();
+		Filtered.Assemblies sut = In.EntryAssembly();
 
 #if NET8_0_OR_GREATER
 		await That(sut).HasSingle().Which
@@ -90,7 +90,7 @@ public class InTests
 	{
 		Assembly expectedAssembly = typeof(In).Assembly;
 
-		FilteredAssemblies sut = In.ExecutingAssembly();
+		Filtered.Assemblies sut = In.ExecutingAssembly();
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(expectedAssembly);

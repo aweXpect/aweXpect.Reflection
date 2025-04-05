@@ -21,12 +21,12 @@ public sealed partial class ThatTypes
 			public async Task WhenFilteringOnlyAbstractTypes_ShouldFail()
 			{
 				async Task Act()
-					=> await That(In.AssemblyContaining<AreAbstract>().Types().Where(type => type.IsAbstract))
+					=> await That(In.AssemblyContaining<AreAbstract>().Types().WhichAreAbstract())
 						.AreNotAbstract();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that In.AssemblyContaining<AreAbstract>().Types().Where(type => type.IsAbstract)
+					             Expected that In.AssemblyContaining<AreAbstract>().Types().WhichAreAbstract()
 					             are not all abstract,
 					             but it only contained abstract types [
 					               *

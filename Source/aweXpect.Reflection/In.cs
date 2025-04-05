@@ -20,7 +20,7 @@ public static class In
 	///     <para />
 	///     See <see cref="AwexpectCustomization.ReflectionCustomization.ExcludedAssemblyPrefixes" /> for more details.
 	/// </param>
-	public static FilteredAssemblies AllLoadedAssemblies(
+	public static Filtered.Assemblies AllLoadedAssemblies(
 		Func<Assembly, bool>? predicate = null,
 		bool applyExclusionFilters = true)
 	{
@@ -43,36 +43,36 @@ public static class In
 	/// <summary>
 	///     Defines expectations on the given <paramref name="assemblies" />.
 	/// </summary>
-	public static FilteredAssemblies Assemblies(params Assembly?[] assemblies)
+	public static Filtered.Assemblies Assemblies(params Assembly?[] assemblies)
 		=> new(assemblies.Where(a => a is not null).Cast<Assembly>());
 
 	/// <summary>
 	///     Defines expectations on the given <paramref name="assemblies" />.
 	/// </summary>
-	public static FilteredAssemblies Assemblies(IEnumerable<Assembly> assemblies)
+	public static Filtered.Assemblies Assemblies(IEnumerable<Assembly> assemblies)
 		=> new(assemblies);
 
 	/// <summary>
 	///     Defines expectations on the assembly that contains the <typeparamref name="TType" />.
 	/// </summary>
-	public static FilteredAssemblies AssemblyContaining<TType>()
+	public static Filtered.Assemblies AssemblyContaining<TType>()
 		=> Assemblies(typeof(TType).Assembly);
 
 	/// <summary>
 	///     Defines expectations on the assembly that contains the <paramref name="type" />.
 	/// </summary>
-	public static FilteredAssemblies AssemblyContaining(Type type)
+	public static Filtered.Assemblies AssemblyContaining(Type type)
 		=> Assemblies(type.Assembly);
 
 	/// <summary>
 	///     Defines expectations on the <see cref="Assembly.GetEntryAssembly()" />.
 	/// </summary>
-	public static FilteredAssemblies EntryAssembly()
+	public static Filtered.Assemblies EntryAssembly()
 		=> Assemblies(Assembly.GetEntryAssembly());
 
 	/// <summary>
 	///     Defines expectations on the <see cref="Assembly.GetExecutingAssembly()" />.
 	/// </summary>
-	public static FilteredAssemblies ExecutingAssembly()
+	public static Filtered.Assemblies ExecutingAssembly()
 		=> Assemblies(Assembly.GetExecutingAssembly());
 }
