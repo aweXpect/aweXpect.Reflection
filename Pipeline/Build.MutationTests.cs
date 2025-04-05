@@ -45,7 +45,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.aweXpect_Reflection, [Solution.Tests.aweXpect_Reflection_Tests,]
+					Solution.aweXpect_Reflection, [
+						Solution.Tests.aweXpect_Reflection_Tests,
+						Solution.Tests.aweXpect_Reflection_Internal_Tests,
+					]
 				},
 			};
 
@@ -58,6 +61,7 @@ partial class Build
 					branchName = "release/" + version;
 					Log.Information("Use release branch analysis for '{BranchName}'", branchName);
 				}
+
 				File.WriteAllText(ArtifactsDirectory / "BranchName.txt", branchName);
 
 				string configText = $$"""
@@ -126,7 +130,8 @@ partial class Build
 			File.WriteAllText(ArtifactsDirectory / "PR_Comment.md", body);
 
 			if (prId != null)
-			{				File.WriteAllText(ArtifactsDirectory / "PR.txt", prId.Value.ToString());
+			{
+				File.WriteAllText(ArtifactsDirectory / "PR.txt", prId.Value.ToString());
 			}
 		});
 
@@ -139,7 +144,10 @@ partial class Build
 			Dictionary<Project, Project[]> projects = new()
 			{
 				{
-					Solution.aweXpect_Reflection, [Solution.Tests.aweXpect_Reflection_Tests,]
+					Solution.aweXpect_Reflection, [
+						Solution.Tests.aweXpect_Reflection_Tests,
+						Solution.Tests.aweXpect_Reflection_Internal_Tests,
+					]
 				},
 			};
 			string apiKey = Environment.GetEnvironmentVariable("STRYKER_DASHBOARD_API_KEY");
@@ -187,7 +195,8 @@ partial class Build
 					else
 					{
 						Log.Information($"Update comment:\n{body}");
-						await gitHubClient.Issue.Comment.Update("aweXpect", "aweXpect.Reflection", commentId.Value, body);
+						await gitHubClient.Issue.Comment.Update("aweXpect", "aweXpect.Reflection", commentId.Value,
+							body);
 					}
 				}
 			}
