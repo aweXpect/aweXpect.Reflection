@@ -7,6 +7,17 @@ public sealed partial class ThatType
 		public sealed class Tests
 		{
 			[Fact]
+			public async Task WhenTypeIsAbstract_ShouldSucceed()
+			{
+				Type subject = typeof(MyAbstractType);
+
+				async Task Act()
+					=> await That(subject).IsAbstract();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
 			public async Task WhenTypeIsNotAbstract_ShouldFail()
 			{
 				Type subject = typeof(MyInstanceType);
@@ -20,17 +31,6 @@ public sealed partial class ThatType
 					             is abstract,
 					             but it was non-abstract MyInstanceType
 					             """);
-			}
-
-			[Fact]
-			public async Task WhenTypeIsAbstract_ShouldSucceed()
-			{
-				Type subject = typeof(MyAbstractType);
-
-				async Task Act()
-					=> await That(subject).IsAbstract();
-
-				await That(Act).DoesNotThrow();
 			}
 		}
 

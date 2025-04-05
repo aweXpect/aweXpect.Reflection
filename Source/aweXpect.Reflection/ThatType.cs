@@ -29,7 +29,7 @@ public static partial class ThatType
 		{
 			return "record";
 		}
-		
+
 		if (type.IsClass)
 		{
 			return "class";

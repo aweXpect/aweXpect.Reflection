@@ -6,21 +6,6 @@ public sealed partial class ThatType
 	{
 		public sealed class Tests
 		{
-			[Theory]
-			[MemberData(nameof(NotInterfaceData))]
-			public async Task WhenTypeIsNotAnInterface_ShouldFail(Type? subject, string name)
-			{
-				async Task Act()
-					=> await That(subject).IsAnInterface();
-
-				await That(Act).ThrowsException()
-					.WithMessage($"""
-					             Expected that subject
-					             is an interface,
-					             but it was {name}
-					             """);
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAnInterface_ShouldSucceed()
 			{
@@ -30,6 +15,21 @@ public sealed partial class ThatType
 					=> await That(subject).IsAnInterface();
 
 				await That(Act).DoesNotThrow();
+			}
+
+			[Theory]
+			[MemberData(nameof(NotInterfaceData))]
+			public async Task WhenTypeIsNotAnInterface_ShouldFail(Type? subject, string name)
+			{
+				async Task Act()
+					=> await That(subject).IsAnInterface();
+
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is an interface,
+					              but it was {name}
+					              """);
 			}
 
 			public static TheoryData<Type?, string> NotInterfaceData() => new()

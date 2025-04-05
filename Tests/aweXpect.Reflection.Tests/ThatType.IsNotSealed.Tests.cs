@@ -7,6 +7,17 @@ public sealed partial class ThatType
 		public sealed class Tests
 		{
 			[Fact]
+			public async Task WhenTypeIsNotSealed_ShouldSucceed()
+			{
+				Type subject = typeof(MyInstanceType);
+
+				async Task Act()
+					=> await That(subject).IsNotSealed();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
 			public async Task WhenTypeIsSealed_ShouldFail()
 			{
 				Type subject = typeof(MySealedType);
@@ -20,17 +31,6 @@ public sealed partial class ThatType
 					             is not sealed,
 					             but it was sealed MySealedType
 					             """);
-			}
-
-			[Fact]
-			public async Task WhenTypeIsNotSealed_ShouldSucceed()
-			{
-				Type subject = typeof(MyInstanceType);
-
-				async Task Act()
-					=> await That(subject).IsNotSealed();
-
-				await That(Act).DoesNotThrow();
 			}
 		}
 
