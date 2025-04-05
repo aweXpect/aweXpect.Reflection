@@ -12,18 +12,6 @@ namespace aweXpect.Reflection;
 public static class In
 {
 	/// <summary>
-	///     Defines expectations on the given <paramref name="assemblies" />.
-	/// </summary>
-	public static FilteredAssemblies Assemblies(IEnumerable<Assembly> assemblies)
-		=> new(assemblies);
-
-	/// <summary>
-	///     Defines expectations on the given <paramref name="assemblies" />.
-	/// </summary>
-	public static FilteredAssemblies Assemblies(params Assembly[] assemblies)
-		=> new(assemblies);
-
-	/// <summary>
 	///     Defines expectations on all loaded assemblies from the current <see cref="System.AppDomain.CurrentDomain" />.
 	/// </summary>
 	/// <param name="predicate">(optional) A predicate to filter the assemblies.</param>
@@ -53,6 +41,18 @@ public static class In
 	}
 
 	/// <summary>
+	///     Defines expectations on the given <paramref name="assemblies" />.
+	/// </summary>
+	public static FilteredAssemblies Assemblies(params Assembly?[] assemblies)
+		=> new(assemblies.Where(a => a is not null).Cast<Assembly>());
+
+	/// <summary>
+	///     Defines expectations on the given <paramref name="assemblies" />.
+	/// </summary>
+	public static FilteredAssemblies Assemblies(IEnumerable<Assembly> assemblies)
+		=> new(assemblies);
+
+	/// <summary>
 	///     Defines expectations on the assembly that contains the <typeparamref name="TType" />.
 	/// </summary>
 	public static FilteredAssemblies AssemblyContaining<TType>()
@@ -63,6 +63,12 @@ public static class In
 	/// </summary>
 	public static FilteredAssemblies AssemblyContaining(Type type)
 		=> Assemblies(type.Assembly);
+
+	/// <summary>
+	///     Defines expectations on the <see cref="Assembly.GetEntryAssembly()" />.
+	/// </summary>
+	public static FilteredAssemblies EntryAssembly()
+		=> Assemblies(Assembly.GetEntryAssembly());
 
 	/// <summary>
 	///     Defines expectations on the <see cref="Assembly.GetExecutingAssembly()" />.
