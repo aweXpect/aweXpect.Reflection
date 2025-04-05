@@ -33,9 +33,5 @@ public sealed partial class ThatType
 				await That(Act).DoesNotThrow();
 			}
 		}
-
-		private class MyClassType;
-
-		private struct MyStructType;
 	}
 }

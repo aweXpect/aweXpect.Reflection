@@ -2,37 +2,37 @@
 
 public sealed partial class ThatType
 {
-	public sealed class IsAClass
+	public sealed class IsAnInterface
 	{
 		public sealed class Tests
 		{
 			[Theory]
-			[MemberData(nameof(NotClassData))]
-			public async Task WhenTypeIsNotAClass_ShouldFail(Type? subject, string name)
+			[MemberData(nameof(NotInterfaceData))]
+			public async Task WhenTypeIsNotAnInterface_ShouldFail(Type? subject, string name)
 			{
 				async Task Act()
-					=> await That(subject).IsAClass();
+					=> await That(subject).IsAnInterface();
 
 				await That(Act).ThrowsException()
 					.WithMessage($"""
 					             Expected that subject
-					             is a class,
+					             is an interface,
 					             but it was {name}
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenTypeIsAClass_ShouldSucceed()
+			public async Task WhenTypeIsAnInterface_ShouldSucceed()
 			{
-				Type subject = typeof(MyClassType);
+				Type subject = typeof(MyInterfaceType);
 
 				async Task Act()
-					=> await That(subject).IsAClass();
+					=> await That(subject).IsAnInterface();
 
 				await That(Act).DoesNotThrow();
 			}
 
-			public static TheoryData<Type?, string> NotClassData() => new()
+			public static TheoryData<Type?, string> NotInterfaceData() => new()
 			{
 				{
 					null, "<null>"
@@ -41,7 +41,7 @@ public sealed partial class ThatType
 					typeof(MyStructType), "struct MyStructType"
 				},
 				{
-					typeof(MyInterfaceType), "interface MyInterfaceType"
+					typeof(MyClassType), "class MyClassType"
 				},
 				{
 					typeof(MyEnumType), "enum MyEnumType"
