@@ -13,7 +13,13 @@ namespace aweXpect.Reflection
     }
     public static class ThatType
     {
-        public static aweXpect.Results.AndOrResult<System.Type, aweXpect.Core.IThat<System.Type>> IsNotStatic(this aweXpect.Core.IThat<System.Type> subject) { }
-        public static aweXpect.Results.AndOrResult<System.Type, aweXpect.Core.IThat<System.Type>> IsStatic(this aweXpect.Core.IThat<System.Type> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsAClass(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsAbstract(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsNotAClass(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsNotAbstract(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsNotSealed(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsNotStatic(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsSealed(this aweXpect.Core.IThat<System.Type?> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Type?, aweXpect.Core.IThat<System.Type?>> IsStatic(this aweXpect.Core.IThat<System.Type?> subject) { }
     }
 }
