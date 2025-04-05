@@ -32,6 +32,22 @@ public sealed partial class ThatType
 					              """);
 			}
 
+			[Fact]
+			public async Task WhenTypeIsNull_ShouldFail()
+			{
+				Type? subject = null;
+
+				async Task Act()
+					=> await That(subject).IsAClass();
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is a class,
+					             but it was <null>
+					             """);
+			}
+
 			public static TheoryData<Type?, string> NotClassData() => new()
 			{
 				{

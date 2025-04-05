@@ -32,6 +32,22 @@ public sealed partial class ThatType
 					             but it was non-nested ThatType
 					             """);
 			}
+
+			[Fact]
+			public async Task WhenTypeIsNull_ShouldFail()
+			{
+				Type? subject = null;
+
+				async Task Act()
+					=> await That(subject).IsNested();
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is nested,
+					             but it was <null>
+					             """);
+			}
 		}
 	}
 }

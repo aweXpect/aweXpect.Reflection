@@ -32,6 +32,22 @@ public sealed partial class ThatType
 					             but it was non-abstract MyInstanceType
 					             """);
 			}
+
+			[Fact]
+			public async Task WhenTypeIsNull_ShouldFail()
+			{
+				Type? subject = null;
+
+				async Task Act()
+					=> await That(subject).IsAbstract();
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is abstract,
+					             but it was <null>
+					             """);
+			}
 		}
 
 		private abstract class MyAbstractType;

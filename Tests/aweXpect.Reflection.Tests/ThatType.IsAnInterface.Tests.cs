@@ -32,6 +32,22 @@ public sealed partial class ThatType
 					              """);
 			}
 
+			[Fact]
+			public async Task WhenTypeIsNull_ShouldFail()
+			{
+				Type? subject = null;
+
+				async Task Act()
+					=> await That(subject).IsAnInterface();
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is an interface,
+					             but it was <null>
+					             """);
+			}
+
 			public static TheoryData<Type?, string> NotInterfaceData() => new()
 			{
 				{

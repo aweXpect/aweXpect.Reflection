@@ -18,6 +18,22 @@ public sealed partial class ThatType
 			}
 
 			[Fact]
+			public async Task WhenTypeIsNull_ShouldFail()
+			{
+				Type? subject = null;
+
+				async Task Act()
+					=> await That(subject).IsNotSealed();
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is not sealed,
+					             but it was <null>
+					             """);
+			}
+
+			[Fact]
 			public async Task WhenTypeIsSealed_ShouldFail()
 			{
 				Type subject = typeof(MySealedType);
