@@ -13,6 +13,7 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<SignAssembly>False</SignAssembly>
 		<NoWarn>701;1702;CA1845</NoWarn>
 	</PropertyGroup>
 
