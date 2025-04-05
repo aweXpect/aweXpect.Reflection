@@ -2,23 +2,23 @@
 
 public sealed partial class ThatType
 {
-	public sealed class IsStatic
+	public sealed class IsSealed
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenTypeIsNotStatic_ShouldFail()
+			public async Task WhenTypeIsNotSealed_ShouldFail()
 			{
 				Type subject = typeof(MyInstanceType);
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsSealed();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
-					             but it was non-static MyInstanceType
+					             is sealed,
+					             but it was non-sealed MyInstanceType
 					             """);
 			}
 
@@ -28,29 +28,29 @@ public sealed partial class ThatType
 				Type? subject = null;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsSealed();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
+					             is sealed,
 					             but it was <null>
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenTypeIsStatic_ShouldSucceed()
+			public async Task WhenTypeIsSealed_ShouldSucceed()
 			{
-				Type subject = typeof(MyStaticType);
+				Type subject = typeof(MySealedType);
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsSealed();
 
 				await That(Act).DoesNotThrow();
 			}
 		}
 
-		private static class MyStaticType;
+		private sealed class MySealedType;
 
 		private class MyInstanceType;
 	}

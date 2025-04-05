@@ -2,23 +2,34 @@
 
 public sealed partial class ThatType
 {
-	public sealed class IsStatic
+	public sealed class IsAbstract
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenTypeIsNotStatic_ShouldFail()
+			public async Task WhenTypeIsAbstract_ShouldSucceed()
+			{
+				Type subject = typeof(MyAbstractType);
+
+				async Task Act()
+					=> await That(subject).IsAbstract();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeIsNotAbstract_ShouldFail()
 			{
 				Type subject = typeof(MyInstanceType);
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsAbstract();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
-					             but it was non-static MyInstanceType
+					             is abstract,
+					             but it was non-abstract MyInstanceType
 					             """);
 			}
 
@@ -28,29 +39,18 @@ public sealed partial class ThatType
 				Type? subject = null;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsAbstract();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
+					             is abstract,
 					             but it was <null>
 					             """);
 			}
-
-			[Fact]
-			public async Task WhenTypeIsStatic_ShouldSucceed()
-			{
-				Type subject = typeof(MyStaticType);
-
-				async Task Act()
-					=> await That(subject).IsStatic();
-
-				await That(Act).DoesNotThrow();
-			}
 		}
 
-		private static class MyStaticType;
+		private abstract class MyAbstractType;
 
 		private class MyInstanceType;
 	}

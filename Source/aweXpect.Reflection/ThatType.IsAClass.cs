@@ -11,50 +11,47 @@ namespace aweXpect.Reflection;
 public static partial class ThatType
 {
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is static.
+	///     Verifies that the <see cref="Type" /> is a class.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsStatic(
+	public static AndOrResult<Type?, IThat<Type?>> IsAClass(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsStaticConstraint(it, grammars)),
+				=> new IsAClassConstraint(it, grammars)),
 			subject);
 
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is not static.
+	///     Verifies that the <see cref="Type" /> is not a class.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsNotStatic(
+	public static AndOrResult<Type?, IThat<Type?>> IsNotAClass(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsStaticConstraint(it, grammars).Invert()),
+				=> new IsAClassConstraint(it, grammars).Invert()),
 			subject);
 
-	private sealed class IsStaticConstraint(string it, ExpectationGrammars grammars)
+	private sealed class IsAClassConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithNotNullValue<Type?>(it, grammars),
 			IValueConstraint<Type?>
 	{
 		public ConstraintResult IsMetBy(Type? actual)
 		{
 			Actual = actual;
-			Outcome = actual?.IsStatic() == true ? Outcome.Success : Outcome.Failure;
+			Outcome = actual?.IsClass == true && !actual.IsRecordClass() ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is static");
+			=> stringBuilder.Append("is a class");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(It).Append(" was non-static ");
+			stringBuilder.Append(It).Append(" was ").Append(GetTypeNameOfType(Actual)).Append(' ');
 			Formatter.Format(stringBuilder, Actual);
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is not static");
+			=> stringBuilder.Append("is not a class");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
-		{
-			stringBuilder.Append(It).Append(" was static ");
-			Formatter.Format(stringBuilder, Actual);
-		}
+			=> AppendNormalResult(stringBuilder, indentation);
 	}
 }
