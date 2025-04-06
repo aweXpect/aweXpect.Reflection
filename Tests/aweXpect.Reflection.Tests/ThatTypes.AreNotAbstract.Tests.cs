@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace aweXpect.Reflection.Tests;
+﻿namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatTypes
 {
@@ -21,12 +19,12 @@ public sealed partial class ThatTypes
 			public async Task WhenFilteringOnlyAbstractTypes_ShouldFail()
 			{
 				async Task Act()
-					=> await That(In.AssemblyContaining<AreAbstract>().Types().WhichAreAbstract())
+					=> await That(In.AssemblyContaining<AreAbstract>().AbstractTypes())
 						.AreNotAbstract();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that In.AssemblyContaining<AreAbstract>().Types().WhichAreAbstract()
+					             Expected that abstract types in assembly containing type AreAbstract
 					             are not all abstract,
 					             but it only contained abstract types [
 					               *

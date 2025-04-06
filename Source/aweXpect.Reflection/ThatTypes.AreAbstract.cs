@@ -6,6 +6,7 @@ using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Reflection.Extensions;
 using aweXpect.Results;
+// ReSharper disable PossibleMultipleEnumeration
 
 namespace aweXpect.Reflection;
 
@@ -35,9 +36,8 @@ public static partial class ThatTypes
 	{
 		public ConstraintResult IsMetBy(IEnumerable<Type> actual)
 		{
-			List<Type> list = actual.ToList();
-			Actual = list;
-			Outcome = list.All(type => type.IsAbstract) ? Outcome.Success : Outcome.Failure;
+			Actual = actual;
+			Outcome = actual.All(type => type.IsAbstract) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 

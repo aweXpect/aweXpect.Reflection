@@ -13,15 +13,7 @@ public class InTests
 
 		await That(sut).HasCount().Between(5).And(7);
 		await That(sut).All().Satisfy(x => !x.FullName!.StartsWith("System."));
-	}
-
-	[Fact]
-	public async Task AllLoadedAssemblies_WithoutInclusionFilter()
-	{
-		Filtered.Assemblies sut = In.AllLoadedAssemblies(applyExclusionFilters: false);
-
-		await That(sut).HasCount().AtLeast(8);
-		await That(sut).AtLeast(1).Satisfy(x => x.FullName!.StartsWith("System."));
+		await That(sut.GetDescription()).IsEqualTo("in all loaded assemblies");
 	}
 
 	[Fact]
@@ -30,6 +22,8 @@ public class InTests
 		Filtered.Assemblies sut = In.AllLoadedAssemblies(assembly => !assembly.FullName!.StartsWith("aweXpect."));
 
 		await That(sut).HasCount().Between(2).And(4);
+		await That(sut.GetDescription())
+			.IsEqualTo("in all loaded assemblies matching assembly => !assembly.FullName!.StartsWith(\"aweXpect.\")");
 	}
 
 	[Fact]
@@ -40,6 +34,8 @@ public class InTests
 		Filtered.Assemblies sut = In.Assemblies(assemblies);
 
 		await That(sut).IsEqualTo(assemblies);
+		await That(sut.GetDescription())
+			.IsEqualTo("in the assemblies [aweXpect.Reflection*, aweXpect.Reflection.Tests*]").AsWildcard();
 	}
 
 	[Fact]
@@ -50,6 +46,8 @@ public class InTests
 		Filtered.Assemblies sut = In.Assemblies(assemblies);
 
 		await That(sut).IsEqualTo(assemblies);
+		await That(sut.GetDescription())
+			.IsEqualTo("in the assemblies [aweXpect.Reflection*, aweXpect.Reflection.Tests*]").AsWildcard();
 	}
 
 	[Fact]
@@ -59,6 +57,7 @@ public class InTests
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(typeof(InTests).Assembly);
+		await That(sut.GetDescription()).IsEqualTo("in assembly containing type InTests");
 	}
 
 	[Fact]
@@ -68,6 +67,7 @@ public class InTests
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(typeof(In).Assembly);
+		await That(sut.GetDescription()).IsEqualTo("in assembly containing type In");
 	}
 
 	[Fact]
@@ -83,6 +83,7 @@ public class InTests
 #else
 		await That(sut).IsEmpty();
 #endif
+		await That(sut.GetDescription()).IsEqualTo("in entry assembly");
 	}
 
 	[Fact]
@@ -94,5 +95,6 @@ public class InTests
 
 		await That(sut).HasSingle().Which
 			.IsEqualTo(expectedAssembly);
+		await That(sut.GetDescription()).IsEqualTo("in executing assembly");
 	}
 }

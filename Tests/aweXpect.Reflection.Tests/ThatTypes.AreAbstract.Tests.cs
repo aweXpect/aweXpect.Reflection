@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace aweXpect.Reflection.Tests;
+﻿namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatTypes
 {
@@ -16,7 +14,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that In.AssemblyContaining<AreAbstract>().Types()
+					             Expected that types in assembly containing type AreAbstract
 					             are all abstract,
 					             but it contained non-abstract types [
 					               *

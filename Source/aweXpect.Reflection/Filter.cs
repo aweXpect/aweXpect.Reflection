@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq.Expressions;
 
 namespace aweXpect.Reflection;
 
@@ -9,39 +8,63 @@ namespace aweXpect.Reflection;
 public static class Filter
 {
 	/// <summary>
-	///     Creates a new <see cref="Filter{TEntity}" /> from the given <paramref name="predicate" /> and
-	///     uses the expression as name.
+	///     Creates a new <see cref="Filter{TEntity}" /> from the given <paramref name="predicate" />.
 	/// </summary>
-	public static Filter<TEntity> FromPredicate<TEntity>(Expression<Func<TEntity, bool>> predicate)
-	{
-		Func<TEntity, bool> compiledPredicate = predicate.Compile();
-		return new GenericFilter<TEntity>(compiledPredicate, predicate.ToString());
-	}
+	public static Filter<TEntity> Prefix<TEntity>(Func<TEntity, bool> predicate, string prefix)
+		=> new GenericPrefixFilter<TEntity>(predicate, prefix);
 
 	/// <summary>
 	///     Creates a new <see cref="Filter{TEntity}" /> from the given <paramref name="predicate" />.
 	/// </summary>
-	public static Filter<TEntity> FromPredicate<TEntity>(Func<TEntity, bool> predicate, string name)
-		=> new GenericFilter<TEntity>(predicate, name);
+	public static Filter<TEntity> Suffix<TEntity>(Func<TEntity, bool> predicate, string suffix)
+		=> new GenericSuffixFilter<TEntity>(predicate, suffix);
 
-	private sealed class GenericFilter<TEntity> : Filter<TEntity>
+	private sealed class GenericPrefixFilter<TEntity> : Filter<TEntity>
 	{
 		private readonly Func<TEntity, bool> _filter;
-		private readonly string _name;
+		private readonly string _prefix;
 
-		public GenericFilter(Func<TEntity, bool> filter, string name)
+		public GenericPrefixFilter(Func<TEntity, bool> filter, string prefix)
 		{
 			_filter = filter;
-			_name = name;
+			_prefix = prefix;
 		}
 
 		/// <inheritdoc cref="Filter{TEntity}.Applies(TEntity)" />
 		public override bool Applies(TEntity type)
 			=> _filter(type);
 
+		/// <inheritdoc cref="Filter{TEntity}.Describe(string)" />
+		public override string Describe(string text)
+			=> _prefix + text;
+
 		/// <inheritdoc cref="object.ToString()" />
 		public override string ToString()
-			=> _name;
+			=> _prefix;
+	}
+
+	private sealed class GenericSuffixFilter<TEntity> : Filter<TEntity>
+	{
+		private readonly Func<TEntity, bool> _filter;
+		private readonly string _suffix;
+
+		public GenericSuffixFilter(Func<TEntity, bool> filter, string suffix)
+		{
+			_filter = filter;
+			_suffix = suffix;
+		}
+
+		/// <inheritdoc cref="Filter{TEntity}.Applies(TEntity)" />
+		public override bool Applies(TEntity type)
+			=> _filter(type);
+
+		/// <inheritdoc cref="Filter{TEntity}.Describe(string)" />
+		public override string Describe(string text)
+			=> text + _suffix;
+
+		/// <inheritdoc cref="object.ToString()" />
+		public override string ToString()
+			=> _suffix;
 	}
 }
 
@@ -54,4 +77,9 @@ public abstract class Filter<TEntity>
 	///     Checks if the filter applies to the given <typeparamref name="TEntity" />.
 	/// </summary>
 	public abstract bool Applies(TEntity type);
+
+	/// <summary>
+	///     Describes the filter around the given <paramref name="text" />.
+	/// </summary>
+	public abstract string Describe(string text);
 }
