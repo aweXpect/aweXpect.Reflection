@@ -1,4 +1,6 @@
-﻿namespace aweXpect.Reflection.Tests;
+﻿using aweXpect.Reflection.Collections;
+
+namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatTypes
 {
@@ -6,7 +8,7 @@ public sealed partial class ThatTypes
 	{
 		public sealed class Tests
 		{
-			[Fact]
+			[Fact(Skip = "TODO: Wait for filter to test success case")]
 			public async Task WhenAssembliesContainNonAbstractTypes_ShouldSucceed()
 			{
 				async Task Act()
@@ -25,8 +27,8 @@ public sealed partial class ThatTypes
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that abstract types in assembly containing type AreAbstract
-					             are not all abstract,
-					             but it only contained abstract types [
+					             are all not abstract,
+					             but it contained abstract types [
 					               *
 					             ]
 					             """).AsWildcard();

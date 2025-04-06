@@ -4,26 +4,26 @@ using aweXpect.Core;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace aweXpect.Reflection;
+namespace aweXpect.Reflection.Collections;
 
 public static partial class Filtered
 {
 	/// <summary>
-	///     Container for a filterable collection of <see cref="PropertyInfo" />.
+	///     Container for a filterable collection of <see cref="EventInfo" />.
 	/// </summary>
-	public class Properties : Filtered<PropertyInfo, Properties>, IDescribableSubject
+	public class Events : Filtered<EventInfo, Events>, IDescribableSubject
 	{
 		private readonly string _description;
 		private readonly Types? _types;
 
 		/// <summary>
-		///     Container for a filterable collection of <see cref="PropertyInfo" />.
+		///     Container for a filterable collection of <see cref="EventInfo" />.
 		/// </summary>
-		public Properties(Types types, string description) : base(types.SelectMany(type =>
-			type.GetProperties(BindingFlags.DeclaredOnly |
-			                   BindingFlags.NonPublic |
-			                   BindingFlags.Public |
-			                   BindingFlags.Instance)))
+		public Events(Types types, string description) : base(types.SelectMany(type =>
+			type.GetEvents(BindingFlags.DeclaredOnly |
+			               BindingFlags.NonPublic |
+			               BindingFlags.Public |
+			               BindingFlags.Instance)))
 		{
 			_types = types;
 			_description = description;
@@ -33,7 +33,7 @@ public static partial class Filtered
 		public string GetDescription()
 		{
 			string description = _description;
-			foreach (Filter<PropertyInfo> filter in Filters)
+			foreach (Filter<EventInfo> filter in Filters)
 			{
 				description = filter.Describe(description);
 			}
@@ -47,7 +47,7 @@ public static partial class Filtered
 		}
 
 		/// <summary>
-		///     Get all types of the filtered properties.
+		///     Get all types of the filtered events.
 		/// </summary>
 		public Types Types() => new(this);
 	}

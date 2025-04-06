@@ -1,4 +1,6 @@
-﻿namespace aweXpect.Reflection;
+﻿using System;
+
+namespace aweXpect.Reflection.Collections;
 
 public static partial class FilteredExtensions
 {
@@ -6,5 +8,5 @@ public static partial class FilteredExtensions
 	///     Get all abstract types in the filtered assemblies.
 	/// </summary>
 	public static Filtered.Types AbstractTypes(this Filtered.Assemblies assemblies)
-		=> assemblies.Types().WhichAreAbstract();
+		=> assemblies.Types().Which(Filter.Prefix<Type>(type => type.IsAbstract, "abstract "));
 }

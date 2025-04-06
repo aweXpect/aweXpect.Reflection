@@ -4,26 +4,26 @@ using aweXpect.Core;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace aweXpect.Reflection;
+namespace aweXpect.Reflection.Collections;
 
 public static partial class Filtered
 {
 	/// <summary>
-	///     Container for a filterable collection of <see cref="ConstructorInfo" />.
+	///     Container for a filterable collection of <see cref="FieldInfo" />.
 	/// </summary>
-	public class Constructors : Filtered<ConstructorInfo, Constructors>, IDescribableSubject
+	public class Fields : Filtered<FieldInfo, Fields>, IDescribableSubject
 	{
 		private readonly string _description;
 		private readonly Types? _types;
 
 		/// <summary>
-		///     Container for a filterable collection of <see cref="ConstructorInfo" />.
+		///     Container for a filterable collection of <see cref="FieldInfo" />.
 		/// </summary>
-		public Constructors(Types types, string description) : base(types.SelectMany(type =>
-			type.GetConstructors(BindingFlags.DeclaredOnly |
-			                     BindingFlags.NonPublic |
-			                     BindingFlags.Public |
-			                     BindingFlags.Instance)))
+		public Fields(Types types, string description) : base(types.SelectMany(type =>
+			type.GetFields(BindingFlags.DeclaredOnly |
+			               BindingFlags.NonPublic |
+			               BindingFlags.Public |
+			               BindingFlags.Instance)))
 		{
 			_types = types;
 			_description = description;
@@ -33,7 +33,7 @@ public static partial class Filtered
 		public string GetDescription()
 		{
 			string description = _description;
-			foreach (Filter<ConstructorInfo> filter in Filters)
+			foreach (Filter<FieldInfo> filter in Filters)
 			{
 				description = filter.Describe(description);
 			}
@@ -47,7 +47,7 @@ public static partial class Filtered
 		}
 
 		/// <summary>
-		///     Get all types of the filtered constructors.
+		///     Get all types of the filtered fields.
 		/// </summary>
 		public Types Types() => new(this);
 	}

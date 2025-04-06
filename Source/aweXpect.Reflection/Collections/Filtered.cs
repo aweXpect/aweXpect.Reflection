@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace aweXpect.Reflection;
+namespace aweXpect.Reflection.Collections;
 
 /// <summary>
 ///     Container for filtered collections.

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using aweXpect.Customization;
+using aweXpect.Reflection.Collections;
 
 // ReSharper disable PossibleMultipleEnumeration
 

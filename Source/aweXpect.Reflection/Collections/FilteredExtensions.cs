@@ -1,4 +1,4 @@
-﻿namespace aweXpect.Reflection;
+﻿namespace aweXpect.Reflection.Collections;
 
 /// <summary>
 ///     Extensions on filtered collections.

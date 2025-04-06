@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace aweXpect.Reflection;
+namespace aweXpect.Reflection.Collections;
 
 /// <summary>
 ///     Filters specify which entities must satisfy the requirements.

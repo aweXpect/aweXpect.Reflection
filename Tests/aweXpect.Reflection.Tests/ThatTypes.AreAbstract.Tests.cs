@@ -1,4 +1,6 @@
-﻿namespace aweXpect.Reflection.Tests;
+﻿using aweXpect.Reflection.Collections;
+
+namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatTypes
 {
@@ -26,7 +28,7 @@ public sealed partial class ThatTypes
 			public async Task WhenFilteringOnlyAbstractTypes_ShouldSucceed()
 			{
 				async Task Act()
-					=> await That(In.AssemblyContaining<AreAbstract>().Types().WhichAreAbstract())
+					=> await That(In.AssemblyContaining<AreAbstract>().AbstractTypes())
 						.AreAbstract();
 
 				await That(Act).DoesNotThrow();

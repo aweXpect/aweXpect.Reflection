@@ -4,7 +4,7 @@ using aweXpect.Core;
 
 // ReSharper disable MemberHidesStaticFromOuterClass
 
-namespace aweXpect.Reflection;
+namespace aweXpect.Reflection.Collections;
 
 public static partial class Filtered
 {
