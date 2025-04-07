@@ -46,8 +46,8 @@ public static partial class FilteredExtensions
 		AccessModifiers accessModifier = AccessModifiers.Any)
 	{
 		Func<Type, bool> predicate = type => accessModifier == AccessModifiers.Any
-			? type.IsSealed
-			: type.IsSealed && type.HasAccessModifier(accessModifier);
+			? type is { IsAbstract: false, IsSealed: true, IsInterface: false, }
+			: type is { IsAbstract: false, IsSealed: true, IsInterface: false, } && type.HasAccessModifier(accessModifier);
 		return assemblies.Types().Which(Filter.Prefix(predicate, $"{accessModifier.GetString()}sealed "));
 	}
 	

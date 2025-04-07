@@ -8,11 +8,11 @@ public sealed partial class ThatTypes
 	{
 		public sealed class Tests
 		{
-			[Fact(Skip = "TODO: Wait for filter to test success case")]
+			[Fact]
 			public async Task WhenAssembliesContainNonAbstractTypes_ShouldSucceed()
 			{
 				async Task Act()
-					=> await That(In.AssemblyContaining<AreAbstract>().Types()).AreNotAbstract();
+					=> await That(In.AssemblyContaining<AreAbstract>().SealedTypes()).AreNotAbstract();
 
 				await That(Act).DoesNotThrow();
 			}

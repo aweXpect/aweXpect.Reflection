@@ -58,7 +58,7 @@ internal static class AccessModifiersExtensions
 		#if NET8_0_OR_GREATER
 		return string.Join(", ", modifiers[..^1]) + " or " + modifiers[^1] + " ";
 		#else
-		return string.Join(", ", modifiers.Take(modifiers.Count - 1)) + " or " + modifiers.Last() + " ";
+		return string.Join(", ", modifiers.Take(modifiers.Count - 1)) + " or " + modifiers[^1] + " ";
 		#endif
 	}
 }

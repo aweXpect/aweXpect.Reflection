@@ -13,6 +13,8 @@ public static partial class Filtered
 	/// </summary>
 	public class Types : Filtered<Type, Types>, IDescribableSubject
 	{
+		private const string TypesSuffix = " types";
+
 		private readonly Assemblies? _assemblies;
 		private readonly string _description;
 
@@ -35,7 +37,7 @@ public static partial class Filtered
 			.Cast<Type>()
 			.Distinct())
 		{
-			_description = constructors.GetDescription() + " types";
+			_description = constructors.GetDescription() + TypesSuffix;
 		}
 
 		/// <summary>
@@ -47,7 +49,7 @@ public static partial class Filtered
 			.Cast<Type>()
 			.Distinct())
 		{
-			_description = properties.GetDescription() + " types";
+			_description = properties.GetDescription() + TypesSuffix;
 		}
 
 		/// <summary>
@@ -59,7 +61,7 @@ public static partial class Filtered
 			.Cast<Type>()
 			.Distinct())
 		{
-			_description = methods.GetDescription() + " types";
+			_description = methods.GetDescription() + TypesSuffix;
 		}
 
 		/// <summary>
@@ -71,7 +73,7 @@ public static partial class Filtered
 			.Cast<Type>()
 			.Distinct())
 		{
-			_description = fields.GetDescription() + " types";
+			_description = fields.GetDescription() + TypesSuffix;
 		}
 
 		/// <summary>
@@ -83,7 +85,7 @@ public static partial class Filtered
 			.Cast<Type>()
 			.Distinct())
 		{
-			_description = events.GetDescription() + " types";
+			_description = events.GetDescription() + TypesSuffix;
 		}
 
 		/// <inheritdoc />
