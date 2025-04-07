@@ -18,32 +18,21 @@ public static class In
 	/// <summary>
 	///     Defines expectations on all loaded assemblies from the current <see cref="System.AppDomain.CurrentDomain" />.
 	/// </summary>
-	/// <remarks>The optional <paramref name="predicate" /> is used to filter the assemblies.</remarks>
-	public static Filtered.Assemblies AllLoadedAssemblies(
-		Func<Assembly, bool>? predicate = null,
-		[CallerArgumentExpression("predicate")]
-		string doNotPopulateThisValue = "")
+	public static Filtered.Assemblies AllLoadedAssemblies()
 	{
-		string description = "in all loaded assemblies";
 		IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
-		if (predicate != null)
-		{
-			assemblies = assemblies.Where(predicate);
-			description += " matching " + doNotPopulateThisValue;
-		}
-
 		string[] prefixes = Customize.aweXpect.Reflection().ExcludedAssemblyPrefixes.Get();
 		assemblies = assemblies.Where(assembly =>
 			prefixes.All(prefix => !assembly.FullName?.StartsWith(prefix) == true));
 
-		return new Filtered.Assemblies(assemblies, description);
+		return new Filtered.Assemblies(assemblies, "in all loaded assemblies");
 	}
 
 	/// <summary>
 	///     Defines expectations on the given <paramref name="assemblies" />.
 	/// </summary>
 	public static Filtered.Assemblies Assemblies(params Assembly?[] assemblies)
-		=> CreateAssemblies($"in the assemblies {Formatter.Format(assemblies)}", assemblies);
+		=> new(assemblies, $"in the assemblies {Formatter.Format(assemblies)}");
 
 	/// <summary>
 	///     Defines expectations on the given <paramref name="assemblies" />.
@@ -55,26 +44,23 @@ public static class In
 	///     Defines expectations on the assembly that contains the <typeparamref name="TType" />.
 	/// </summary>
 	public static Filtered.Assemblies AssemblyContaining<TType>()
-		=> CreateAssemblies($"in assembly containing type {Formatter.Format(typeof(TType))}", typeof(TType).Assembly);
+		=> new(typeof(TType).Assembly, $"in assembly containing type {Formatter.Format(typeof(TType))}");
 
 	/// <summary>
 	///     Defines expectations on the assembly that contains the <paramref name="type" />.
 	/// </summary>
 	public static Filtered.Assemblies AssemblyContaining(Type type)
-		=> CreateAssemblies($"in assembly containing type {Formatter.Format(type)}", type.Assembly);
+		=> new(type.Assembly, $"in assembly containing type {Formatter.Format(type)}");
 
 	/// <summary>
 	///     Defines expectations on the <see cref="Assembly.GetEntryAssembly()" />.
 	/// </summary>
 	public static Filtered.Assemblies EntryAssembly()
-		=> CreateAssemblies("in entry assembly", Assembly.GetEntryAssembly());
+		=> new(Assembly.GetEntryAssembly(), "in entry assembly");
 
 	/// <summary>
 	///     Defines expectations on the <see cref="Assembly.GetExecutingAssembly()" />.
 	/// </summary>
 	public static Filtered.Assemblies ExecutingAssembly()
-		=> CreateAssemblies("in executing assembly", Assembly.GetExecutingAssembly());
-
-	private static Filtered.Assemblies CreateAssemblies(string description, params Assembly?[] assemblies)
-		=> new(assemblies.Where(a => a is not null).Cast<Assembly>(), description);
+		=> new(Assembly.GetExecutingAssembly(), "in executing assembly");
 }

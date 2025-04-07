@@ -19,7 +19,17 @@ public static partial class Filtered
 		/// <summary>
 		///     Container for a filterable collection of <see cref="Assembly" />.
 		/// </summary>
-		public Assemblies(IEnumerable<Assembly> source, string description) : base(source)
+		public Assemblies(IEnumerable<Assembly?> source, string description)
+			: base(source.Where(a => a is not null).Cast<Assembly>())
+		{
+			_description = description;
+		}
+
+		/// <summary>
+		///     Container for a filterable collection of <see cref="Assembly" />.
+		/// </summary>
+		public Assemblies(Assembly? source, string description)
+			: base(source == null ? [] : [source,])
 		{
 			_description = description;
 		}

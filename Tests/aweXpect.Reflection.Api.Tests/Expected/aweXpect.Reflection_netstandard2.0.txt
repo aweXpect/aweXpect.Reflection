@@ -18,6 +18,7 @@ namespace aweXpect.Reflection.Collections
         Protected = 2,
         Private = 4,
         Public = 8,
+        Any = 15,
     }
     public static class Filter
     {
@@ -34,7 +35,8 @@ namespace aweXpect.Reflection.Collections
     {
         public class Assemblies : aweXpect.Reflection.Collections.Filtered<System.Reflection.Assembly, aweXpect.Reflection.Collections.Filtered.Assemblies>, aweXpect.Core.IDescribableSubject
         {
-            public Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> source, string description) { }
+            public Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly?> source, string description) { }
+            public Assemblies(System.Reflection.Assembly? source, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
@@ -81,9 +83,13 @@ namespace aweXpect.Reflection.Collections
     }
     public static class FilteredExtensions
     {
-        public static aweXpect.Reflection.Collections.Filtered.Types AbstractTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types AbstractTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types NestedTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types SealedTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types StaticTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
         public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom(this aweXpect.Reflection.Collections.Filtered.Types @this, System.Type baseType, bool forceDirect = false) { }
         public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom<TBaseType>(this aweXpect.Reflection.Collections.Filtered.Types @this, bool forceDirect = false) { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies WhichSatisfy(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, System.Func<System.Reflection.Assembly, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
     }
     public abstract class Filtered<T, TFiltered> : System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
         where TFiltered : aweXpect.Reflection.Collections.Filtered<T, TFiltered>
@@ -98,7 +104,7 @@ namespace aweXpect.Reflection
 {
     public static class In
     {
-        public static aweXpect.Reflection.Collections.Filtered.Assemblies AllLoadedAssemblies(System.Func<System.Reflection.Assembly, bool>? predicate = null, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies AllLoadedAssemblies() { }
         public static aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies) { }
         public static aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies(params System.Reflection.Assembly?[] assemblies) { }
         public static aweXpect.Reflection.Collections.Filtered.Assemblies AssemblyContaining(System.Type type) { }
@@ -126,6 +132,14 @@ namespace aweXpect.Reflection
     public static class ThatTypes
     {
         public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreAbstract(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreGeneric(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNested(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
         public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNotAbstract(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNotGeneric(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNotNested(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNotSealed(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreNotStatic(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreSealed(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
+        public static aweXpect.Results.AndOrResult<System.Collections.Generic.IEnumerable<System.Type>, aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>>> AreStatic(this aweXpect.Core.IThat<System.Collections.Generic.IEnumerable<System.Type>> subject) { }
     }
 }

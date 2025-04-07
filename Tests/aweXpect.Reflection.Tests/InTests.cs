@@ -20,7 +20,7 @@ public class InTests
 	[Fact]
 	public async Task AllLoadedAssemblies_WithPredicate_ShouldApplyPredicate()
 	{
-		Filtered.Assemblies sut = In.AllLoadedAssemblies(assembly => assembly.FullName!.StartsWith("aweXpect."));
+		Filtered.Assemblies sut = In.AllLoadedAssemblies().WhichSatisfy(assembly => assembly.FullName!.StartsWith("aweXpect."));
 
 		await That(sut).HasCount().Between(2).And(4);
 		await That(sut.GetDescription())

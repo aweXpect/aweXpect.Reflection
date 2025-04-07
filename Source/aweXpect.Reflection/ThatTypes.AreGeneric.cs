@@ -13,83 +13,83 @@ namespace aweXpect.Reflection;
 public static partial class ThatTypes
 {
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type"/> are abstract.
+	///     Verifies that all items in the filtered collection of <see cref="Type"/> are generic.
 	/// </summary>
-	public static AndOrResult<IEnumerable<Type>, IThat<IEnumerable<Type>>> AreAbstract(
+	public static AndOrResult<IEnumerable<Type>, IThat<IEnumerable<Type>>> AreGeneric(
 		this IThat<IEnumerable<Type>> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new AreAbstractConstraint(it, grammars)),
+				=> new AreGenericConstraint(it, grammars)),
 			subject);
 	
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type"/> are not abstract.
+	///     Verifies that all items in the filtered collection of <see cref="Type"/> are not generic.
 	/// </summary>
-	public static AndOrResult<IEnumerable<Type>, IThat<IEnumerable<Type>>> AreNotAbstract(
+	public static AndOrResult<IEnumerable<Type>, IThat<IEnumerable<Type>>> AreNotGeneric(
 		this IThat<IEnumerable<Type>> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new AreNotAbstractConstraint(it, grammars)),
+				=> new AreNotGenericConstraint(it, grammars)),
 			subject);
 
-	private sealed class AreAbstractConstraint(string it, ExpectationGrammars grammars)
+	private sealed class AreGenericConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithValue<IEnumerable<Type>>(grammars),
 			IValueConstraint<IEnumerable<Type>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<Type> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => type.IsAbstract) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => type.IsGenericType) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are all abstract");
+			=> stringBuilder.Append("are all generic");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" contained non-abstract types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsAbstract),
+			stringBuilder.Append(it).Append(" contained non-generic types ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsGenericType),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are not all abstract");
+			=> stringBuilder.Append("are not all generic");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained abstract types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsAbstract),
+			stringBuilder.Append(it).Append(" only contained generic types ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsGenericType),
 				FormattingOptions.Indented(indentation));
 		}
 	}
 
-	private sealed class AreNotAbstractConstraint(string it, ExpectationGrammars grammars)
+	private sealed class AreNotGenericConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithValue<IEnumerable<Type>>(grammars),
 			IValueConstraint<IEnumerable<Type>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<Type> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => !type.IsAbstract) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => !type.IsGenericType) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are all not abstract");
+			=> stringBuilder.Append("are all not generic");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" contained abstract types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsAbstract),
+			stringBuilder.Append(it).Append(" contained generic types ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsGenericType),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain an abstract type");
+			=> stringBuilder.Append("also contain an generic type");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained non-abstract types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsAbstract),
+			stringBuilder.Append(it).Append(" only contained non-generic types ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsGenericType),
 				FormattingOptions.Indented(indentation));
 		}
 	}
