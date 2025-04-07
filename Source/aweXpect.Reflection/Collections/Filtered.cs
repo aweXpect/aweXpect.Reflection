@@ -18,7 +18,7 @@ public abstract class Filtered<T, TFiltered>(IEnumerable<T> source) : IEnumerabl
 	/// <summary>
 	///     The filters on the source.
 	/// </summary>
-	protected List<Filter<T>> Filters { get; } = [];
+	protected List<IFilter<T>> Filters { get; } = [];
 
 	/// <inheritdoc />
 	public IEnumerator<T> GetEnumerator() => source.Where(a => Filters.All(f => f.Applies(a))).GetEnumerator();
@@ -29,7 +29,7 @@ public abstract class Filtered<T, TFiltered>(IEnumerable<T> source) : IEnumerabl
 	///     Filters the applicable <typeparamref name="T" /> on which the expectations should be applied.
 	/// </summary>
 	/// <param name="filter">The filter to apply on <typeparamref name="T" />.</param>
-	public TFiltered Which(Filter<T> filter)
+	public TFiltered Which(IFilter<T> filter)
 	{
 		Filters.Add(filter);
 		return (TFiltered)this;

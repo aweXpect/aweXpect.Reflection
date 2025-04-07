@@ -1,14 +1,6 @@
 [assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/aweXpect/aweXpect.Reflection.git")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo(@"aweXpect.Reflection.Internal.Tests, PublicKey=00240000048000009400000006020000002400005253413100040000010001002ddc851a03b64bc2a64705e04ea47777e669695d8afed80f7544ff34fc699706a9f99f8385085bd675508e4c2acb917b7e1c9984da918c3fab585850a8a5b013c1d1780e1bb9e1e46656d965fc35bfc237a929c2c94e2e998d66ca44ee0a526245ef3f97dd136efe2e657b244b5f9f4a233fe656d659dddd811ba6bbed6817c1")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETStandard,Version=v2.0", FrameworkDisplayName=".NET Standard 2.0")]
-namespace aweXpect.Formatting
-{
-    public static class ReflectionFormatting
-    {
-        public static string Format(this aweXpect.Formatting.ValueFormatter formatter, System.Reflection.Assembly? value, aweXpect.Formatting.FormattingOptions? options = null) { }
-        public static void Format(this aweXpect.Formatting.ValueFormatter formatter, System.Text.StringBuilder stringBuilder, System.Reflection.Assembly? value, aweXpect.Formatting.FormattingOptions? options = null) { }
-    }
-}
 namespace aweXpect.Reflection.Collections
 {
     [System.Flags]
@@ -22,14 +14,8 @@ namespace aweXpect.Reflection.Collections
     }
     public static class Filter
     {
-        public static aweXpect.Reflection.Collections.Filter<TEntity> Prefix<TEntity>(System.Func<TEntity, bool> predicate, string prefix) { }
-        public static aweXpect.Reflection.Collections.Filter<TEntity> Suffix<TEntity>(System.Func<TEntity, bool> predicate, string suffix) { }
-    }
-    public abstract class Filter<TEntity>
-    {
-        protected Filter() { }
-        public abstract bool Applies(TEntity type);
-        public abstract string Describe(string text);
+        public static aweXpect.Reflection.Collections.IFilter<TEntity> Prefix<TEntity>(System.Func<TEntity, bool> predicate, string prefix) { }
+        public static aweXpect.Reflection.Collections.IFilter<TEntity> Suffix<TEntity>(System.Func<TEntity, bool> predicate, string suffix) { }
     }
     public static class Filtered
     {
@@ -95,9 +81,14 @@ namespace aweXpect.Reflection.Collections
         where TFiltered : aweXpect.Reflection.Collections.Filtered<T, TFiltered>
     {
         protected Filtered(System.Collections.Generic.IEnumerable<T> source) { }
-        protected System.Collections.Generic.List<aweXpect.Reflection.Collections.Filter<T>> Filters { get; }
+        protected System.Collections.Generic.List<aweXpect.Reflection.Collections.IFilter<T>> Filters { get; }
         public System.Collections.Generic.IEnumerator<T> GetEnumerator() { }
-        public TFiltered Which(aweXpect.Reflection.Collections.Filter<T> filter) { }
+        public TFiltered Which(aweXpect.Reflection.Collections.IFilter<T> filter) { }
+    }
+    public interface IFilter<in TEntity>
+    {
+        bool Applies(TEntity type);
+        string Describes(string text);
     }
 }
 namespace aweXpect.Reflection

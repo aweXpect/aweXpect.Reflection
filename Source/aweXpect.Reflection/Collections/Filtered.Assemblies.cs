@@ -46,9 +46,9 @@ public static partial class Filtered
 		public string GetDescription()
 		{
 			string description = _description;
-			foreach (Filter<Assembly> filter in Filters)
+			foreach (IFilter<Assembly> filter in Filters)
 			{
-				description = filter.Describe(description);
+				description = filter.Describes(description);
 			}
 
 			return description;

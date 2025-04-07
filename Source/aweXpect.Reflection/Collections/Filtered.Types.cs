@@ -90,9 +90,9 @@ public static partial class Filtered
 		public string GetDescription()
 		{
 			string description = _description;
-			foreach (Filter<Type> filter in Filters)
+			foreach (IFilter<Type> filter in Filters)
 			{
-				description = filter.Describe(description);
+				description = filter.Describes(description);
 			}
 
 			if (_assemblies is not null)

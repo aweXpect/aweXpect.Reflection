@@ -33,9 +33,9 @@ public static partial class Filtered
 		public string GetDescription()
 		{
 			string description = _description;
-			foreach (Filter<EventInfo> filter in Filters)
+			foreach (IFilter<EventInfo> filter in Filters)
 			{
-				description = filter.Describe(description);
+				description = filter.Describes(description);
 			}
 
 			if (_types is not null)
