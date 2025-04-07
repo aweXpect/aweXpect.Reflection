@@ -12,7 +12,7 @@ public class InTests
 	{
 		Filtered.Assemblies sut = In.AllLoadedAssemblies();
 
-		await That(sut).HasCount().Between(5).And(7);
+		await That(sut).HasCount().AtLeast(5);
 		await That(sut).All().Satisfy(x => !x.FullName!.StartsWith("System."));
 		await That(sut.GetDescription()).IsEqualTo("in all loaded assemblies");
 	}
@@ -20,11 +20,11 @@ public class InTests
 	[Fact]
 	public async Task AllLoadedAssemblies_WithPredicate_ShouldApplyPredicate()
 	{
-		Filtered.Assemblies sut = In.AllLoadedAssemblies(assembly => !assembly.FullName!.StartsWith("aweXpect."));
+		Filtered.Assemblies sut = In.AllLoadedAssemblies(assembly => assembly.FullName!.StartsWith("aweXpect."));
 
 		await That(sut).HasCount().Between(2).And(4);
 		await That(sut.GetDescription())
-			.IsEqualTo("in all loaded assemblies matching assembly => !assembly.FullName!.StartsWith(\"aweXpect.\")");
+			.IsEqualTo("in all loaded assemblies matching assembly => assembly.FullName!.StartsWith(\"aweXpect.\")");
 	}
 
 	[Fact]

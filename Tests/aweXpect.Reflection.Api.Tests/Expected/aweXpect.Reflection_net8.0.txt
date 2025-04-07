@@ -9,7 +9,7 @@ namespace aweXpect.Formatting
         public static void Format(this aweXpect.Formatting.ValueFormatter formatter, System.Text.StringBuilder stringBuilder, System.Reflection.Assembly? value, aweXpect.Formatting.FormattingOptions? options = null) { }
     }
 }
-namespace aweXpect.Reflection
+namespace aweXpect.Reflection.Collections
 {
     [System.Flags]
     public enum AccessModifiers
@@ -21,8 +21,8 @@ namespace aweXpect.Reflection
     }
     public static class Filter
     {
-        public static aweXpect.Reflection.Filter<TEntity> Prefix<TEntity>(System.Func<TEntity, bool> predicate, string prefix) { }
-        public static aweXpect.Reflection.Filter<TEntity> Suffix<TEntity>(System.Func<TEntity, bool> predicate, string suffix) { }
+        public static aweXpect.Reflection.Collections.Filter<TEntity> Prefix<TEntity>(System.Func<TEntity, bool> predicate, string prefix) { }
+        public static aweXpect.Reflection.Collections.Filter<TEntity> Suffix<TEntity>(System.Func<TEntity, bool> predicate, string suffix) { }
     }
     public abstract class Filter<TEntity>
     {
@@ -32,75 +32,79 @@ namespace aweXpect.Reflection
     }
     public static class Filtered
     {
-        public class Assemblies : aweXpect.Reflection.Filtered<System.Reflection.Assembly, aweXpect.Reflection.Filtered.Assemblies>, aweXpect.Core.IDescribableSubject
+        public class Assemblies : aweXpect.Reflection.Collections.Filtered<System.Reflection.Assembly, aweXpect.Reflection.Collections.Filtered.Assemblies>, aweXpect.Core.IDescribableSubject
         {
             public Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> source, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Constructors : aweXpect.Reflection.Filtered<System.Reflection.ConstructorInfo, aweXpect.Reflection.Filtered.Constructors>, aweXpect.Core.IDescribableSubject
+        public class Constructors : aweXpect.Reflection.Collections.Filtered<System.Reflection.ConstructorInfo, aweXpect.Reflection.Collections.Filtered.Constructors>, aweXpect.Core.IDescribableSubject
         {
-            public Constructors(aweXpect.Reflection.Filtered.Types types, string description) { }
+            public Constructors(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Events : aweXpect.Reflection.Filtered<System.Reflection.EventInfo, aweXpect.Reflection.Filtered.Events>, aweXpect.Core.IDescribableSubject
+        public class Events : aweXpect.Reflection.Collections.Filtered<System.Reflection.EventInfo, aweXpect.Reflection.Collections.Filtered.Events>, aweXpect.Core.IDescribableSubject
         {
-            public Events(aweXpect.Reflection.Filtered.Types types, string description) { }
+            public Events(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Fields : aweXpect.Reflection.Filtered<System.Reflection.FieldInfo, aweXpect.Reflection.Filtered.Fields>, aweXpect.Core.IDescribableSubject
+        public class Fields : aweXpect.Reflection.Collections.Filtered<System.Reflection.FieldInfo, aweXpect.Reflection.Collections.Filtered.Fields>, aweXpect.Core.IDescribableSubject
         {
-            public Fields(aweXpect.Reflection.Filtered.Types types, string description) { }
+            public Fields(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Methods : aweXpect.Reflection.Filtered<System.Reflection.MethodInfo, aweXpect.Reflection.Filtered.Methods>, aweXpect.Core.IDescribableSubject
+        public class Methods : aweXpect.Reflection.Collections.Filtered<System.Reflection.MethodInfo, aweXpect.Reflection.Collections.Filtered.Methods>, aweXpect.Core.IDescribableSubject
         {
-            public Methods(aweXpect.Reflection.Filtered.Types types, string description) { }
+            public Methods(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Properties : aweXpect.Reflection.Filtered<System.Reflection.PropertyInfo, aweXpect.Reflection.Filtered.Properties>, aweXpect.Core.IDescribableSubject
+        public class Properties : aweXpect.Reflection.Collections.Filtered<System.Reflection.PropertyInfo, aweXpect.Reflection.Collections.Filtered.Properties>, aweXpect.Core.IDescribableSubject
         {
-            public Properties(aweXpect.Reflection.Filtered.Types types, string description) { }
+            public Properties(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Types Types() { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
-        public class Types : aweXpect.Reflection.Filtered<System.Type, aweXpect.Reflection.Filtered.Types>, aweXpect.Core.IDescribableSubject
+        public class Types : aweXpect.Reflection.Collections.Filtered<System.Type, aweXpect.Reflection.Collections.Filtered.Types>, aweXpect.Core.IDescribableSubject
         {
-            public aweXpect.Reflection.Filtered.Assemblies Assemblies() { }
-            public aweXpect.Reflection.Filtered.Constructors Constructors() { }
-            public aweXpect.Reflection.Filtered.Events Events() { }
-            public aweXpect.Reflection.Filtered.Fields Fields() { }
+            public aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies() { }
+            public aweXpect.Reflection.Collections.Filtered.Constructors Constructors() { }
+            public aweXpect.Reflection.Collections.Filtered.Events Events() { }
+            public aweXpect.Reflection.Collections.Filtered.Fields Fields() { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Filtered.Methods Methods() { }
-            public aweXpect.Reflection.Filtered.Properties Properties() { }
+            public aweXpect.Reflection.Collections.Filtered.Methods Methods() { }
+            public aweXpect.Reflection.Collections.Filtered.Properties Properties() { }
         }
     }
     public static class FilteredExtensions
     {
-        public static aweXpect.Reflection.Filtered.Types AbstractTypes(this aweXpect.Reflection.Filtered.Assemblies assemblies) { }
-        public static aweXpect.Reflection.Filtered.Types WhichAreAbstract(this aweXpect.Reflection.Filtered.Types @this) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types AbstractTypes(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom(this aweXpect.Reflection.Collections.Filtered.Types @this, System.Type baseType, bool forceDirect = false) { }
+        public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom<TBaseType>(this aweXpect.Reflection.Collections.Filtered.Types @this, bool forceDirect = false) { }
     }
     public abstract class Filtered<T, TFiltered> : System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
-        where TFiltered : aweXpect.Reflection.Filtered<T, TFiltered>
+        where TFiltered : aweXpect.Reflection.Collections.Filtered<T, TFiltered>
     {
         protected Filtered(System.Collections.Generic.IEnumerable<T> source) { }
-        protected System.Collections.Generic.List<aweXpect.Reflection.Filter<T>> Filters { get; }
+        protected System.Collections.Generic.List<aweXpect.Reflection.Collections.Filter<T>> Filters { get; }
         public System.Collections.Generic.IEnumerator<T> GetEnumerator() { }
-        public TFiltered Which(aweXpect.Reflection.Filter<T> filter) { }
+        public TFiltered Which(aweXpect.Reflection.Collections.Filter<T> filter) { }
     }
+}
+namespace aweXpect.Reflection
+{
     public static class In
     {
-        public static aweXpect.Reflection.Filtered.Assemblies AllLoadedAssemblies(System.Func<System.Reflection.Assembly, bool>? predicate = null, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
-        public static aweXpect.Reflection.Filtered.Assemblies Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies) { }
-        public static aweXpect.Reflection.Filtered.Assemblies Assemblies(params System.Reflection.Assembly?[] assemblies) { }
-        public static aweXpect.Reflection.Filtered.Assemblies AssemblyContaining(System.Type type) { }
-        public static aweXpect.Reflection.Filtered.Assemblies AssemblyContaining<TType>() { }
-        public static aweXpect.Reflection.Filtered.Assemblies EntryAssembly() { }
-        public static aweXpect.Reflection.Filtered.Assemblies ExecutingAssembly() { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies AllLoadedAssemblies(System.Func<System.Reflection.Assembly, bool>? predicate = null, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies) { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies(params System.Reflection.Assembly?[] assemblies) { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies AssemblyContaining(System.Type type) { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies AssemblyContaining<TType>() { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies EntryAssembly() { }
+        public static aweXpect.Reflection.Collections.Filtered.Assemblies ExecutingAssembly() { }
     }
     public static class ThatType
     {
