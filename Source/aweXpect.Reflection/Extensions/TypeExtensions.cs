@@ -266,8 +266,16 @@ internal static class TypeExtensions
 	/// </summary>
 	/// <param name="type">The <see cref="Type" />.</param>
 	/// <remarks>https://stackoverflow.com/a/1175901</remarks>
-	public static bool IsStatic(this Type type)
+	public static bool IsReallyStatic(this Type type)
 		=> type is { IsAbstract: true, IsSealed: true, IsInterface: false, };
+
+	/// <summary>
+	///     Gets a value indicating whether the <see cref="Type" /> is sealed and not static.
+	/// </summary>
+	/// <param name="type">The <see cref="Type" />.</param>
+	/// <remarks>https://stackoverflow.com/a/1175901</remarks>
+	public static bool IsReallySealed(this Type type)
+		=> type is { IsAbstract: false, IsSealed: true, IsInterface: false, };
 
 	/// <summary>
 	///     Check if the generic types are compatible.<br />

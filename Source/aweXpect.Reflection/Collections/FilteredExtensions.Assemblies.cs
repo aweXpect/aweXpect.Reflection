@@ -58,8 +58,8 @@ public static partial class FilteredExtensions
 		AccessModifiers accessModifier = AccessModifiers.Any)
 	{
 		Func<Type, bool> predicate = type => accessModifier == AccessModifiers.Any
-			? type.IsStatic()
-			: type.IsStatic() && type.HasAccessModifier(accessModifier);
+			? type.IsReallyStatic()
+			: type.IsReallyStatic() && type.HasAccessModifier(accessModifier);
 		return assemblies.Types().Which(Filter.Prefix(predicate, $"{accessModifier.GetString()}static "));
 	}
 }

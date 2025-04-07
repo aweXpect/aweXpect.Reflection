@@ -34,7 +34,7 @@ public static partial class ThatType
 		public ConstraintResult IsMetBy(Type? actual)
 		{
 			Actual = actual;
-			Outcome = actual?.IsStatic() == true ? Outcome.Success : Outcome.Failure;
+			Outcome = actual?.IsReallyStatic() == true ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 

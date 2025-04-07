@@ -37,7 +37,7 @@ public static partial class ThatTypes
 		public ConstraintResult IsMetBy(IEnumerable<Type> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => type.IsSealed) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => type.IsReallySealed()) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -47,7 +47,7 @@ public static partial class ThatTypes
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained non-sealed types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsSealed),
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallySealed()),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -57,7 +57,7 @@ public static partial class ThatTypes
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained sealed types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsSealed),
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallySealed()),
 				FormattingOptions.Indented(indentation));
 		}
 	}
@@ -69,7 +69,7 @@ public static partial class ThatTypes
 		public ConstraintResult IsMetBy(IEnumerable<Type> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => !type.IsSealed) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => !type.IsReallySealed()) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -79,7 +79,7 @@ public static partial class ThatTypes
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained sealed types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsSealed),
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallySealed()),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -89,7 +89,7 @@ public static partial class ThatTypes
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained non-sealed types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsSealed),
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallySealed()),
 				FormattingOptions.Indented(indentation));
 		}
 	}

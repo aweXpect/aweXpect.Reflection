@@ -28,31 +28,26 @@ namespace aweXpect.Reflection.Collections
         }
         public class Constructors : aweXpect.Reflection.Collections.Filtered<System.Reflection.ConstructorInfo, aweXpect.Reflection.Collections.Filtered.Constructors>, aweXpect.Core.IDescribableSubject
         {
-            public Constructors(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
         public class Events : aweXpect.Reflection.Collections.Filtered<System.Reflection.EventInfo, aweXpect.Reflection.Collections.Filtered.Events>, aweXpect.Core.IDescribableSubject
         {
-            public Events(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
         public class Fields : aweXpect.Reflection.Collections.Filtered<System.Reflection.FieldInfo, aweXpect.Reflection.Collections.Filtered.Fields>, aweXpect.Core.IDescribableSubject
         {
-            public Fields(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
         public class Methods : aweXpect.Reflection.Collections.Filtered<System.Reflection.MethodInfo, aweXpect.Reflection.Collections.Filtered.Methods>, aweXpect.Core.IDescribableSubject
         {
-            public Methods(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }
         public class Properties : aweXpect.Reflection.Collections.Filtered<System.Reflection.PropertyInfo, aweXpect.Reflection.Collections.Filtered.Properties>, aweXpect.Core.IDescribableSubject
         {
-            public Properties(aweXpect.Reflection.Collections.Filtered.Types types, string description) { }
             public string GetDescription() { }
             public aweXpect.Reflection.Collections.Filtered.Types Types() { }
         }

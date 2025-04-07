@@ -19,7 +19,7 @@ public static partial class Filtered
 		/// <summary>
 		///     Container for a filterable collection of <see cref="ConstructorInfo" />.
 		/// </summary>
-		public Constructors(Types types, string description) : base(types.SelectMany(type =>
+		internal Constructors(Types types, string description) : base(types.SelectMany(type =>
 			type.GetConstructors(BindingFlags.DeclaredOnly |
 			                     BindingFlags.NonPublic |
 			                     BindingFlags.Public |

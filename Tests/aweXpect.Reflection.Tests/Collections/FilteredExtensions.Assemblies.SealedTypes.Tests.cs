@@ -15,7 +15,8 @@ public sealed partial class FilteredExtensions
 				{
 					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().SealedTypes();
 
-					await That(types).All().Satisfy(t => t.IsSealed);
+					await That(types).All().Satisfy(type =>
+						type is { IsAbstract: false, IsSealed: true, IsInterface: false, });
 				}
 
 				[Fact]
@@ -37,7 +38,8 @@ public sealed partial class FilteredExtensions
 
 				[Theory]
 				[MemberData(nameof(GetAccessModifiers), MemberType = typeof(FilteredExtensions))]
-				public async Task WithAccessModifier_ShouldIncludeSealedInformationInErrorMessage(AccessModifiers accessModifier, string expectedString)
+				public async Task WithAccessModifier_ShouldIncludeSealedInformationInErrorMessage(
+					AccessModifiers accessModifier, string expectedString)
 				{
 					async Task Act()
 						=> await That(In.AllLoadedAssemblies().SealedTypes(accessModifier))

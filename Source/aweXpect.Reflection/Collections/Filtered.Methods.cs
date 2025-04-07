@@ -19,7 +19,7 @@ public static partial class Filtered
 		/// <summary>
 		///     Container for a filterable collection of <see cref="MethodInfo" />.
 		/// </summary>
-		public Methods(Types types, string description) : base(types.SelectMany(type =>
+		internal Methods(Types types, string description) : base(types.SelectMany(type =>
 			type.GetMethods(BindingFlags.DeclaredOnly |
 			                BindingFlags.NonPublic |
 			                BindingFlags.Public |

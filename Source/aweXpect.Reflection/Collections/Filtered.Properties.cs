@@ -19,7 +19,7 @@ public static partial class Filtered
 		/// <summary>
 		///     Container for a filterable collection of <see cref="PropertyInfo" />.
 		/// </summary>
-		public Properties(Types types, string description) : base(types.SelectMany(type =>
+		internal Properties(Types types, string description) : base(types.SelectMany(type =>
 			type.GetProperties(BindingFlags.DeclaredOnly |
 			                   BindingFlags.NonPublic |
 			                   BindingFlags.Public |
