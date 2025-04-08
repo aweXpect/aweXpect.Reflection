@@ -71,6 +71,14 @@ namespace aweXpect.Reflection.Collections
         public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom(this aweXpect.Reflection.Collections.Filtered.Types @this, System.Type baseType, bool forceDirect = false) { }
         public static aweXpect.Reflection.Collections.Filtered.Types WhichInheritFrom<TBaseType>(this aweXpect.Reflection.Collections.Filtered.Types @this, bool forceDirect = false) { }
         public static aweXpect.Reflection.Collections.Filtered.Assemblies WhichSatisfy(this aweXpect.Reflection.Collections.Filtered.Assemblies assemblies, System.Func<System.Reflection.Assembly, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
+        public static aweXpect.Reflection.Collections.Filtered.Methods With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Methods @this, bool inherit = true)
+            where TAttribute : System.Attribute { }
+        public static aweXpect.Reflection.Collections.Filtered.Types With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Types @this, bool inherit = true)
+            where TAttribute : System.Attribute { }
+        public static aweXpect.Reflection.Collections.Filtered.Methods With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Methods @this, System.Func<TAttribute, bool>? predicate, bool inherit = true, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+            where TAttribute : System.Attribute { }
+        public static aweXpect.Reflection.Collections.Filtered.Types With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Types @this, System.Func<TAttribute, bool>? predicate, bool inherit = true, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
+            where TAttribute : System.Attribute { }
     }
     public abstract class Filtered<T, TFiltered> : System.Collections.Generic.IEnumerable<T>, System.Collections.IEnumerable
         where TFiltered : aweXpect.Reflection.Collections.Filtered<T, TFiltered>
