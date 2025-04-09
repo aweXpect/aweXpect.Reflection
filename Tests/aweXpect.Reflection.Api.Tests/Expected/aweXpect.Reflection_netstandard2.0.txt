@@ -48,7 +48,6 @@ namespace aweXpect.Reflection.Collections
         }
         public class Types : aweXpect.Reflection.Collections.Filtered<System.Type, aweXpect.Reflection.Collections.Filtered.Types>, aweXpect.Core.IDescribableSubject
         {
-            protected Types(aweXpect.Reflection.Collections.Filtered.Types inner) { }
             public aweXpect.Reflection.Collections.Filtered.Assemblies Assemblies() { }
             public aweXpect.Reflection.Collections.Filtered.Constructors Constructors() { }
             public aweXpect.Reflection.Collections.Filtered.Events Events() { }
@@ -58,7 +57,6 @@ namespace aweXpect.Reflection.Collections
             public aweXpect.Reflection.Collections.Filtered.Properties Properties() { }
             public class StringEqualityResult : aweXpect.Reflection.Collections.Filtered.Types
             {
-                public StringEqualityResult(aweXpect.Reflection.Collections.Filtered.Types inner, aweXpect.Options.StringEqualityOptions options) { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult IgnoringCase(bool ignoreCase = true) { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true) { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true) { }
@@ -66,7 +64,6 @@ namespace aweXpect.Reflection.Collections
             }
             public class StringEqualityResultType : aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult
             {
-                public StringEqualityResultType(aweXpect.Reflection.Collections.Filtered.Types inner, aweXpect.Options.StringEqualityOptions options) { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult AsPrefix() { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult AsRegex() { }
                 public aweXpect.Reflection.Collections.Filtered.Types.StringEqualityResult AsSuffix() { }
