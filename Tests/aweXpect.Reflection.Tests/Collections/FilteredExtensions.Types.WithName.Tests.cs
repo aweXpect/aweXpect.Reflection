@@ -30,7 +30,7 @@ public sealed partial class FilteredExtensions
 
 					await That(types).HasSingle().Which.IsEqualTo(typeof(SomeClassToVerifyTheNameOfIt));
 					await That(types.GetDescription())
-						.IsEqualTo("types with name start with \"SomeClassToVerifyTheNameOf\" in assembly").AsPrefix();
+						.IsEqualTo("types with name starting with \"SomeClassToVerifyTheNameOf\" in assembly").AsPrefix();
 				}
 
 				[Fact]
@@ -53,7 +53,7 @@ public sealed partial class FilteredExtensions
 
 					await That(types).HasSingle().Which.IsEqualTo(typeof(SomeClassToVerifyTheNameOfIt));
 					await That(types.GetDescription())
-						.IsEqualTo("types with name end with \"ClassToVerifyTheNameOfIt\" in assembly").AsPrefix();
+						.IsEqualTo("types with name ending with \"ClassToVerifyTheNameOfIt\" in assembly").AsPrefix();
 				}
 
 				[Fact]
