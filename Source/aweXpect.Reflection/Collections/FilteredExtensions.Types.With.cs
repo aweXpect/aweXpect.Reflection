@@ -6,6 +6,8 @@ namespace aweXpect.Reflection.Collections;
 
 public static partial class FilteredExtensions
 {
+	private const string DirectText = "direct ";
+
 	/// <summary>
 	///     Filter for types with attribute of type <typeparamref name="TAttribute" />.
 	/// </summary>
@@ -17,7 +19,7 @@ public static partial class FilteredExtensions
 		where TAttribute : Attribute
 	{
 		IChangeableFilter<Type> filter = Filter.Suffix<Type>(type => type.HasAttribute<TAttribute>(inherit: inherit),
-			$"with {(inherit ? "" : "direct ")}{Formatter.Format(typeof(TAttribute))} ");
+			$"with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} ");
 		return new TypesWith(@this.Which(filter), filter);
 	}
 
@@ -37,7 +39,7 @@ public static partial class FilteredExtensions
 		where TAttribute : Attribute
 	{
 		IChangeableFilter<Type> filter = Filter.Suffix<Type>(type => type.HasAttribute(predicate, inherit),
-			$"with {(inherit ? "" : "direct ")}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
+			$"with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
 		return new TypesWith(@this.Which(filter), filter);
 	}
 
@@ -58,7 +60,7 @@ public static partial class FilteredExtensions
 		{
 			filter.UpdateFilter((result, type) => result || type.HasAttribute<TAttribute>(inherit: inherit),
 				description
-					=> $"{description}or with {(inherit ? "" : "direct ")}{Formatter.Format(typeof(TAttribute))} ");
+					=> $"{description}or with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} ");
 			return this;
 		}
 
@@ -80,7 +82,7 @@ public static partial class FilteredExtensions
 			filter.UpdateFilter(
 				(result, type) => result || type.HasAttribute(predicate, inherit),
 				description
-					=> $"{description}or with {(inherit ? "" : "direct ")}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
+					=> $"{description}or with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
 			return this;
 		}
 	}

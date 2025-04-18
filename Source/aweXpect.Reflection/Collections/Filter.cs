@@ -26,21 +26,15 @@ internal static class Filter
 	public static IChangeableFilter<TEntity> Suffix<TEntity>(Func<TEntity, bool> predicate, Func<string> suffix)
 		=> new GenericSuffixFuncFilter<TEntity>(predicate, suffix);
 
-	private abstract class GenericFilter<TEntity> : IChangeableFilter<TEntity>
+	private abstract class GenericFilter<TEntity>(Func<TEntity, bool> filter) : IChangeableFilter<TEntity>
 	{
-		private readonly Func<TEntity, bool> _filter;
 		private List<Func<string, string>>? _descriptions;
 		private List<Func<bool, TEntity, bool>>? _predicates;
-
-		public GenericFilter(Func<TEntity, bool> filter)
-		{
-			_filter = filter;
-		}
 
 		/// <inheritdoc cref="IFilter{TEntity}.Applies(TEntity)" />
 		public bool Applies(TEntity value)
 		{
-			bool result = _filter(value);
+			bool result = filter(value);
 			if (_predicates != null)
 			{
 				foreach (Func<bool, TEntity, bool>? predicate in _predicates)
@@ -55,7 +49,7 @@ internal static class Filter
 		/// <inheritdoc cref="IFilter{TEntity}.Describes(string)" />
 		public string Describes(string text)
 		{
-			string? result = DescribeCore(text);
+			string result = DescribeCore(text);
 			if (_descriptions != null)
 			{
 				foreach (Func<string, string>? description in _descriptions)
