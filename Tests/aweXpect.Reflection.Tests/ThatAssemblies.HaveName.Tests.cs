@@ -23,7 +23,7 @@ public sealed partial class ThatAssemblies
 					             Expected that in assembly containing type PublicAbstractClass
 					             all have name equal to "Reflection",
 					             but it contained not matching types [
-					               aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 					             ]
 					             """).AsWildcard();
 			}
