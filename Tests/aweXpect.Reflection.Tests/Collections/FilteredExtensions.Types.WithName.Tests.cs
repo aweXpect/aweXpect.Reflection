@@ -120,7 +120,7 @@ public sealed partial class FilteredExtensions
 				}
 
 				[Fact]
-				public async Task ShouldSupportUsingCustomComperer()
+				public async Task ShouldSupportUsingCustomComparer()
 				{
 					Reflection.Collections.Filtered.Types types = In.AssemblyContaining<FilteredExtensions>()
 						.Types().WithName("SOmEClAssTOVErIfyThENAmEofit")
