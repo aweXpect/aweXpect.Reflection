@@ -9,6 +9,7 @@ public sealed partial class ThatProperty
 		protected int ProtectedProperty { get; set; }
 		private int PrivateProperty { get; set; }
 	}
+
 	public class ClassWithSingleProperty
 	{
 		public int MyProperty { get; set; }

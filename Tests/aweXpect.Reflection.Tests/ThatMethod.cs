@@ -9,6 +9,7 @@ public sealed partial class ThatMethod
 		protected int ProtectedMethod() => 0;
 		private int PrivateMethod() => 0;
 	}
+
 	public class ClassWithSingleMethod
 	{
 		public int MyMethod() => 0;

@@ -9,6 +9,7 @@ public sealed partial class ThatEvent
 		protected event EventHandler ProtectedEvent;
 		private event EventHandler PrivateEvent;
 	}
+
 	public class ClassWithSingleEvent
 	{
 		public event EventHandler MyEvent;

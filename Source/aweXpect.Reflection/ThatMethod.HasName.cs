@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
@@ -20,9 +19,9 @@ public static partial class ThatMethod
 		this IThat<MethodInfo?> subject, string expected)
 	{
 		StringEqualityOptions options = new();
-		return new StringEqualityTypeResult<MethodInfo?, IThat<MethodInfo?>>(subject.Get().ExpectationBuilder.AddConstraint(
-				(it, grammars)
-					=> new HasNameConstraint(it, grammars, expected, options)),
+		return new StringEqualityTypeResult<MethodInfo?, IThat<MethodInfo?>>(
+			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new HasNameConstraint(it, grammars, expected, options)),
 			subject,
 			options);
 	}

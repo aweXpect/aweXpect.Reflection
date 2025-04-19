@@ -4,11 +4,12 @@ public sealed partial class ThatField
 {
 	public class ClassWithFields
 	{
-		public int PublicField;
 		internal int InternalField;
-		protected int ProtectedField;
 		private int PrivateField;
+		protected int ProtectedField;
+		public int PublicField;
 	}
+
 	public class ClassWithSingleField
 	{
 		public int MyField;

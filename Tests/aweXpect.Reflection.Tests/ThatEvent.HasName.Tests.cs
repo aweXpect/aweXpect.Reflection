@@ -10,27 +10,6 @@ public sealed partial class ThatEvent
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenExpectedValueIsOnlySubstring_ShouldFail()
-			{
-				EventInfo? subject =
-					typeof(ClassWithEvents).GetEvent(nameof(ClassWithEvents.PublicEvent));
-
-				async Task Act()
-					=> await That(subject).HasName("Event");
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has name equal to "Event",
-					             but it was "PublicEvent" which differs at index 0:
-					                ↓ (actual)
-					               "PublicEvent"
-					               "Event"
-					                ↑ (expected)
-					             """);
-			}
-
-			[Fact]
 			public async Task WhenEventInfoHasExpectedPrefix_ShouldSucceed()
 			{
 				EventInfo? subject =
@@ -80,6 +59,27 @@ public sealed partial class ThatEvent
 					=> await That(subject).HasName("pUBLICevent").IgnoringCase();
 
 				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenExpectedValueIsOnlySubstring_ShouldFail()
+			{
+				EventInfo? subject =
+					typeof(ClassWithEvents).GetEvent(nameof(ClassWithEvents.PublicEvent));
+
+				async Task Act()
+					=> await That(subject).HasName("Event");
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has name equal to "Event",
+					             but it was "PublicEvent" which differs at index 0:
+					                ↓ (actual)
+					               "PublicEvent"
+					               "Event"
+					                ↑ (expected)
+					             """);
 			}
 		}
 	}
