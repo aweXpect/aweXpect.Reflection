@@ -12,17 +12,17 @@ using aweXpect.Results;
 
 namespace aweXpect.Reflection;
 
-public static partial class ThatAssemblies
+public static partial class ThatMethods
 {
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Assembly" /> have
+	///     Verifies that all items in the filtered collection of <see cref="MethodInfo" /> have
 	///     the <paramref name="expected" /> name.
 	/// </summary>
-	public static StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>> HaveName(
-		this IThat<IEnumerable<Assembly?>> subject, string expected)
+	public static StringEqualityTypeResult<IEnumerable<MethodInfo?>, IThat<IEnumerable<MethodInfo?>>> HaveName(
+		this IThat<IEnumerable<MethodInfo?>> subject, string expected)
 	{
 		StringEqualityOptions options = new();
-		return new StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>>(subject.Get()
+		return new StringEqualityTypeResult<IEnumerable<MethodInfo?>, IThat<IEnumerable<MethodInfo?>>>(subject.Get()
 				.ExpectationBuilder.AddConstraint((it, grammars)
 					=> new HaveNameConstraint(it, grammars, expected, options)),
 			subject,
@@ -34,13 +34,13 @@ public static partial class ThatAssemblies
 		ExpectationGrammars grammars,
 		string expected,
 		StringEqualityOptions options)
-		: ConstraintResult.WithValue<IEnumerable<Assembly?>>(grammars),
-			IValueConstraint<IEnumerable<Assembly?>>
+		: ConstraintResult.WithValue<IEnumerable<MethodInfo?>>(grammars),
+			IValueConstraint<IEnumerable<MethodInfo?>>
 	{
-		public ConstraintResult IsMetBy(IEnumerable<Assembly?> actual)
+		public ConstraintResult IsMetBy(IEnumerable<MethodInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => options.AreConsideredEqual(type?.GetName().Name, expected))
+			Outcome = actual.All(type => options.AreConsideredEqual(type?.Name, expected))
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
@@ -52,8 +52,7 @@ public static partial class ThatAssemblies
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained not matching types ");
-			Formatter.Format(stringBuilder,
-				Actual?.Where(type => !options.AreConsideredEqual(type?.GetName().Name, expected)),
+			Formatter.Format(stringBuilder, Actual?.Where(type => !options.AreConsideredEqual(type?.Name, expected)),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -63,8 +62,7 @@ public static partial class ThatAssemblies
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained matching types ");
-			Formatter.Format(stringBuilder,
-				Actual?.Where(type => options.AreConsideredEqual(type?.GetName().Name, expected)),
+			Formatter.Format(stringBuilder, Actual?.Where(type => options.AreConsideredEqual(type?.Name, expected)),
 				FormattingOptions.Indented(indentation));
 		}
 	}
