@@ -2,6 +2,7 @@
 
 public sealed partial class ThatMethod
 {
+#pragma warning disable CA1822
 	public class ClassWithMethods
 	{
 		public int PublicMethod() => 0;
@@ -14,4 +15,5 @@ public sealed partial class ThatMethod
 	{
 		public int MyMethod() => 0;
 	}
+#pragma warning restore CA1822
 }
