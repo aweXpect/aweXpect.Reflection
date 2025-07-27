@@ -1,5 +1,17 @@
-﻿namespace aweXpect.Reflection.Tests.Filters;
+﻿using System.Reflection;
+
+namespace aweXpect.Reflection.Tests.Filters;
 
 public sealed partial class MethodFilters
 {
+	private static MethodInfo? ExpectedMethodInfo()
+		=> typeof(SomeClassToVerifyTheMethodNameOfIt)
+			.GetMethod(nameof(SomeClassToVerifyTheMethodNameOfIt.SomeMethodToVerifyTheNameOfIt));
+
+	private class SomeClassToVerifyTheMethodNameOfIt
+	{
+		public void SomeMethodToVerifyTheNameOfIt()
+		{
+		}
+	}
 }
