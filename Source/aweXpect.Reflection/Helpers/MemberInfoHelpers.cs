@@ -7,7 +7,7 @@ namespace aweXpect.Reflection.Helpers;
 /// <summary>
 ///     Extension methods for <see cref="MemberInfo" />.
 /// </summary>
-internal static class MemberInfoExtensions
+internal static class MemberInfoHelpers
 {
 	/// <summary>
 	///     Checks if the <paramref name="memberInfo" /> has the specified <paramref name="accessModifiers" />.

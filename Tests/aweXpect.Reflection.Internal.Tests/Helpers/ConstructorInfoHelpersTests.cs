@@ -2,11 +2,11 @@
 using System.Reflection;
 using aweXpect.Reflection.Helpers;
 
-namespace aweXpect.Reflection.Internal.Tests.Extensions;
+namespace aweXpect.Reflection.Internal.Tests.Helpers;
 
 // ReSharper disable UnusedParameter.Local
 // ReSharper disable UnusedMember.Local
-public sealed class ConstructorInfoExtensionsTests
+public sealed class ConstructorInfoHelpersTests
 {
 	[Fact]
 	public async Task HasAttribute_WithAttribute_ShouldReturnTrue()

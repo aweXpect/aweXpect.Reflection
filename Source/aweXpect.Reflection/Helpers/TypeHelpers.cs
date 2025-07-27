@@ -10,7 +10,7 @@ namespace aweXpect.Reflection.Helpers;
 /// <summary>
 ///     Extension methods for <see cref="Type" />.
 /// </summary>
-internal static class TypeExtensions
+internal static class TypeHelpers
 {
 	/// <summary>
 	///     Searches for constructors in the <paramref name="type" /> that were directly declared there.

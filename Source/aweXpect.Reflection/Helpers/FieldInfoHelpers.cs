@@ -8,7 +8,7 @@ namespace aweXpect.Reflection.Helpers;
 /// <summary>
 ///     Extension fields for <see cref="FieldInfo" />.
 /// </summary>
-internal static class FieldInfoExtensions
+internal static class FieldInfoHelpers
 {
 	/// <summary>
 	///     Checks if the <paramref name="fieldInfo" /> has the specified <paramref name="accessModifiers" />.

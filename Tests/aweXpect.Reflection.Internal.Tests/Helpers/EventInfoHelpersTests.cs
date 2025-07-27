@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 using aweXpect.Reflection.Helpers;
 
-namespace aweXpect.Reflection.Internal.Tests.Extensions;
+namespace aweXpect.Reflection.Internal.Tests.Helpers;
 
-public sealed class EventInfoExtensionsTests
+public sealed class EventInfoHelpersTests
 {
 	[Fact]
 	public async Task HasAttribute_WithAttribute_ShouldReturnTrue()

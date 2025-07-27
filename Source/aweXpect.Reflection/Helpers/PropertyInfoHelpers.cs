@@ -8,7 +8,7 @@ namespace aweXpect.Reflection.Helpers;
 /// <summary>
 ///     Extension properties for <see cref="PropertyInfo" />.
 /// </summary>
-internal static class PropertyInfoExtensions
+internal static class PropertyInfoHelpers
 {
 	/// <summary>
 	///     Checks if the <paramref name="propertyInfo" /> has the specified <paramref name="accessModifiers" />.
