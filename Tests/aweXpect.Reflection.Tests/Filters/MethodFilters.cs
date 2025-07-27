@@ -10,8 +10,10 @@ public sealed partial class MethodFilters
 
 	private class SomeClassToVerifyTheMethodNameOfIt
 	{
+#pragma warning disable CA1822
 		public void SomeMethodToVerifyTheNameOfIt()
 		{
 		}
+#pragma warning restore CA1822
 	}
 }
