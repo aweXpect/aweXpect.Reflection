@@ -11,11 +11,11 @@ public sealed partial class MethodFilters
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichSatisfyThePredicate()
 			{
-				Filtered.Methods types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
 					.Methods().WhichSatisfy(it => it.Name.Equals("SomeMethodToVerifyTheNameOfIt"));
 
-				await That(types).HasSingle().Which.IsEqualTo(ExpectedMethodInfo());
-				await That(types.GetDescription())
+				await That(methods).HasSingle().Which.IsEqualTo(ExpectedMethodInfo());
+				await That(methods.GetDescription())
 					.IsEqualTo(
 						"methods matching it => it.Name.Equals(\"SomeMethodToVerifyTheNameOfIt\") in assembly")
 					.AsPrefix();

@@ -14,7 +14,7 @@ public static partial class MethodFilters
 	{
 		StringEqualityOptions options = new();
 		return new Filtered.Methods.StringEqualityResultType(@this.Which(Filter.Suffix<MethodInfo>(
-				type => options.AreConsideredEqual(type.Name, expected),
+				methodInfo => options.AreConsideredEqual(methodInfo.Name, expected),
 				() => $"with name {options.GetExpectation(expected, ExpectationGrammars.None)} ")),
 			options);
 	}
