@@ -11,7 +11,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenAssembliesContainNonNestedTypes_ShouldSucceed()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreNested>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotNested>().Types()
 					.WhichSatisfy(type => !type.IsNested);
 
 				async Task Act()
@@ -23,7 +23,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlyNestedTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreNested>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotNested>().Types()
 					.WhichSatisfy(type => type.IsNested);
 
 				async Task Act()
@@ -31,7 +31,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that types matching type => type.IsNested in assembly containing type ThatTypes.AreNested
+					             Expected that types matching type => type.IsNested in assembly containing type ThatTypes.AreNotNested
 					             are all not nested,
 					             but it contained nested types [
 					               *

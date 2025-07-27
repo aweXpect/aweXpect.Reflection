@@ -11,7 +11,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenAssembliesContainNonStaticTypes_ShouldSucceed()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreStatic>().Abstract.Types();
+				Filtered.Types subject = In.AssemblyContaining<AreNotStatic>().Abstract.Types();
 
 				async Task Act()
 					=> await That(subject).AreNotStatic();
@@ -22,7 +22,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlyStaticTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreStatic>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotStatic>().Types()
 					.WhichSatisfy(type => type is { IsAbstract: true, IsSealed: true, IsInterface: false, });
 
 				async Task Act()
@@ -30,7 +30,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that types matching type => type is { IsAbstract: true, IsSealed: true, IsInterface: false, } in assembly containing type ThatTypes.AreStatic
+					             Expected that types matching type => type is { IsAbstract: true, IsSealed: true, IsInterface: false, } in assembly containing type ThatTypes.AreNotStatic
 					             are all not static,
 					             but it contained static types [
 					               *

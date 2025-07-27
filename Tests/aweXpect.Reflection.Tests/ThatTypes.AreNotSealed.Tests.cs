@@ -11,7 +11,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenAssembliesContainNonSealedTypes_ShouldSucceed()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreSealed>().Abstract.Types();
+				Filtered.Types subject = In.AssemblyContaining<AreNotSealed>().Abstract.Types();
 
 				async Task Act()
 					=> await That(subject).AreNotSealed();
@@ -22,7 +22,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlySealedTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreSealed>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotSealed>().Types()
 					.WhichSatisfy(type => type is { IsAbstract: false, IsSealed: true, IsInterface: false, });
 
 				async Task Act()
@@ -30,7 +30,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that types matching type => type is { IsAbstract: false, IsSealed: true, IsInterface: false, } in assembly containing type ThatTypes.AreSealed
+					             Expected that types matching type => type is { IsAbstract: false, IsSealed: true, IsInterface: false, } in assembly containing type ThatTypes.AreNotSealed
 					             are all not sealed,
 					             but it contained sealed types [
 					               *

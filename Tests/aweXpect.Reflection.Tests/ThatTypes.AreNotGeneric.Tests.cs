@@ -11,7 +11,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenAssembliesContainNonGenericTypes_ShouldSucceed()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreGeneric>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotGeneric>().Types()
 					.WhichSatisfy(type => !type.IsGenericType);
 
 				async Task Act()
@@ -23,7 +23,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlyGenericTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreGeneric>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotGeneric>().Types()
 					.WhichSatisfy(type => type.IsGenericType);
 
 				async Task Act()
@@ -31,7 +31,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that types matching type => type.IsGenericType in assembly containing type ThatTypes.AreGeneric
+					             Expected that types matching type => type.IsGenericType in assembly containing type ThatTypes.AreNotGeneric
 					             are all not generic,
 					             but it contained generic types [
 					               *

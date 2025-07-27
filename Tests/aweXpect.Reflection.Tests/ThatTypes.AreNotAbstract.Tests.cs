@@ -11,7 +11,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenAssembliesContainNonAbstractTypes_ShouldSucceed()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreAbstract>().Sealed.Types();
+				Filtered.Types subject = In.AssemblyContaining<AreNotAbstract>().Sealed.Types();
 
 				async Task Act()
 					=> await That(subject).AreNotAbstract();
@@ -22,7 +22,7 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlyAbstractTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreAbstract>().Types()
+				Filtered.Types subject = In.AssemblyContaining<AreNotAbstract>().Types()
 					.WhichSatisfy(type => type is { IsAbstract: true, IsSealed: false, IsInterface: false, });
 
 				async Task Act()
@@ -30,7 +30,7 @@ public sealed partial class ThatTypes
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that types matching type => type is { IsAbstract: true, IsSealed: false, IsInterface: false, } in assembly containing type ThatTypes.AreAbstract
+					             Expected that types matching type => type is { IsAbstract: true, IsSealed: false, IsInterface: false, } in assembly containing type ThatTypes.AreNotAbstract
 					             are all not abstract,
 					             but it contained abstract types [
 					               *
