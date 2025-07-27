@@ -48,7 +48,7 @@ public static partial class Filtered
 		}
 
 		/// <summary>
-		///     Get all declaring types of the filtered constructors.
+		///     Get all declaring types of the filtered fields.
 		/// </summary>
 		public Types DeclaringTypes() => new(this);
 	}
