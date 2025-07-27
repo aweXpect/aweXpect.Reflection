@@ -22,14 +22,15 @@ public sealed partial class ThatTypes
 			[Fact]
 			public async Task WhenFilteringOnlyAbstractTypes_ShouldFail()
 			{
-				Filtered.Types subject = In.AssemblyContaining<AreAbstract>().Abstract.Types();
+				Filtered.Types subject = In.AssemblyContaining<AreAbstract>().Types()
+					.WhichSatisfy(type => type is { IsAbstract: true, IsSealed: false, IsInterface: false, });
 
 				async Task Act()
 					=> await That(subject).AreNotAbstract();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
-					             Expected that abstract types in assembly containing type ThatTypes.AreAbstract
+					             Expected that types matching type => type is { IsAbstract: true, IsSealed: false, IsInterface: false, } in assembly containing type ThatTypes.AreAbstract
 					             are all not abstract,
 					             but it contained abstract types [
 					               *
