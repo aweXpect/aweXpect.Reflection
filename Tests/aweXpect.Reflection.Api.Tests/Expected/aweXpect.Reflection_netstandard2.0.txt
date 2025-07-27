@@ -287,21 +287,6 @@ namespace aweXpect.Reflection.Collections
             protected Constructors(aweXpect.Reflection.Collections.Filtered.Constructors inner) { }
             public aweXpect.Reflection.Collections.Filtered.Types DeclaringTypes() { }
             public string GetDescription() { }
-            public class StringEqualityResult : aweXpect.Reflection.Collections.Filtered.Constructors
-            {
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult IgnoringCase(bool ignoreCase = true) { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true) { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true) { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult Using(System.Collections.Generic.IEqualityComparer<string> comparer) { }
-            }
-            public class StringEqualityResultType : aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult
-            {
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult AsPrefix() { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult AsRegex() { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult AsSuffix() { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult AsWildcard() { }
-                public aweXpect.Reflection.Collections.Filtered.Constructors.StringEqualityResult Exactly() { }
-            }
         }
         public class Events : aweXpect.Reflection.Collections.Filtered<System.Reflection.EventInfo, aweXpect.Reflection.Collections.Filtered.Events>, aweXpect.Core.IDescribableSubject
         {

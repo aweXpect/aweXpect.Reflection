@@ -9,46 +9,46 @@ public sealed partial class EventFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalTypes()
+			public async Task ShouldAllowFilteringForInternalEvents()
 			{
-				Filtered.Events types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
 					.Events().WhichAreNot(AccessModifiers.Internal);
 
-				await That(types).AreNotInternal();
-				await That(types.GetDescription())
+				await That(events).AreNotInternal();
+				await That(events.GetDescription())
 					.IsEqualTo("non-internal events in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivateTypes()
+			public async Task ShouldAllowFilteringForPrivateEvents()
 			{
-				Filtered.Events types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
 					.Events().WhichAreNot(AccessModifiers.Private);
 
-				await That(types).AreNotPrivate();
-				await That(types.GetDescription())
+				await That(events).AreNotPrivate();
+				await That(events.GetDescription())
 					.IsEqualTo("non-private events in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedTypes()
+			public async Task ShouldAllowFilteringForProtectedEvents()
 			{
-				Filtered.Events types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
 					.Events().WhichAreNot(AccessModifiers.Protected);
 
-				await That(types).AreNotProtected();
-				await That(types.GetDescription())
+				await That(events).AreNotProtected();
+				await That(events.GetDescription())
 					.IsEqualTo("non-protected events in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicTypes()
+			public async Task ShouldAllowFilteringForPublicEvents()
 			{
-				Filtered.Events types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
 					.Events().WhichAreNot(AccessModifiers.Public);
 
-				await That(types).AreNotPublic();
-				await That(types.GetDescription())
+				await That(events).AreNotPublic();
+				await That(events.GetDescription())
 					.IsEqualTo("non-public events in assembly").AsPrefix();
 			}
 		}

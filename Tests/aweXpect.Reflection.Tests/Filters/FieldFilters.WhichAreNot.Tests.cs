@@ -9,46 +9,46 @@ public sealed partial class FieldFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalTypes()
+			public async Task ShouldAllowFilteringForInternalFields()
 			{
-				Filtered.Fields types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
 					.Fields().WhichAreNot(AccessModifiers.Internal);
 
-				await That(types).AreNotInternal();
-				await That(types.GetDescription())
+				await That(fields).AreNotInternal();
+				await That(fields.GetDescription())
 					.IsEqualTo("non-internal fields in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivateTypes()
+			public async Task ShouldAllowFilteringForPrivateFields()
 			{
-				Filtered.Fields types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
 					.Fields().WhichAreNot(AccessModifiers.Private);
 
-				await That(types).AreNotPrivate();
-				await That(types.GetDescription())
+				await That(fields).AreNotPrivate();
+				await That(fields.GetDescription())
 					.IsEqualTo("non-private fields in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedTypes()
+			public async Task ShouldAllowFilteringForProtectedFields()
 			{
-				Filtered.Fields types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
 					.Fields().WhichAreNot(AccessModifiers.Protected);
 
-				await That(types).AreNotProtected();
-				await That(types.GetDescription())
+				await That(fields).AreNotProtected();
+				await That(fields.GetDescription())
 					.IsEqualTo("non-protected fields in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicTypes()
+			public async Task ShouldAllowFilteringForPublicFields()
 			{
-				Filtered.Fields types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
 					.Fields().WhichAreNot(AccessModifiers.Public);
 
-				await That(types).AreNotPublic();
-				await That(types.GetDescription())
+				await That(fields).AreNotPublic();
+				await That(fields.GetDescription())
 					.IsEqualTo("non-public fields in assembly").AsPrefix();
 			}
 		}

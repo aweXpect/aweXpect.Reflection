@@ -9,46 +9,46 @@ public sealed partial class ConstructorFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalTypes()
+			public async Task ShouldAllowFilteringForInternalConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAre(AccessModifiers.Internal);
 
-				await That(types).AreInternal();
-				await That(types.GetDescription())
+				await That(constructors).AreInternal();
+				await That(constructors.GetDescription())
 					.IsEqualTo("internal constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivateTypes()
+			public async Task ShouldAllowFilteringForPrivateConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAre(AccessModifiers.Private);
 
-				await That(types).ArePrivate();
-				await That(types.GetDescription())
+				await That(constructors).ArePrivate();
+				await That(constructors.GetDescription())
 					.IsEqualTo("private constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedTypes()
+			public async Task ShouldAllowFilteringForProtectedConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAre(AccessModifiers.Protected);
 
-				await That(types).AreProtected();
-				await That(types.GetDescription())
+				await That(constructors).AreProtected();
+				await That(constructors.GetDescription())
 					.IsEqualTo("protected constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicTypes()
+			public async Task ShouldAllowFilteringForPublicConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAre(AccessModifiers.Public);
 
-				await That(types).ArePublic();
-				await That(types.GetDescription())
+				await That(constructors).ArePublic();
+				await That(constructors.GetDescription())
 					.IsEqualTo("public constructors in assembly").AsPrefix();
 			}
 		}

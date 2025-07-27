@@ -9,46 +9,46 @@ public sealed partial class ConstructorFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalTypes()
+			public async Task ShouldAllowFilteringForInternalConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAreNot(AccessModifiers.Internal);
 
-				await That(types).AreNotInternal();
-				await That(types.GetDescription())
+				await That(constructors).AreNotInternal();
+				await That(constructors.GetDescription())
 					.IsEqualTo("non-internal constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivateTypes()
+			public async Task ShouldAllowFilteringForPrivateConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAreNot(AccessModifiers.Private);
 
-				await That(types).AreNotPrivate();
-				await That(types.GetDescription())
+				await That(constructors).AreNotPrivate();
+				await That(constructors.GetDescription())
 					.IsEqualTo("non-private constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedTypes()
+			public async Task ShouldAllowFilteringForProtectedConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAreNot(AccessModifiers.Protected);
 
-				await That(types).AreNotProtected();
-				await That(types.GetDescription())
+				await That(constructors).AreNotProtected();
+				await That(constructors.GetDescription())
 					.IsEqualTo("non-protected constructors in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicTypes()
+			public async Task ShouldAllowFilteringForPublicConstructors()
 			{
-				Filtered.Constructors types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAreNot(AccessModifiers.Public);
 
-				await That(types).AreNotPublic();
-				await That(types.GetDescription())
+				await That(constructors).AreNotPublic();
+				await That(constructors.GetDescription())
 					.IsEqualTo("non-public constructors in assembly").AsPrefix();
 			}
 		}

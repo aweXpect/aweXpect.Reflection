@@ -9,46 +9,46 @@ public sealed partial class PropertyFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalTypes()
+			public async Task ShouldAllowFilteringForInternalProperties()
 			{
-				Filtered.Properties types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreNot(AccessModifiers.Internal);
 
-				await That(types).AreNotInternal();
-				await That(types.GetDescription())
+				await That(properties).AreNotInternal();
+				await That(properties.GetDescription())
 					.IsEqualTo("non-internal properties in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivateTypes()
+			public async Task ShouldAllowFilteringForPrivateProperties()
 			{
-				Filtered.Properties types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreNot(AccessModifiers.Private);
 
-				await That(types).AreNotPrivate();
-				await That(types.GetDescription())
+				await That(properties).AreNotPrivate();
+				await That(properties.GetDescription())
 					.IsEqualTo("non-private properties in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedTypes()
+			public async Task ShouldAllowFilteringForProtectedProperties()
 			{
-				Filtered.Properties types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreNot(AccessModifiers.Protected);
 
-				await That(types).AreNotProtected();
-				await That(types.GetDescription())
+				await That(properties).AreNotProtected();
+				await That(properties.GetDescription())
 					.IsEqualTo("non-protected properties in assembly").AsPrefix();
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicTypes()
+			public async Task ShouldAllowFilteringForPublicProperties()
 			{
-				Filtered.Properties types = In.AssemblyContaining<AssemblyFilters>()
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreNot(AccessModifiers.Public);
 
-				await That(types).AreNotPublic();
-				await That(types.GetDescription())
+				await That(properties).AreNotPublic();
+				await That(properties.GetDescription())
 					.IsEqualTo("non-public properties in assembly").AsPrefix();
 			}
 		}
