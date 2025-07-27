@@ -95,6 +95,19 @@ public static partial class Filtered
 			}
 		}
 
+		/// <summary>
+		///     Filters only for nested types.
+		/// </summary>
+		public Assemblies Nested
+		{
+			get
+			{
+				_typeFilterDescription = "nested " + (_typeFilterDescription ?? "");
+				_typeFilters.Add(type => type.IsNested);
+				return this;
+			}
+		}
+
 		/// <inheritdoc />
 		public string GetDescription()
 		{
@@ -177,19 +190,6 @@ public static partial class Filtered
 				.Which(Filter.Prefix<Type>(
 					type => _typeFilters.All(predicate => predicate.Invoke(type)),
 					_typeFilterDescription ?? ""));
-		}
-
-		/// <summary>
-		///     Filters only for nested types.
-		/// </summary>
-		public Assemblies Nested
-		{
-			get
-			{
-				_typeFilterDescription = "nested " + (_typeFilterDescription ?? "");
-				_typeFilters.Add(type => type.IsNested);
-				return this;
-			}
 		}
 
 		/// <summary>
@@ -282,8 +282,7 @@ public static partial class Filtered
 		{
 			private readonly StringEqualityOptions _options;
 
-			internal StringEqualityResultType(Assemblies inner, StringEqualityOptions options) : base(inner,
-				options)
+			internal StringEqualityResultType(Assemblies inner, StringEqualityOptions options) : base(inner, options)
 			{
 				_options = options;
 			}

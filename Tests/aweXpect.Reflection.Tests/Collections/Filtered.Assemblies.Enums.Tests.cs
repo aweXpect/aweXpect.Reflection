@@ -9,7 +9,7 @@ public sealed partial class Filtered
 			public sealed class Tests
 			{
 				[Fact]
-				public async Task ShouldApplyFilterForInterfaces()
+				public async Task ShouldApplyFilterForEnums()
 				{
 					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Enums();
 
