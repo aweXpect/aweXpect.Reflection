@@ -1,8 +1,11 @@
 namespace aweXpect.Reflection.Collections;
 
 /// <summary>
-///     An interface to allow filtering for types
+///     A limited interface to allow basic filtering for types in assemblies.
 /// </summary>
+/// <remarks>
+///     It only supports accessing <see cref="Types" /> or <see cref="Classes" />.
+/// </remarks>
 public interface ILimitedTypeAssemblies
 {
 	/// <summary>
@@ -17,8 +20,12 @@ public interface ILimitedTypeAssemblies
 }
 
 /// <summary>
-///     An interface to allow filtering for types
+///     A limited interface to allow basic filtering for types in assemblies.
 /// </summary>
+/// <remarks>
+///     In addition to the methods in <see cref="ILimitedTypeAssemblies" /> it also
+///     supports adding a filter for generic or nested types.
+/// </remarks>
 public interface ILimitedTypeAssemblies<out TLimitedTypeAssemblies> : ILimitedTypeAssemblies
 	where TLimitedTypeAssemblies : ILimitedTypeAssemblies
 {

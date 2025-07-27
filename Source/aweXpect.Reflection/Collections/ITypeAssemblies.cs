@@ -1,8 +1,12 @@
 ﻿namespace aweXpect.Reflection.Collections;
 
 /// <summary>
-///     An interface to allow filtering for types
+///     An interface to allow filtering for types in assemblies.
 /// </summary>
+/// <remarks>
+///     In addition to the properties and methods in <see cref="ILimitedTypeAssemblies{ITypeAssemblies}" /> it also
+///     supports adding a filter for abstract, sealed or static types as well as accessing interfaces or enums.
+/// </remarks>
 public interface ITypeAssemblies : ILimitedTypeAssemblies<ITypeAssemblies>
 {
 	/// <summary>
