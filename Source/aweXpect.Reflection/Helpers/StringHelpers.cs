@@ -1,6 +1,6 @@
 ﻿namespace aweXpect.Reflection.Helpers;
 
-public static class StringHelpers
+internal static class StringHelpers
 {
 	public static string PrefixIn(this string description)
 	{
@@ -8,6 +8,7 @@ public static class StringHelpers
 		{
 			return description;
 		}
+
 		return "in " + description;
 	}
 }
