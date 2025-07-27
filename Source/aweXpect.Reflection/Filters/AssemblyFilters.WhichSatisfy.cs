@@ -10,9 +10,9 @@ public static partial class AssemblyFilters
 	/// <summary>
 	///     Filters the assemblies according to the <paramref name="predicate" />.
 	/// </summary>
-	public static Filtered.Assemblies WhichSatisfy(this Filtered.Assemblies assemblies,
+	public static Filtered.Assemblies WhichSatisfy(this Filtered.Assemblies typeAssemblies,
 		Func<Assembly, bool> predicate,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
-		=> assemblies.Which(Filter.Suffix(predicate, $" matching {doNotPopulateThisValue}"));
+		=> typeAssemblies.Which(Filter.Suffix(predicate, $" matching {doNotPopulateThisValue}"));
 }

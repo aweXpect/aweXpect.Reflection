@@ -18,16 +18,16 @@ public static partial class Filtered
 	{
 		private const string DeclaringTypesPrefix = "declaring types of ";
 
-		private readonly Assemblies? _assemblies;
+		private readonly Assemblies? _typeAssemblies;
 		private readonly string _description;
 
 		/// <summary>
 		///     Container for a filterable collection of <see cref="Type" />.
 		/// </summary>
-		internal Types(Assemblies assemblies, string description) : base(
-			assemblies.SelectMany(assembly => assembly.GetTypes()))
+		internal Types(Assemblies typeAssemblies, string description) : base(
+			typeAssemblies.SelectMany(assembly => assembly.GetTypes()))
 		{
-			_assemblies = assemblies;
+			_typeAssemblies = typeAssemblies;
 			_description = description;
 		}
 
@@ -97,7 +97,7 @@ public static partial class Filtered
 		protected Types(Types inner) : base(inner, inner.Filters)
 		{
 			_description = inner._description;
-			_assemblies = inner._assemblies;
+			_typeAssemblies = inner._typeAssemblies;
 		}
 
 		/// <inheritdoc />
@@ -109,9 +109,9 @@ public static partial class Filtered
 				description = filter.Describes(description);
 			}
 
-			if (_assemblies is not null)
+			if (_typeAssemblies is not null)
 			{
-				return description + _assemblies.GetDescription();
+				return description + _typeAssemblies.GetDescription();
 			}
 
 			return description;
