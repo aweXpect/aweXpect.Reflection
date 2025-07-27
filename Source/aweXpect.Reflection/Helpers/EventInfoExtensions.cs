@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Collections;
 
-namespace aweXpect.Reflection.Extensions;
+namespace aweXpect.Reflection.Helpers;
 
 /// <summary>
 ///     Extension events for <see cref="EventInfo" />.

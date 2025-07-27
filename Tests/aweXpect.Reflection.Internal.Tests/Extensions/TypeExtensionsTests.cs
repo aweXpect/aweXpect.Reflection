@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using aweXpect.Reflection.Extensions;
+using aweXpect.Reflection.Helpers;
 
 namespace aweXpect.Reflection.Internal.Tests.Extensions;
 

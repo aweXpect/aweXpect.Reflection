@@ -2,7 +2,7 @@
 using System.Reflection;
 using aweXpect.Reflection.Collections;
 
-namespace aweXpect.Reflection.Extensions;
+namespace aweXpect.Reflection.Helpers;
 
 /// <summary>
 ///     Extension methods for <see cref="MemberInfo" />.

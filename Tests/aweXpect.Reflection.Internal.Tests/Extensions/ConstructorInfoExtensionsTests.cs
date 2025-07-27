@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
-using aweXpect.Reflection.Extensions;
+using aweXpect.Reflection.Helpers;
 
 namespace aweXpect.Reflection.Internal.Tests.Extensions;
 
