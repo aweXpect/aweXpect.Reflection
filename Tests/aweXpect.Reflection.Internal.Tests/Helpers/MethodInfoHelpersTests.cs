@@ -143,11 +143,13 @@ public sealed class MethodInfoHelpersTests
 
 	private class AccessModifierTestClass
 	{
+#pragma warning disable CA1822
 		internal int InternalMethod() => 1;
 
 		private int PrivateMethod() => 2;
 
 		protected int ProtectedMethod() => 3;
 		public int PublicMethod() => 1;
+#pragma warning restore CA1822
 	}
 }

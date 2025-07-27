@@ -120,11 +120,13 @@ public sealed class FieldInfoHelpersTests
 	private class AccessModifierTestClass
 	{
 		internal int InternalField = 4;
+		public int PublicField = 1;
 
+#pragma warning disable CS0414
 		private int PrivateField = 2;
 
 		protected int ProtectedField = 3;
-		public int PublicField = 1;
+#pragma warning restore CS0414
 	}
 #pragma warning restore CS0649
 }
