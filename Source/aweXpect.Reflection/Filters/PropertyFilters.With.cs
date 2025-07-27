@@ -6,51 +6,51 @@ using aweXpect.Reflection.Helpers;
 
 namespace aweXpect.Reflection;
 
-public static partial class MethodFilters
+public static partial class PropertyFilters
 {
 	private const string DirectText = "direct ";
 
 	/// <summary>
-	///     Filter for methods with attribute of type <typeparamref name="TAttribute" />.
+	///     Filter for properties with attribute of type <typeparamref name="TAttribute" />.
 	/// </summary>
 	/// <remarks>
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static MethodsWith With<TAttribute>(this Filtered.Methods @this, bool inherit = true)
+	public static PropertiesWith With<TAttribute>(this Filtered.Properties @this, bool inherit = true)
 		where TAttribute : Attribute
 	{
-		IChangeableFilter<MethodInfo> filter = Filter.Suffix<MethodInfo>(
-			methodInfo => methodInfo.HasAttribute<TAttribute>(inherit: inherit),
+		IChangeableFilter<PropertyInfo> filter = Filter.Suffix<PropertyInfo>(
+			propertyInfo => propertyInfo.HasAttribute<TAttribute>(inherit: inherit),
 			$"with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} ");
-		return new MethodsWith(@this.Which(filter), filter);
+		return new PropertiesWith(@this.Which(filter), filter);
 	}
 
 	/// <summary>
-	///     Filter for methods with attribute of type <typeparamref name="TAttribute" /> that
+	///     Filter for properties with attribute of type <typeparamref name="TAttribute" /> that
 	///     match the <paramref name="predicate" />.
 	/// </summary>
 	/// <remarks>
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static MethodsWith With<TAttribute>(this Filtered.Methods @this,
+	public static PropertiesWith With<TAttribute>(this Filtered.Properties @this,
 		Func<TAttribute, bool>? predicate,
 		bool inherit = true,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		where TAttribute : Attribute
 	{
-		IChangeableFilter<MethodInfo> filter = Filter.Suffix<MethodInfo>(
-			methodInfo => methodInfo.HasAttribute(predicate, inherit),
+		IChangeableFilter<PropertyInfo> filter = Filter.Suffix<PropertyInfo>(
+			propertyInfo => propertyInfo.HasAttribute(predicate, inherit),
 			$"with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
-		return new MethodsWith(@this.Which(filter), filter);
+		return new PropertiesWith(@this.Which(filter), filter);
 	}
 
 	/// <summary>
-	///     Additional filters on methods with an attribute.
+	///     Additional filters on properties with an attribute.
 	/// </summary>
-	public class MethodsWith(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter) : Filtered.Methods(inner)
+	public class PropertiesWith(Filtered.Properties inner, IChangeableFilter<PropertyInfo> filter) : Filtered.Properties(inner)
 	{
 		/// <summary>
 		///     Allow an alternative attribute of type <typeparamref name="TAttribute" />.
@@ -59,10 +59,10 @@ public static partial class MethodFilters
 		///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 		///     the attribute can be inherited from a base type.
 		/// </remarks>
-		public MethodsWith OrWith<TAttribute>(bool inherit = true)
+		public PropertiesWith OrWith<TAttribute>(bool inherit = true)
 			where TAttribute : Attribute
 		{
-			filter.UpdateFilter((result, methodInfo) => result || methodInfo.HasAttribute<TAttribute>(inherit: inherit),
+			filter.UpdateFilter((result, propertyInfo) => result || propertyInfo.HasAttribute<TAttribute>(inherit: inherit),
 				description
 					=> $"{description}or with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} ");
 			return this;
@@ -76,7 +76,7 @@ public static partial class MethodFilters
 		///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 		///     the attribute can be inherited from a base type.
 		/// </remarks>
-		public MethodsWith OrWith<TAttribute>(
+		public PropertiesWith OrWith<TAttribute>(
 			Func<TAttribute, bool>? predicate,
 			bool inherit = true,
 			[CallerArgumentExpression("predicate")]
@@ -84,7 +84,7 @@ public static partial class MethodFilters
 			where TAttribute : Attribute
 		{
 			filter.UpdateFilter(
-				(result, methodInfo) => result || methodInfo.HasAttribute(predicate, inherit),
+				(result, propertyInfo) => result || propertyInfo.HasAttribute(predicate, inherit),
 				description
 					=> $"{description}or with {(inherit ? "" : DirectText)}{Formatter.Format(typeof(TAttribute))} matching {doNotPopulateThisValue} ");
 			return this;
