@@ -16,7 +16,9 @@ public static partial class Filtered
 	/// <summary>
 	///     Container for a filterable collection of <see cref="Assembly" />.
 	/// </summary>
-	public class Assemblies : Filtered<Assembly, Assemblies>, IDescribableSubject, ITypeAssemblies.IProtected,
+	public class Assemblies : Filtered<Assembly, Assemblies>,
+		IDescribableSubject,
+		ITypeAssemblies.IProtected,
 		ITypeAssemblies.IPrivate
 	{
 		private readonly string _description;

@@ -39,12 +39,12 @@ public interface ITypeAssemblies : ILimitedTypeAssemblies<ITypeAssemblies>
 	/// </summary>
 	/// <remarks>
 	///     In addition to the properties and methods in <see cref="ITypeAssemblies" /> it also
-	///     allows specifying a private protected access modifier.
+	///     allows filtering for a private protected access modifier.
 	/// </remarks>
 	public interface IPrivate : ITypeAssemblies
 	{
 		/// <summary>
-		///     Filters only for private protected types.
+		///     Filters for private protected types.
 		/// </summary>
 		ITypeAssemblies Protected { get; }
 	}
@@ -54,12 +54,12 @@ public interface ITypeAssemblies : ILimitedTypeAssemblies<ITypeAssemblies>
 	/// </summary>
 	/// <remarks>
 	///     In addition to the properties and methods in <see cref="ITypeAssemblies" /> it also
-	///     allows specifying a protected internal access modifier.
+	///     allows filtering for a protected internal access modifier.
 	/// </remarks>
 	public interface IProtected : ITypeAssemblies
 	{
 		/// <summary>
-		///     Filters only for protected internal types.
+		///     Filters for protected internal types.
 		/// </summary>
 		ITypeAssemblies Internal { get; }
 	}

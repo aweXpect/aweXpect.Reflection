@@ -163,6 +163,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Internal.Types();
 				string description = types.GetDescription();
 
+				await That(types).AreInternal();
 				await That(description).IsEqualTo("internal types in all loaded assemblies");
 			}
 
@@ -172,6 +173,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Private.Protected.Types();
 				string description = types.GetDescription();
 
+				await That(types).ArePrivate();
 				await That(description).IsEqualTo("private protected types in all loaded assemblies");
 			}
 
@@ -181,6 +183,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Private.Types();
 				string description = types.GetDescription();
 
+				await That(types).ArePrivate();
 				await That(description).IsEqualTo("private types in all loaded assemblies");
 			}
 
@@ -190,6 +193,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Protected.Internal.Types();
 				string description = types.GetDescription();
 
+				await That(types).AreProtected();
 				await That(description).IsEqualTo("protected internal types in all loaded assemblies");
 			}
 
@@ -199,6 +203,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Protected.Types();
 				string description = types.GetDescription();
 
+				await That(types).AreProtected();
 				await That(description).IsEqualTo("protected types in all loaded assemblies");
 			}
 
@@ -208,6 +213,7 @@ public sealed partial class Filtered
 				Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Public.Types();
 				string description = types.GetDescription();
 
+				await That(types).ArePublic();
 				await That(description).IsEqualTo("public types in all loaded assemblies");
 			}
 
