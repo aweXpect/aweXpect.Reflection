@@ -85,7 +85,7 @@ public static partial class ThatTypes
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain a interface");
+			=> stringBuilder.Append("also contain an interface");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
