@@ -186,6 +186,7 @@ public sealed partial class MethodFilters
 			}
 		}
 
+#pragma warning disable CA1822 // Mark members as static
 		private class TestClass
 		{
 			public string GetString() => "test";
@@ -199,6 +200,7 @@ public sealed partial class MethodFilters
 			public Action GetAction() => () => { };
 			public void VoidMethod() { }
 		}
+#pragma warning restore CA1822
 
 		private class DummyBase
 		{
