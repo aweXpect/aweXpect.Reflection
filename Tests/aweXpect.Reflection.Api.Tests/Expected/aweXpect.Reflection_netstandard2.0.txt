@@ -25,6 +25,7 @@ namespace aweXpect.Reflection
             where TAttribute : System.Attribute { }
         public static aweXpect.Reflection.ConstructorFilters.ConstructorsWith With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Constructors @this, System.Func<TAttribute, bool>? predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
             where TAttribute : System.Attribute { }
+        public static aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter WithParameter(this aweXpect.Reflection.Collections.Filtered.Constructors @this, System.Func<System.Reflection.ParameterInfo, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public class ConstructorsWith : aweXpect.Reflection.Collections.Filtered.Constructors
         {
             public ConstructorsWith(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Reflection.Collections.IChangeableFilter<System.Reflection.ConstructorInfo> filter) { }
@@ -32,6 +33,11 @@ namespace aweXpect.Reflection
                 where TAttribute : System.Attribute { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWith OrWith<TAttribute>(System.Func<TAttribute, bool>? predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
                 where TAttribute : System.Attribute { }
+        }
+        public class ConstructorsWithParameter : aweXpect.Reflection.Collections.Filtered.Constructors
+        {
+            public ConstructorsWithParameter(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Reflection.Collections.IChangeableFilter<System.Reflection.ConstructorInfo> filter) { }
+            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter OrWithParameter(System.Func<System.Reflection.ParameterInfo, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         }
     }
     public static class EventFilters
@@ -133,6 +139,7 @@ namespace aweXpect.Reflection
         public static aweXpect.Reflection.MethodFilters.MethodsWith With<TAttribute>(this aweXpect.Reflection.Collections.Filtered.Methods @this, System.Func<TAttribute, bool>? predicate, bool inherit = true, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
             where TAttribute : System.Attribute { }
         public static aweXpect.Reflection.Collections.Filtered.Methods.StringEqualityResultType WithName(this aweXpect.Reflection.Collections.Filtered.Methods @this, string expected) { }
+        public static aweXpect.Reflection.MethodFilters.MethodsWithParameter WithParameter(this aweXpect.Reflection.Collections.Filtered.Methods @this, System.Func<System.Reflection.ParameterInfo, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         public class MethodsWith : aweXpect.Reflection.Collections.Filtered.Methods
         {
             public MethodsWith(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Reflection.Collections.IChangeableFilter<System.Reflection.MethodInfo> filter) { }
@@ -140,6 +147,11 @@ namespace aweXpect.Reflection
                 where TAttribute : System.Attribute { }
             public aweXpect.Reflection.MethodFilters.MethodsWith OrWith<TAttribute>(System.Func<TAttribute, bool>? predicate, bool inherit = true, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
                 where TAttribute : System.Attribute { }
+        }
+        public class MethodsWithParameter : aweXpect.Reflection.Collections.Filtered.Methods
+        {
+            public MethodsWithParameter(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Reflection.Collections.IChangeableFilter<System.Reflection.MethodInfo> filter) { }
+            public aweXpect.Reflection.MethodFilters.MethodsWithParameter OrWithParameter(System.Func<System.Reflection.ParameterInfo, bool> predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "") { }
         }
     }
     public static class PropertyFilters
