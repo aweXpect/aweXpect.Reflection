@@ -167,6 +167,14 @@ git fetch --unshallow && build.cmd Compile && build.cmd UnitTests && build.cmd A
 3. **Always** run API checks for library changes: `./build.sh ApiChecks` (or `build.cmd ApiChecks`)
 4. For performance-sensitive changes, run benchmarks: `./build.sh Benchmarks` (or `build.cmd Benchmarks`)
 
+### Pull Request Title
+To communicate intent to the consumers of your library, the title of the pull requests is prefixed with one of the following elements:
+- `fix:`: patches a bug
+- `feat:`: introduces a new feature
+- `refactor`: improves internal structure without changing the observable behavior
+- `docs`: updates documentation or XML comments
+- `chore`: updates to dependencies, build pipelines, ...
+
 ### Target Frameworks  
 The library targets:
 - .NET Standard 2.0 (for broad compatibility)
