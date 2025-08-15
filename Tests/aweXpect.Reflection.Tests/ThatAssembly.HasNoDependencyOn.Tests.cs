@@ -85,5 +85,32 @@ public sealed partial class ThatAssembly
 					             """).AsWildcard();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenAssemblyDoesNotHaveDependency_ShouldFail()
+			{
+				Assembly subject = typeof(PublicAbstractClass).Assembly;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.HasNoDependencyOn("NonExistentAssembly"));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*does have dependency on assembly*")
+					.AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenAssemblyHasDependency_ShouldSucceed()
+			{
+				Assembly subject = typeof(PublicAbstractClass).Assembly;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.HasNoDependencyOn("System.Runtime"));
+
+				await That(Act).DoesNotThrow();
+			}
+		}
 	}
 }

@@ -61,5 +61,32 @@ public sealed partial class ThatAssemblies
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenAssembliesDoNotHaveDependency_ShouldSucceed()
+			{
+				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.HaveDependencyOn("NonExistentAssembly"));
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenAssembliesHaveDependency_ShouldFail()
+			{
+				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.HaveDependencyOn("System.Runtime"));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*all have dependency on assembly*")
+					.AsWildcard();
+			}
+		}
 	}
 }
