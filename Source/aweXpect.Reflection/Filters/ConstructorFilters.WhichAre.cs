@@ -47,4 +47,28 @@ public static partial class ConstructorFilters
 	/// </summary>
 	public static Filtered.Constructors WhichAreInternal(this Filtered.Constructors @this)
 		=> @this.WhichAre(AccessModifiers.Internal);
+
+	/// <summary>
+	///     Filters for constructors that are not public.
+	/// </summary>
+	public static Filtered.Constructors WhichAreNotPublic(this Filtered.Constructors @this)
+		=> @this.WhichAreNot(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for constructors that are not private.
+	/// </summary>
+	public static Filtered.Constructors WhichAreNotPrivate(this Filtered.Constructors @this)
+		=> @this.WhichAreNot(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for constructors that are not protected.
+	/// </summary>
+	public static Filtered.Constructors WhichAreNotProtected(this Filtered.Constructors @this)
+		=> @this.WhichAreNot(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for constructors that are not internal.
+	/// </summary>
+	public static Filtered.Constructors WhichAreNotInternal(this Filtered.Constructors @this)
+		=> @this.WhichAreNot(AccessModifiers.Internal);
 }

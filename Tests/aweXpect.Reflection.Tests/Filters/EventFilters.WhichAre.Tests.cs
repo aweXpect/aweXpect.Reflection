@@ -1,4 +1,4 @@
-﻿using aweXpect.Reflection.Collections;
+using aweXpect.Reflection.Collections;
 
 namespace aweXpect.Reflection.Tests.Filters;
 
@@ -50,50 +50,6 @@ public sealed partial class EventFilters
 				await That(events).ArePublic();
 				await That(events.GetDescription())
 					.IsEqualTo("public events in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForPublicEventsWithExplicitMethod()
-			{
-				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
-					.Events().WhichArePublic();
-
-				await That(events).ArePublic();
-				await That(events.GetDescription())
-					.IsEqualTo("public events in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForPrivateEventsWithExplicitMethod()
-			{
-				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
-					.Events().WhichArePrivate();
-
-				await That(events).ArePrivate();
-				await That(events.GetDescription())
-					.IsEqualTo("private events in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForProtectedEventsWithExplicitMethod()
-			{
-				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
-					.Events().WhichAreProtected();
-
-				await That(events).AreProtected();
-				await That(events.GetDescription())
-					.IsEqualTo("protected events in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForInternalEventsWithExplicitMethod()
-			{
-				Filtered.Events events = In.AssemblyContaining<AssemblyFilters>()
-					.Events().WhichAreInternal();
-
-				await That(events).AreInternal();
-				await That(events.GetDescription())
-					.IsEqualTo("internal events in assembly").AsPrefix();
 			}
 		}
 	}

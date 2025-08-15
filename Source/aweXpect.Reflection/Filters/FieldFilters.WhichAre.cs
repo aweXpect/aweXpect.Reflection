@@ -47,4 +47,28 @@ public static partial class FieldFilters
 	/// </summary>
 	public static Filtered.Fields WhichAreInternal(this Filtered.Fields @this)
 		=> @this.WhichAre(AccessModifiers.Internal);
+
+	/// <summary>
+	///     Filters for fields that are not public.
+	/// </summary>
+	public static Filtered.Fields WhichAreNotPublic(this Filtered.Fields @this)
+		=> @this.WhichAreNot(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for fields that are not private.
+	/// </summary>
+	public static Filtered.Fields WhichAreNotPrivate(this Filtered.Fields @this)
+		=> @this.WhichAreNot(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for fields that are not protected.
+	/// </summary>
+	public static Filtered.Fields WhichAreNotProtected(this Filtered.Fields @this)
+		=> @this.WhichAreNot(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for fields that are not internal.
+	/// </summary>
+	public static Filtered.Fields WhichAreNotInternal(this Filtered.Fields @this)
+		=> @this.WhichAreNot(AccessModifiers.Internal);
 }

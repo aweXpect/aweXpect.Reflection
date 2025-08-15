@@ -47,4 +47,28 @@ public static partial class PropertyFilters
 	/// </summary>
 	public static Filtered.Properties WhichAreInternal(this Filtered.Properties @this)
 		=> @this.WhichAre(AccessModifiers.Internal);
+
+	/// <summary>
+	///     Filters for properties that are not public.
+	/// </summary>
+	public static Filtered.Properties WhichAreNotPublic(this Filtered.Properties @this)
+		=> @this.WhichAreNot(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for properties that are not private.
+	/// </summary>
+	public static Filtered.Properties WhichAreNotPrivate(this Filtered.Properties @this)
+		=> @this.WhichAreNot(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for properties that are not protected.
+	/// </summary>
+	public static Filtered.Properties WhichAreNotProtected(this Filtered.Properties @this)
+		=> @this.WhichAreNot(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for properties that are not internal.
+	/// </summary>
+	public static Filtered.Properties WhichAreNotInternal(this Filtered.Properties @this)
+		=> @this.WhichAreNot(AccessModifiers.Internal);
 }

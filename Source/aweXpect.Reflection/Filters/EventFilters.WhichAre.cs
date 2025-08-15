@@ -47,4 +47,28 @@ public static partial class EventFilters
 	/// </summary>
 	public static Filtered.Events WhichAreInternal(this Filtered.Events @this)
 		=> @this.WhichAre(AccessModifiers.Internal);
+
+	/// <summary>
+	///     Filters for events that are not public.
+	/// </summary>
+	public static Filtered.Events WhichAreNotPublic(this Filtered.Events @this)
+		=> @this.WhichAreNot(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for events that are not private.
+	/// </summary>
+	public static Filtered.Events WhichAreNotPrivate(this Filtered.Events @this)
+		=> @this.WhichAreNot(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for events that are not protected.
+	/// </summary>
+	public static Filtered.Events WhichAreNotProtected(this Filtered.Events @this)
+		=> @this.WhichAreNot(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for events that are not internal.
+	/// </summary>
+	public static Filtered.Events WhichAreNotInternal(this Filtered.Events @this)
+		=> @this.WhichAreNot(AccessModifiers.Internal);
 }

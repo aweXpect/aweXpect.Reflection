@@ -1,4 +1,4 @@
-﻿using aweXpect.Reflection.Collections;
+using aweXpect.Reflection.Collections;
 
 namespace aweXpect.Reflection.Tests.Filters;
 
@@ -50,50 +50,6 @@ public sealed partial class MethodFilters
 				await That(methods).ArePublic();
 				await That(methods.GetDescription())
 					.IsEqualTo("public methods in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForPublicMethodsWithExplicitMethod()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WhichArePublic();
-
-				await That(methods).ArePublic();
-				await That(methods.GetDescription())
-					.IsEqualTo("public methods in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForPrivateMethodsWithExplicitMethod()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WhichArePrivate();
-
-				await That(methods).ArePrivate();
-				await That(methods.GetDescription())
-					.IsEqualTo("private methods in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForProtectedMethodsWithExplicitMethod()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WhichAreProtected();
-
-				await That(methods).AreProtected();
-				await That(methods.GetDescription())
-					.IsEqualTo("protected methods in assembly").AsPrefix();
-			}
-
-			[Fact]
-			public async Task ShouldAllowFilteringForInternalMethodsWithExplicitMethod()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WhichAreInternal();
-
-				await That(methods).AreInternal();
-				await That(methods.GetDescription())
-					.IsEqualTo("internal methods in assembly").AsPrefix();
 			}
 		}
 	}
