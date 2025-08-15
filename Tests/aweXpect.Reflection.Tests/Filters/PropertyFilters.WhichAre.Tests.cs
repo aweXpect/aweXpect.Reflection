@@ -9,7 +9,7 @@ public sealed partial class PropertyFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalPropertys()
+			public async Task ShouldAllowFilteringForInternalProperties()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAre(AccessModifiers.Internal);
@@ -20,7 +20,7 @@ public sealed partial class PropertyFilters
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPrivatePropertys()
+			public async Task ShouldAllowFilteringForPrivateProperties()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAre(AccessModifiers.Private);
@@ -31,7 +31,7 @@ public sealed partial class PropertyFilters
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForProtectedPropertys()
+			public async Task ShouldAllowFilteringForProtectedProperties()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAre(AccessModifiers.Protected);
@@ -42,7 +42,7 @@ public sealed partial class PropertyFilters
 			}
 
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicPropertys()
+			public async Task ShouldAllowFilteringForPublicProperties()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAre(AccessModifiers.Public);

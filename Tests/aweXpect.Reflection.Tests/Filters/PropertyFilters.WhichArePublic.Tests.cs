@@ -9,7 +9,7 @@ public sealed partial class PropertyFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForPublicPropertysWithExplicitMethod()
+			public async Task ShouldAllowFilteringForPublicPropertiesWithExplicitMethod()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichArePublic();

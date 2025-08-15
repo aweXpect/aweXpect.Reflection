@@ -9,7 +9,7 @@ public sealed partial class PropertyFilters
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForInternalPropertysWithExplicitMethod()
+			public async Task ShouldAllowFilteringForInternalPropertiesWithExplicitMethod()
 			{
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreInternal();
