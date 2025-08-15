@@ -28,13 +28,13 @@ public static partial class MethodFilters
 	public partial class MethodsWhichReturn
 	{
 		/// <summary>
-		///     Allow an alternative return type <typeparamref name="TReturn" /> exactly.
+		///     Allow an alternative exact return type <typeparamref name="TReturn" />.
 		/// </summary>
 		public MethodsWhichReturn OrReturnExactly<TReturn>()
 			=> OrReturnExactly(typeof(TReturn));
 
 		/// <summary>
-		///     Allow an alternative return type <paramref name="returnType" /> exactly.
+		///     Allow an alternative exact return type <paramref name="returnType" />.
 		/// </summary>
 		public MethodsWhichReturn OrReturnExactly(Type returnType)
 		{
