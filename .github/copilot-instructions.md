@@ -166,6 +166,7 @@ git fetch --unshallow && build.cmd Compile && build.cmd UnitTests && build.cmd A
    - Windows: `build.cmd Compile && build.cmd UnitTests`
 3. **Always** run API checks for library changes: `./build.sh ApiChecks` (or `build.cmd ApiChecks`)
 4. For performance-sensitive changes, run benchmarks: `./build.sh Benchmarks` (or `build.cmd Benchmarks`)
+5. **Never** update files in the root directory (e.g., `.gitignore`, `global.json`) unless specifically required for the issue being addressed
 
 ### Pull Request Title
 To communicate intent to the consumers of your library, the title of the pull requests is prefixed with one of the following elements:
