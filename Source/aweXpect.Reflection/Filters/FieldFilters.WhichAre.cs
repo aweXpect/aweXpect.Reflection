@@ -23,4 +23,28 @@ public static partial class FieldFilters
 		=> @this.Which(Filter.Prefix<FieldInfo>(
 			type => !type.HasAccessModifier(accessModifier),
 			"non-" + accessModifier.GetString(" ")));
+
+	/// <summary>
+	///     Filters for fields that are public.
+	/// </summary>
+	public static Filtered.Fields WhichArePublic(this Filtered.Fields @this)
+		=> @this.WhichAre(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for fields that are private.
+	/// </summary>
+	public static Filtered.Fields WhichArePrivate(this Filtered.Fields @this)
+		=> @this.WhichAre(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for fields that are protected.
+	/// </summary>
+	public static Filtered.Fields WhichAreProtected(this Filtered.Fields @this)
+		=> @this.WhichAre(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for fields that are internal.
+	/// </summary>
+	public static Filtered.Fields WhichAreInternal(this Filtered.Fields @this)
+		=> @this.WhichAre(AccessModifiers.Internal);
 }

@@ -51,6 +51,50 @@ public sealed partial class PropertyFilters
 				await That(properties.GetDescription())
 					.IsEqualTo("public properties in assembly").AsPrefix();
 			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForPublicPropertiesWithExplicitMethod()
+			{
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
+					.Properties().WhichArePublic();
+
+				await That(properties).ArePublic();
+				await That(properties.GetDescription())
+					.IsEqualTo("public properties in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForPrivatePropertiesWithExplicitMethod()
+			{
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
+					.Properties().WhichArePrivate();
+
+				await That(properties).ArePrivate();
+				await That(properties.GetDescription())
+					.IsEqualTo("private properties in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForProtectedPropertiesWithExplicitMethod()
+			{
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
+					.Properties().WhichAreProtected();
+
+				await That(properties).AreProtected();
+				await That(properties.GetDescription())
+					.IsEqualTo("protected properties in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForInternalPropertiesWithExplicitMethod()
+			{
+				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
+					.Properties().WhichAreInternal();
+
+				await That(properties).AreInternal();
+				await That(properties.GetDescription())
+					.IsEqualTo("internal properties in assembly").AsPrefix();
+			}
 		}
 	}
 }

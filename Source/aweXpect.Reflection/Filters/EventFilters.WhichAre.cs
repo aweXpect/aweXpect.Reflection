@@ -23,4 +23,28 @@ public static partial class EventFilters
 		=> @this.Which(Filter.Prefix<EventInfo>(
 			type => !type.HasAccessModifier(accessModifier),
 			"non-" + accessModifier.GetString(" ")));
+
+	/// <summary>
+	///     Filters for events that are public.
+	/// </summary>
+	public static Filtered.Events WhichArePublic(this Filtered.Events @this)
+		=> @this.WhichAre(AccessModifiers.Public);
+
+	/// <summary>
+	///     Filters for events that are private.
+	/// </summary>
+	public static Filtered.Events WhichArePrivate(this Filtered.Events @this)
+		=> @this.WhichAre(AccessModifiers.Private);
+
+	/// <summary>
+	///     Filters for events that are protected.
+	/// </summary>
+	public static Filtered.Events WhichAreProtected(this Filtered.Events @this)
+		=> @this.WhichAre(AccessModifiers.Protected);
+
+	/// <summary>
+	///     Filters for events that are internal.
+	/// </summary>
+	public static Filtered.Events WhichAreInternal(this Filtered.Events @this)
+		=> @this.WhichAre(AccessModifiers.Internal);
 }

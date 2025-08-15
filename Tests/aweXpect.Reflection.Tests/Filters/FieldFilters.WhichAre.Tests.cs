@@ -51,6 +51,50 @@ public sealed partial class FieldFilters
 				await That(fields.GetDescription())
 					.IsEqualTo("public fields in assembly").AsPrefix();
 			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForPublicFieldsWithExplicitMethod()
+			{
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
+					.Fields().WhichArePublic();
+
+				await That(fields).ArePublic();
+				await That(fields.GetDescription())
+					.IsEqualTo("public fields in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForPrivateFieldsWithExplicitMethod()
+			{
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
+					.Fields().WhichArePrivate();
+
+				await That(fields).ArePrivate();
+				await That(fields.GetDescription())
+					.IsEqualTo("private fields in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForProtectedFieldsWithExplicitMethod()
+			{
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
+					.Fields().WhichAreProtected();
+
+				await That(fields).AreProtected();
+				await That(fields.GetDescription())
+					.IsEqualTo("protected fields in assembly").AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldAllowFilteringForInternalFieldsWithExplicitMethod()
+			{
+				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
+					.Fields().WhichAreInternal();
+
+				await That(fields).AreInternal();
+				await That(fields.GetDescription())
+					.IsEqualTo("internal fields in assembly").AsPrefix();
+			}
 		}
 	}
 }
