@@ -1,6 +1,3 @@
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
 using aweXpect.Reflection.Collections;
 
 namespace aweXpect.Reflection.Tests.Filters;
@@ -12,21 +9,6 @@ public sealed partial class MethodFilters
 		public sealed class GenericTests
 		{
 			[Fact]
-			public async Task ShouldFilterForMethodsWhichReturnType()
-			{
-				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().WhichReturn<string>();
-
-				await That(methods).IsEqualTo([
-					typeof(TestClass).GetMethod(nameof(TestClass.GetString))!,
-					typeof(TestClass).GetMethod(nameof(TestClass.GetStringFromObject))!,
-				]).InAnyOrder();
-				await That(methods.GetDescription())
-					.IsEqualTo("methods which return string in type")
-					.AsPrefix();
-			}
-
-			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnBaseType()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
@@ -37,7 +19,7 @@ public sealed partial class MethodFilters
 					typeof(TestClass).GetMethod(nameof(TestClass.GetDummy))!,
 				]).InAnyOrder();
 				await That(methods.GetDescription())
-					.IsEqualTo("methods which return MethodFilters.WhichReturn.DummyBase in type")
+					.IsEqualTo("methods which return MethodFilters.WhichReturn.DummyBase in")
 					.AsPrefix();
 			}
 
@@ -51,28 +33,28 @@ public sealed partial class MethodFilters
 					typeof(TestClass).GetMethod(nameof(TestClass.AsyncMethod))!,
 				]).InAnyOrder();
 				await That(methods.GetDescription())
-					.IsEqualTo("methods which return Task in type")
+					.IsEqualTo("methods which return Task in")
 					.AsPrefix();
 			}
-		}
 
-		public sealed class TypeTests
-		{
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnType()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().WhichReturn(typeof(string));
+					.Methods().WhichReturn<string>();
 
 				await That(methods).IsEqualTo([
 					typeof(TestClass).GetMethod(nameof(TestClass.GetString))!,
 					typeof(TestClass).GetMethod(nameof(TestClass.GetStringFromObject))!,
 				]).InAnyOrder();
 				await That(methods.GetDescription())
-					.IsEqualTo("methods which return string in type")
+					.IsEqualTo("methods which return string in")
 					.AsPrefix();
 			}
+		}
 
+		public sealed class TypeTests
+		{
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnBaseType()
 			{
@@ -87,26 +69,25 @@ public sealed partial class MethodFilters
 					.IsEqualTo("methods which return MethodFilters.WhichReturn.DummyBase in type")
 					.AsPrefix();
 			}
+
+			[Fact]
+			public async Task ShouldFilterForMethodsWhichReturnType()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().WhichReturn(typeof(string));
+
+				await That(methods).IsEqualTo([
+					typeof(TestClass).GetMethod(nameof(TestClass.GetString))!,
+					typeof(TestClass).GetMethod(nameof(TestClass.GetStringFromObject))!,
+				]).InAnyOrder();
+				await That(methods.GetDescription())
+					.IsEqualTo("methods which return string in type")
+					.AsPrefix();
+			}
 		}
 
 		public sealed class OrReturnGenericTests
 		{
-			[Fact]
-			public async Task ShouldFilterForMethodsWhichReturnAnyOfTheGivenTypes()
-			{
-				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().WhichReturn<Task>().OrReturn<Action>();
-
-				await That(methods).IsEqualTo([
-					typeof(TestClass).GetMethod(nameof(TestClass.AsyncMethod))!,
-					typeof(TestClass).GetMethod(nameof(TestClass.GetAction))!,
-				]).InAnyOrder();
-				await That(methods.GetDescription())
-					.IsEqualTo(
-						"methods which return Task or which return Action in type")
-					.AsPrefix();
-			}
-
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnAnyOfMultipleTypes()
 			{
@@ -121,18 +102,15 @@ public sealed partial class MethodFilters
 				]).InAnyOrder();
 				await That(methods.GetDescription())
 					.IsEqualTo(
-						"methods which return string or which return int or which return bool in type")
+						"methods which return string or return int or return bool in type")
 					.AsPrefix();
 			}
-		}
 
-		public sealed class OrReturnTests
-		{
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnAnyOfTheGivenTypes()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().WhichReturn<Task>().OrReturn(typeof(Action));
+					.Methods().WhichReturn<Task>().OrReturn<Action>();
 
 				await That(methods).IsEqualTo([
 					typeof(TestClass).GetMethod(nameof(TestClass.AsyncMethod))!,
@@ -140,10 +118,13 @@ public sealed partial class MethodFilters
 				]).InAnyOrder();
 				await That(methods.GetDescription())
 					.IsEqualTo(
-						"methods which return Task or which return Action in type")
+						"methods which return Task or return Action in type")
 					.AsPrefix();
 			}
+		}
 
+		public sealed class OrReturnTests
+		{
 			[Fact]
 			public async Task ShouldFilterForMethodsWhichReturnAnyOfMultipleTypes()
 			{
@@ -158,7 +139,23 @@ public sealed partial class MethodFilters
 				]).InAnyOrder();
 				await That(methods.GetDescription())
 					.IsEqualTo(
-						"methods which return string or which return int or which return bool in type")
+						"methods which return string or return int or return bool in type")
+					.AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldFilterForMethodsWhichReturnAnyOfTheGivenTypes()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().WhichReturn<Task>().OrReturn(typeof(Action));
+
+				await That(methods).IsEqualTo([
+					typeof(TestClass).GetMethod(nameof(TestClass.AsyncMethod))!,
+					typeof(TestClass).GetMethod(nameof(TestClass.GetAction))!,
+				]).InAnyOrder();
+				await That(methods.GetDescription())
+					.IsEqualTo(
+						"methods which return Task or return Action in type")
 					.AsPrefix();
 			}
 		}

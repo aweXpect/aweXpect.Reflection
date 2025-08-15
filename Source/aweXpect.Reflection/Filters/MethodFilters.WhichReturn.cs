@@ -28,7 +28,8 @@ public static partial class MethodFilters
 	/// <summary>
 	///     Additional filters on methods which return a specific type.
 	/// </summary>
-	public class MethodsWhichReturn(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter) : Filtered.Methods(inner)
+	public class MethodsWhichReturn(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter)
+		: Filtered.Methods(inner)
 	{
 		/// <summary>
 		///     Allow an alternative return type <typeparamref name="TReturn" />.
@@ -45,7 +46,7 @@ public static partial class MethodFilters
 				(result, methodInfo)
 					=> result || methodInfo.ReturnType.IsOrInheritsFrom(returnType),
 				description
-					=> $"{description}or which return {Formatter.Format(returnType)} ");
+					=> $"{description}or return {Formatter.Format(returnType)} ");
 			return this;
 		}
 	}
