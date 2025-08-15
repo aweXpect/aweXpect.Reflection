@@ -48,8 +48,12 @@ public static partial class ThatAssembly
 			=> stringBuilder.Append("has dependency on ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append(options.GetExtendedFailure(It, Grammars, 
-				string.Join(", ", Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? []), expected));
+		{
+			stringBuilder.Append("it had dependencies [");
+			var dependencies = Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? [];
+			stringBuilder.Append(string.Join(", ", dependencies));
+			stringBuilder.Append("]");
+		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("does not have dependency on ").Append(options.GetExpectation(expected, Grammars));

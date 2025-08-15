@@ -33,8 +33,7 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has no dependency on equal to "System.Runtime",
-					             but it was "*" with a length of * which is longer than the expected length of 14 and has superfluous:
-					               "*"
+					             but it had dependencies [*]
 					             """).AsWildcard();
 			}
 
@@ -66,8 +65,7 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has no dependency on equal to "system.runtime" ignoring case,
-					             but it was "*" with a length of * which is longer than the expected length of 14 and has superfluous:
-					               "*"
+					             but it had dependencies [*]
 					             """).AsWildcard();
 			}
 
@@ -83,11 +81,7 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has no dependency on starting with "System",
-					             but it was "*" which differs at index 6:
-					                      ↓ (actual)
-					               "System.*"
-					               "System"
-					                      ↑ (expected)
+					             but it had dependencies [*]
 					             """).AsWildcard();
 			}
 		}

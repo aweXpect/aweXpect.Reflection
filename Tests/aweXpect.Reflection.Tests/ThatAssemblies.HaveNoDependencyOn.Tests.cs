@@ -50,7 +50,7 @@ public sealed partial class ThatAssemblies
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that in assembly containing type PublicAbstractClass
-					             all have no dependency on equal to "system.runtime" (ignoring case),
+					             all have no dependency on equal to "system.runtime" ignoring case,
 					             but it contained assemblies with dependency [
 					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 					             ]

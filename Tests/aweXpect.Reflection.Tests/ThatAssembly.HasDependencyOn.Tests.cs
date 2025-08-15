@@ -33,11 +33,7 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has dependency on equal to "NonExistentAssembly",
-					             but it was "*" which differs at index 0:
-					                ↓ (actual)
-					               "*"
-					               "NonExistentAssembly"
-					                ↑ (expected)
+					             but it had dependencies [*]
 					             """).AsWildcard();
 			}
 
