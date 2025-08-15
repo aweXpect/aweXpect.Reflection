@@ -40,7 +40,7 @@ public static partial class ThatAssemblies
 		public ConstraintResult IsMetBy(IEnumerable<Assembly?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(assembly => 
+			Outcome = actual.All(assembly =>
 				assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) == true)
 				? Outcome.Success
 				: Outcome.Failure;
@@ -48,26 +48,28 @@ public static partial class ThatAssemblies
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all have dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("all have dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" contained assemblies without dependency ");
+			stringBuilder.Append(it).Append(" contained assemblies without the required dependency ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(assembly => 
-					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) != true),
+				Actual?.Where(assembly =>
+					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) !=
+					true),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("not all have dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("not all have dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained assemblies with dependency ");
+			stringBuilder.Append(it).Append(" only contained assemblies with the required dependency ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(assembly => 
-					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) == true),
+				Actual?.Where(assembly =>
+					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) ==
+					true),
 				FormattingOptions.Indented(indentation));
 		}
 	}

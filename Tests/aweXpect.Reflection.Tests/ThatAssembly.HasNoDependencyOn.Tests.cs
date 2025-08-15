@@ -32,8 +32,8 @@ public sealed partial class ThatAssembly
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has no dependency on equal to "System.Runtime",
-					             but it had dependencies [*]
+					             has no dependency on assembly equal to "System.Runtime",
+					             but it had the unexpected dependencies [*]
 					             """).AsWildcard();
 			}
 
@@ -48,25 +48,9 @@ public sealed partial class ThatAssembly
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             has no dependency on equal to "System.Runtime",
+					             has no dependency on assembly equal to "System.Runtime",
 					             but it was <null>
 					             """);
-			}
-
-			[Fact]
-			public async Task WhenNoDependencyMatchesIgnoringCase_ShouldFail()
-			{
-				Assembly subject = typeof(PublicAbstractClass).Assembly;
-
-				async Task Act()
-					=> await That(subject).HasNoDependencyOn("system.runtime").IgnoringCase();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has no dependency on equal to "system.runtime" ignoring case,
-					             but it had dependencies [*]
-					             """).AsWildcard();
 			}
 
 			[Fact]
@@ -80,8 +64,24 @@ public sealed partial class ThatAssembly
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has no dependency on starting with "System",
-					             but it had dependencies [*]
+					             has no dependency on assembly starting with "System",
+					             but it had the unexpected dependencies [*]
+					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenNoDependencyMatchesIgnoringCase_ShouldFail()
+			{
+				Assembly subject = typeof(PublicAbstractClass).Assembly;
+
+				async Task Act()
+					=> await That(subject).HasNoDependencyOn("system.runtime").IgnoringCase();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has no dependency on assembly equal to "system.runtime" ignoring case,
+					             but it had the unexpected dependencies [*]
 					             """).AsWildcard();
 			}
 		}

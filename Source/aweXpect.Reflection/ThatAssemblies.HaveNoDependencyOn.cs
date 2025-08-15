@@ -16,15 +16,15 @@ public static partial class ThatAssemblies
 {
 	/// <summary>
 	///     Verifies that all items in the filtered collection of <see cref="Assembly" /> have
-	///     no dependency on the <paramref name="expected" /> assembly.
+	///     no dependency on the <paramref name="unexpected" /> assembly.
 	/// </summary>
 	public static StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>> HaveNoDependencyOn(
-		this IThat<IEnumerable<Assembly?>> subject, string expected)
+		this IThat<IEnumerable<Assembly?>> subject, string unexpected)
 	{
 		StringEqualityOptions options = new();
 		return new StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>>(subject.Get()
 				.ExpectationBuilder.AddConstraint((it, grammars)
-					=> new HaveNoDependencyOnConstraint(it, grammars, expected, options)),
+					=> new HaveNoDependencyOnConstraint(it, grammars, unexpected, options)),
 			subject,
 			options);
 	}
@@ -32,7 +32,7 @@ public static partial class ThatAssemblies
 	private sealed class HaveNoDependencyOnConstraint(
 		string it,
 		ExpectationGrammars grammars,
-		string expected,
+		string unexpected,
 		StringEqualityOptions options)
 		: ConstraintResult.WithValue<IEnumerable<Assembly?>>(grammars),
 			IValueConstraint<IEnumerable<Assembly?>>
@@ -40,34 +40,37 @@ public static partial class ThatAssemblies
 		public ConstraintResult IsMetBy(IEnumerable<Assembly?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(assembly => 
-				assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) != true)
+			Outcome = actual.All(assembly =>
+				assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) != true)
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all have no dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("all have no dependency on assembly ").Append(options.GetExpectation(unexpected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" contained assemblies with dependency ");
+			stringBuilder.Append(it).Append(" contained assemblies with the unexpected dependency ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(assembly => 
-					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) == true),
+				Actual?.Where(assembly =>
+					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) ==
+					true),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("not all have no dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("not all have no dependency on assembly ")
+				.Append(options.GetExpectation(unexpected, Grammars));
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained assemblies without dependency ");
+			stringBuilder.Append(it).Append(" only contained assemblies without the unexpected dependency ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(assembly => 
-					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) != true),
+				Actual?.Where(assembly =>
+					assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) !=
+					true),
 				FormattingOptions.Indented(indentation));
 		}
 	}

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -20,8 +21,8 @@ public static partial class ThatAssembly
 		this IThat<Assembly?> subject, string expected)
 	{
 		StringEqualityOptions options = new();
-		return new StringEqualityTypeResult<Assembly?, IThat<Assembly?>>(subject.Get().ExpectationBuilder.AddConstraint(
-				(it, grammars)
+		return new StringEqualityTypeResult<Assembly?, IThat<Assembly?>>(subject.Get().ExpectationBuilder
+				.AddConstraint((it, grammars)
 					=> new HasDependencyOnConstraint(it, grammars, expected, options)),
 			subject,
 			options);
@@ -38,25 +39,26 @@ public static partial class ThatAssembly
 		public ConstraintResult IsMetBy(Assembly? actual)
 		{
 			Actual = actual;
-			Outcome = actual?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) == true 
-				? Outcome.Success 
+			Outcome = actual?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, expected)) ==
+			          true
+				? Outcome.Success
 				: Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("has dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("has dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("it had dependencies [");
-			var dependencies = Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? [];
+			stringBuilder.Append("it had the required dependencies [");
+			IEnumerable<string?> dependencies = Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? [];
 			stringBuilder.Append(string.Join(", ", dependencies));
 			stringBuilder.Append("]");
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("does not have dependency on ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("does not have dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 			=> AppendNormalResult(stringBuilder, indentation);

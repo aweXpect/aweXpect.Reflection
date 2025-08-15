@@ -11,6 +11,24 @@ public sealed partial class ThatAssemblies
 		public sealed class Tests
 		{
 			[Fact]
+			public async Task WhenAssembliesDoNotHaveDependency_ShouldFail()
+			{
+				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
+
+				async Task Act()
+					=> await That(subject).HaveDependencyOn("NonExistentAssembly");
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that in assembly containing type PublicAbstractClass
+					             all have dependency on assembly equal to "NonExistentAssembly",
+					             but it contained assemblies without the required dependency [
+					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             ]
+					             """).AsWildcard();
+			}
+
+			[Fact]
 			public async Task WhenAssembliesHaveDependency_ShouldSucceed()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
@@ -22,21 +40,14 @@ public sealed partial class ThatAssemblies
 			}
 
 			[Fact]
-			public async Task WhenAssembliesDoNotHaveDependency_ShouldFail()
+			public async Task WhenDependencyMatchesAsPrefix_ShouldSucceed()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveDependencyOn("NonExistentAssembly");
+					=> await That(subject).HaveDependencyOn("System").AsPrefix();
 
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that in assembly containing type PublicAbstractClass
-					             all have dependency on equal to "NonExistentAssembly",
-					             but it contained assemblies without dependency [
-					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
-					             ]
-					             """).AsWildcard();
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -46,17 +57,6 @@ public sealed partial class ThatAssemblies
 
 				async Task Act()
 					=> await That(subject).HaveDependencyOn("system.runtime").IgnoringCase();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenDependencyMatchesAsPrefix_ShouldSucceed()
-			{
-				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
-
-				async Task Act()
-					=> await That(subject).HaveDependencyOn("System").AsPrefix();
 
 				await That(Act).DoesNotThrow();
 			}

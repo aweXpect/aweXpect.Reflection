@@ -11,17 +11,6 @@ public sealed partial class ThatAssembly
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenAssemblyHasDependency_ShouldSucceed()
-			{
-				Assembly subject = typeof(PublicAbstractClass).Assembly;
-
-				async Task Act()
-					=> await That(subject).HasDependencyOn("System.Runtime");
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenAssemblyDoesNotHaveDependency_ShouldFail()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
@@ -32,9 +21,20 @@ public sealed partial class ThatAssembly
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has dependency on equal to "NonExistentAssembly",
-					             but it had dependencies [*]
+					             has dependency on assembly equal to "NonExistentAssembly",
+					             but it had the required dependencies [*]
 					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenAssemblyHasDependency_ShouldSucceed()
+			{
+				Assembly subject = typeof(PublicAbstractClass).Assembly;
+
+				async Task Act()
+					=> await That(subject).HasDependencyOn("System.Runtime");
+
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -48,20 +48,9 @@ public sealed partial class ThatAssembly
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             has dependency on equal to "System.Runtime",
+					             has dependency on assembly equal to "System.Runtime",
 					             but it was <null>
 					             """);
-			}
-
-			[Fact]
-			public async Task WhenDependencyMatchesIgnoringCase_ShouldSucceed()
-			{
-				Assembly subject = typeof(PublicAbstractClass).Assembly;
-
-				async Task Act()
-					=> await That(subject).HasDependencyOn("system.runtime").IgnoringCase();
-
-				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -71,6 +60,17 @@ public sealed partial class ThatAssembly
 
 				async Task Act()
 					=> await That(subject).HasDependencyOn("System").AsPrefix();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenDependencyMatchesIgnoringCase_ShouldSucceed()
+			{
+				Assembly subject = typeof(PublicAbstractClass).Assembly;
+
+				async Task Act()
+					=> await That(subject).HasDependencyOn("system.runtime").IgnoringCase();
 
 				await That(Act).DoesNotThrow();
 			}
