@@ -118,7 +118,7 @@ git fetch --unshallow && build.cmd Compile && build.cmd UnitTests && build.cmd A
 ### GitVersion Failures
 **Symptom**: `Could not inject value for Build.GitVersion` error  
 **Solutions**:
-1. Run `git fetch --unshallow` to get full git history
+1. Run `git fetch --unshallow` to get full git history (ignore "does not make sense" error if already unshallowed)
 2. Use direct dotnet build: `./.nuke/temp/dotnet-unix/dotnet build aweXpect.Reflection.sln`
 3. Ensure you're on a valid branch (not detached HEAD)
 
