@@ -2,6 +2,9 @@
 /Artifacts
 /TestResults
 
+# NUKE temporary files
+.nuke/temp/
+
 # Temporary files from Sonarqube
 .sonarqube/
 
