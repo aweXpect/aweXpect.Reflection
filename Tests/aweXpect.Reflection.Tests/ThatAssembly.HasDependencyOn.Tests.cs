@@ -21,8 +21,8 @@ public sealed partial class ThatAssembly
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has dependency on assembly equal to "NonExistentAssembly",
-					             but it had the required dependencies [*]
+					             has a dependency on assembly equal to "NonExistentAssembly",
+					             but it did not have the required dependency in [*]
 					             """).AsWildcard();
 			}
 
@@ -32,7 +32,7 @@ public sealed partial class ThatAssembly
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("System.Runtime");
+					=> await That(subject).HasDependencyOn("aweXpect.Core");
 
 				await That(Act).DoesNotThrow();
 			}
@@ -43,12 +43,12 @@ public sealed partial class ThatAssembly
 				Assembly? subject = null;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("System.Runtime");
+					=> await That(subject).HasDependencyOn("aweXpect.Core");
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             has dependency on assembly equal to "System.Runtime",
+					             has a dependency on assembly equal to "aweXpect.Core",
 					             but it was <null>
 					             """);
 			}
@@ -70,7 +70,7 @@ public sealed partial class ThatAssembly
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("system.runtime").IgnoringCase();
+					=> await That(subject).HasDependencyOn("AWExPECT.cORE").IgnoringCase();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -95,10 +95,14 @@ public sealed partial class ThatAssembly
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.HasDependencyOn("System.Runtime"));
+					=> await That(subject).DoesNotComplyWith(it => it.HasDependencyOn("aweXpect.Core"));
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*does not have dependency on assembly*")
+					.WithMessage("""
+					             Expected that subject
+					             has no dependency on assembly equal to "aweXpect.Core",
+					             but it had the unexpected dependency in [*]
+					             """)
 					.AsWildcard();
 			}
 		}

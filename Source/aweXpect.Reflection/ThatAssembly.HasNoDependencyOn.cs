@@ -1,7 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Options;
@@ -23,44 +20,8 @@ public static partial class ThatAssembly
 		StringEqualityOptions options = new();
 		return new StringEqualityTypeResult<Assembly?, IThat<Assembly?>>(subject.Get().ExpectationBuilder
 				.AddConstraint((it, grammars)
-					=> new HasNoDependencyOnConstraint(it, grammars, unexpected, options)),
+					=> new HasDependencyOnConstraint(it, grammars, unexpected, options).Invert()),
 			subject,
 			options);
-	}
-
-	private sealed class HasNoDependencyOnConstraint(
-		string it,
-		ExpectationGrammars grammars,
-		string unexpected,
-		StringEqualityOptions options)
-		: ConstraintResult.WithNotNullValue<Assembly?>(it, grammars),
-			IValueConstraint<Assembly?>
-	{
-		public ConstraintResult IsMetBy(Assembly? actual)
-		{
-			Actual = actual;
-			Outcome = actual?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) !=
-			          true
-				? Outcome.Success
-				: Outcome.Failure;
-			return this;
-		}
-
-		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("has no dependency on assembly ").Append(options.GetExpectation(unexpected, Grammars));
-
-		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
-		{
-			stringBuilder.Append("it had the unexpected dependencies [");
-			IEnumerable<string?> dependencies = Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? [];
-			stringBuilder.Append(string.Join(", ", dependencies));
-			stringBuilder.Append("]");
-		}
-
-		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("does have dependency on assembly ").Append(options.GetExpectation(unexpected, Grammars));
-
-		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendNormalResult(stringBuilder, indentation);
 	}
 }

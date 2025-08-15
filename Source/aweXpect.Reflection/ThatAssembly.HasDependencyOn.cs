@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -47,20 +46,22 @@ public static partial class ThatAssembly
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("has dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("has a dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("it had the required dependencies [");
-			IEnumerable<string?> dependencies = Actual?.GetReferencedAssemblies().Select(dep => dep.Name) ?? [];
-			stringBuilder.Append(string.Join(", ", dependencies));
-			stringBuilder.Append("]");
+			stringBuilder.Append("it did not have the required dependency in ");
+			Formatter.Format(stringBuilder, Actual?.GetReferencedAssemblies().Select(dep => dep.Name));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("does not have dependency on assembly ").Append(options.GetExpectation(expected, Grammars));
+			=> stringBuilder.Append("has no dependency on assembly ")
+				.Append(options.GetExpectation(expected, Grammars.Negate()));
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendNormalResult(stringBuilder, indentation);
+		{
+			stringBuilder.Append("it had the unexpected dependency in ");
+			Formatter.Format(stringBuilder, Actual?.GetReferencedAssemblies().Select(dep => dep.Name));
+		}
 	}
 }

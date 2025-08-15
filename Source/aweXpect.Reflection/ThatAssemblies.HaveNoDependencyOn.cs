@@ -41,14 +41,16 @@ public static partial class ThatAssemblies
 		{
 			Actual = actual;
 			Outcome = actual.All(assembly =>
-				assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) != true)
+				assembly?.GetReferencedAssemblies().Any(dep => options.AreConsideredEqual(dep.Name, unexpected)) !=
+				true)
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all have no dependency on assembly ").Append(options.GetExpectation(unexpected, Grammars));
+			=> stringBuilder.Append("all have no dependency on assembly ")
+				.Append(options.GetExpectation(unexpected, Grammars));
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -62,7 +64,7 @@ public static partial class ThatAssemblies
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("not all have no dependency on assembly ")
-				.Append(options.GetExpectation(unexpected, Grammars));
+				.Append(options.GetExpectation(unexpected, Grammars.Negate()));
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{

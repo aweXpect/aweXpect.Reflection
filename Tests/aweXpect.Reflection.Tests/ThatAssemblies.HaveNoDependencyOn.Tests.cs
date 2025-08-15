@@ -16,12 +16,12 @@ public sealed partial class ThatAssemblies
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveNoDependencyOn("System.Runtime");
+					=> await That(subject).HaveNoDependencyOn("aweXpect.Core");
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that in assembly containing type PublicAbstractClass
-					             all have no dependency on assembly equal to "System.Runtime",
+					             all have no dependency on assembly equal to "aweXpect.Core",
 					             but it contained assemblies with the unexpected dependency [
 					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 					             ]
@@ -63,12 +63,12 @@ public sealed partial class ThatAssemblies
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveNoDependencyOn("system.runtime").IgnoringCase();
+					=> await That(subject).HaveNoDependencyOn("AWExPECT.cORE").IgnoringCase();
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that in assembly containing type PublicAbstractClass
-					             all have no dependency on assembly equal to "system.runtime" ignoring case,
+					             all have no dependency on assembly equal to "AWExPECT.cORE" ignoring case,
 					             but it contained assemblies with the unexpected dependency [
 					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 					             ]
@@ -84,7 +84,7 @@ public sealed partial class ThatAssemblies
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(they => they.HaveNoDependencyOn("System.Runtime"));
+					=> await That(subject).DoesNotComplyWith(they => they.HaveNoDependencyOn("aweXpect.Core"));
 
 				await That(Act).DoesNotThrow();
 			}
@@ -98,7 +98,13 @@ public sealed partial class ThatAssemblies
 					=> await That(subject).DoesNotComplyWith(they => they.HaveNoDependencyOn("NonExistentAssembly"));
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*all have no dependency on assembly*")
+					.WithMessage("""
+					             Expected that in assembly containing type PublicAbstractClass
+					             not all have no dependency on assembly equal to "NonExistentAssembly",
+					             but it only contained assemblies without the unexpected dependency [
+					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             ]
+					             """)
 					.AsWildcard();
 			}
 		}
