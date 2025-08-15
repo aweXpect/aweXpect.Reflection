@@ -20,7 +20,7 @@ public static partial class ThatAssembly
 		StringEqualityOptions options = new();
 		return new StringEqualityTypeResult<Assembly?, IThat<Assembly?>>(subject.Get().ExpectationBuilder
 				.AddConstraint((it, grammars)
-					=> new HasDependencyOnConstraint(it, grammars, unexpected, options).Invert()),
+					=> new HasADependencyOnConstraint(it, grammars, unexpected, options).Invert()),
 			subject,
 			options);
 	}

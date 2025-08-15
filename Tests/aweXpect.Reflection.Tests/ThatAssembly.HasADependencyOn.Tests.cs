@@ -6,17 +6,17 @@ namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatAssembly
 {
-	public sealed class HasDependencyOn
+	public sealed class HasADependencyOn
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenAssemblyDoesNotHaveDependency_ShouldFail()
+			public async Task WhenAssemblyDoesNotHaveADependency_ShouldFail()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("NonExistentAssembly");
+					=> await That(subject).HasADependencyOn("NonExistentAssembly");
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
@@ -27,12 +27,12 @@ public sealed partial class ThatAssembly
 			}
 
 			[Fact]
-			public async Task WhenAssemblyHasDependency_ShouldSucceed()
+			public async Task WhenAssemblyHasADependency_ShouldSucceed()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("aweXpect.Core");
+					=> await That(subject).HasADependencyOn("aweXpect.Core");
 
 				await That(Act).DoesNotThrow();
 			}
@@ -43,7 +43,7 @@ public sealed partial class ThatAssembly
 				Assembly? subject = null;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("aweXpect.Core");
+					=> await That(subject).HasADependencyOn("aweXpect.Core");
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
@@ -59,7 +59,7 @@ public sealed partial class ThatAssembly
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("System").AsPrefix();
+					=> await That(subject).HasADependencyOn("System").AsPrefix();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -70,7 +70,7 @@ public sealed partial class ThatAssembly
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).HasDependencyOn("AWExPECT.cORE").IgnoringCase();
+					=> await That(subject).HasADependencyOn("AWExPECT.cORE").IgnoringCase();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -79,23 +79,23 @@ public sealed partial class ThatAssembly
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenAssemblyDoesNotHaveDependency_ShouldSucceed()
+			public async Task WhenAssemblyDoesNotHaveADependency_ShouldSucceed()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.HasDependencyOn("NonExistentAssembly"));
+					=> await That(subject).DoesNotComplyWith(it => it.HasADependencyOn("NonExistentAssembly"));
 
 				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
-			public async Task WhenAssemblyHasDependency_ShouldFail()
+			public async Task WhenAssemblyHasADependency_ShouldFail()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.HasDependencyOn("aweXpect.Core"));
+					=> await That(subject).DoesNotComplyWith(it => it.HasADependencyOn("aweXpect.Core"));
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""

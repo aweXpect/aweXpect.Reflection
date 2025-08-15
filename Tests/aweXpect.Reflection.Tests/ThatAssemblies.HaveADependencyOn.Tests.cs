@@ -6,17 +6,17 @@ namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatAssemblies
 {
-	public sealed class HaveDependencyOn
+	public sealed class HaveADependencyOn
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenAssembliesDoNotHaveDependency_ShouldFail()
+			public async Task WhenAssembliesDoNotHaveADependency_ShouldFail()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveDependencyOn("NonExistentAssembly");
+					=> await That(subject).HaveADependencyOn("NonExistentAssembly");
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
@@ -29,12 +29,12 @@ public sealed partial class ThatAssemblies
 			}
 
 			[Fact]
-			public async Task WhenAssembliesHaveDependency_ShouldSucceed()
+			public async Task WhenAssembliesHaveADependency_ShouldSucceed()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveDependencyOn("aweXpect.Core");
+					=> await That(subject).HaveADependencyOn("aweXpect.Core");
 
 				await That(Act).DoesNotThrow();
 			}
@@ -45,7 +45,7 @@ public sealed partial class ThatAssemblies
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveDependencyOn("aweX").AsPrefix();
+					=> await That(subject).HaveADependencyOn("aweX").AsPrefix();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -56,7 +56,7 @@ public sealed partial class ThatAssemblies
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).HaveDependencyOn("aweXpect.Core").IgnoringCase();
+					=> await That(subject).HaveADependencyOn("aweXpect.Core").IgnoringCase();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -65,23 +65,23 @@ public sealed partial class ThatAssemblies
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenAssembliesDoNotHaveDependency_ShouldSucceed()
+			public async Task WhenAssembliesDoNotHaveADependency_ShouldSucceed()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(they => they.HaveDependencyOn("NonExistentAssembly"));
+					=> await That(subject).DoesNotComplyWith(they => they.HaveADependencyOn("NonExistentAssembly"));
 
 				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
-			public async Task WhenAssembliesHaveDependency_ShouldFail()
+			public async Task WhenAssembliesHaveADependency_ShouldFail()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(they => they.HaveDependencyOn("aweXpect.Core"));
+					=> await That(subject).DoesNotComplyWith(they => they.HaveADependencyOn("aweXpect.Core"));
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""

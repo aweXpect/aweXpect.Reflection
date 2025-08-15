@@ -11,7 +11,7 @@ public sealed partial class ThatAssemblies
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenAssembliesHaveDependency_ShouldFail()
+			public async Task WhenAssembliesHaveADependency_ShouldFail()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 
@@ -79,7 +79,7 @@ public sealed partial class ThatAssemblies
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenAssembliesHaveDependency_ShouldSucceed()
+			public async Task WhenAssembliesHaveADependency_ShouldSucceed()
 			{
 				Filtered.Assemblies subject = In.AssemblyContaining<PublicAbstractClass>();
 

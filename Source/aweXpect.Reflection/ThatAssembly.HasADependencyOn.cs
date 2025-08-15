@@ -16,18 +16,18 @@ public static partial class ThatAssembly
 	/// <summary>
 	///     Verifies that the <see cref="Assembly" /> has a dependency on the <paramref name="expected" /> assembly.
 	/// </summary>
-	public static StringEqualityTypeResult<Assembly?, IThat<Assembly?>> HasDependencyOn(
+	public static StringEqualityTypeResult<Assembly?, IThat<Assembly?>> HasADependencyOn(
 		this IThat<Assembly?> subject, string expected)
 	{
 		StringEqualityOptions options = new();
 		return new StringEqualityTypeResult<Assembly?, IThat<Assembly?>>(subject.Get().ExpectationBuilder
 				.AddConstraint((it, grammars)
-					=> new HasDependencyOnConstraint(it, grammars, expected, options)),
+					=> new HasADependencyOnConstraint(it, grammars, expected, options)),
 			subject,
 			options);
 	}
 
-	private sealed class HasDependencyOnConstraint(
+	private sealed class HasADependencyOnConstraint(
 		string it,
 		ExpectationGrammars grammars,
 		string expected,

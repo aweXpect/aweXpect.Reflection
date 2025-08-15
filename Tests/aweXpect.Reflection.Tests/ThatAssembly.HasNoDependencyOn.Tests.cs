@@ -11,7 +11,7 @@ public sealed partial class ThatAssembly
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenAssemblyDoesNotHaveDependency_ShouldSucceed()
+			public async Task WhenAssemblyDoesNotHaveADependency_ShouldSucceed()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
@@ -22,7 +22,7 @@ public sealed partial class ThatAssembly
 			}
 
 			[Fact]
-			public async Task WhenAssemblyHasDependency_ShouldFail()
+			public async Task WhenAssemblyHasADependency_ShouldFail()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
@@ -89,7 +89,7 @@ public sealed partial class ThatAssembly
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenAssemblyDoesNotHaveDependency_ShouldFail()
+			public async Task WhenAssemblyDoesNotHaveADependency_ShouldFail()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 
@@ -105,7 +105,7 @@ public sealed partial class ThatAssembly
 			}
 
 			[Fact]
-			public async Task WhenAssemblyHasDependency_ShouldSucceed()
+			public async Task WhenAssemblyHasADependency_ShouldSucceed()
 			{
 				Assembly subject = typeof(PublicAbstractClass).Assembly;
 

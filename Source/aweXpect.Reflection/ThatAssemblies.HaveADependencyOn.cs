@@ -18,18 +18,18 @@ public static partial class ThatAssemblies
 	///     Verifies that all items in the filtered collection of <see cref="Assembly" /> have
 	///     a dependency on the <paramref name="expected" /> assembly.
 	/// </summary>
-	public static StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>> HaveDependencyOn(
+	public static StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>> HaveADependencyOn(
 		this IThat<IEnumerable<Assembly?>> subject, string expected)
 	{
 		StringEqualityOptions options = new();
 		return new StringEqualityTypeResult<IEnumerable<Assembly?>, IThat<IEnumerable<Assembly?>>>(subject.Get()
 				.ExpectationBuilder.AddConstraint((it, grammars)
-					=> new HaveDependencyOnConstraint(it, grammars, expected, options)),
+					=> new HaveADependencyOnConstraint(it, grammars, expected, options)),
 			subject,
 			options);
 	}
 
-	private sealed class HaveDependencyOnConstraint(
+	private sealed class HaveADependencyOnConstraint(
 		string it,
 		ExpectationGrammars grammars,
 		string expected,
