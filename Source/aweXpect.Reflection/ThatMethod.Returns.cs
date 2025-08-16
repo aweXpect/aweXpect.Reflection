@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
@@ -28,24 +27,22 @@ public static partial class ThatMethod
 	{
 		List<Type> returnTypes = [returnType,];
 		return new MethodReturnResult<MethodInfo?, IThat<MethodInfo?>>(
-			subject, returnTypes, (subj, types) => new AndOrResult<MethodInfo?, IThat<MethodInfo?>>(subj.Get()
-				.ExpectationBuilder.AddConstraint((it, grammars)
-					=> new ReturnsConstraint(it, grammars, types)), subj));
+			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new ReturnsConstraint(it, grammars, returnTypes)),
+			subject,
+			returnTypes);
 	}
 
 	/// <summary>
 	///     Result that allows chaining additional return types for a single method.
 	/// </summary>
 	public sealed class MethodReturnResult<TValue, TResult>(
+		ExpectationBuilder expectationBuilder,
 		TResult subject,
-		List<Type> returnTypes,
-		Func<TResult, List<Type>, AndOrResult<TValue, TResult>> constraintFactory)
+		List<Type> returnTypes)
+		: AndOrResult<TValue, TResult>(expectationBuilder, subject)
 		where TResult : IThat<TValue>
 	{
-		private readonly Func<TResult, List<Type>, AndOrResult<TValue, TResult>> _constraintFactory = constraintFactory;
-		private readonly List<Type> _returnTypes = returnTypes;
-		private readonly TResult _subject = subject;
-
 		/// <summary>
 		///     Allow an alternative return type <typeparamref name="TReturn" />.
 		/// </summary>
@@ -57,22 +54,9 @@ public static partial class ThatMethod
 		/// </summary>
 		public MethodReturnResult<TValue, TResult> OrReturns(Type returnType)
 		{
-			_returnTypes.Add(returnType);
+			returnTypes.Add(returnType);
 			return this;
 		}
-
-		/// <summary>
-		///     Implicitly converts to the constraint result.
-		/// </summary>
-		public static implicit operator AndOrResult<TValue, TResult>(MethodReturnResult<TValue, TResult> result)
-		{
-			return result._constraintFactory(result._subject, result._returnTypes);
-		}
-
-		/// <summary>
-		///     Gets the awaiter for async operations.
-		/// </summary>
-		public TaskAwaiter<TValue> GetAwaiter() => ((AndOrResult<TValue, TResult>)this).GetAwaiter();
 	}
 
 	private sealed class ReturnsConstraint(

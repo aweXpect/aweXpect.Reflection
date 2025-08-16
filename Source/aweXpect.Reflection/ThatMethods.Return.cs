@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Reflection.Helpers;
@@ -29,25 +27,24 @@ public static partial class ThatMethods
 	public static MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return(
 		this IThat<IEnumerable<MethodInfo>> subject, Type returnType)
 	{
-		List<Type> returnTypes = [returnType];
+		List<Type> returnTypes = [returnType,];
 		return new MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>>(
-			subject, returnTypes, (subj, types) => new(subj.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnConstraint(it, grammars, types)), subj));
+			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new ReturnConstraint(it, grammars, returnTypes)),
+			subject,
+			returnTypes);
 	}
 
 	/// <summary>
 	///     Result that allows chaining additional return types for method collections.
 	/// </summary>
 	public sealed class MethodsReturnResult<TValue, TResult>(
+		ExpectationBuilder expectationBuilder,
 		TResult subject,
-		List<Type> returnTypes,
-		Func<TResult, List<Type>, AndOrResult<TValue, TResult>> constraintFactory)
+		List<Type> returnTypes)
+		: AndOrResult<TValue, TResult>(expectationBuilder, subject)
 		where TResult : IThat<TValue>
 	{
-		private readonly TResult _subject = subject;
-		private readonly List<Type> _returnTypes = returnTypes;
-		private readonly Func<TResult, List<Type>, AndOrResult<TValue, TResult>> _constraintFactory = constraintFactory;
-
 		/// <summary>
 		///     Allow an alternative return type <typeparamref name="TReturn" />.
 		/// </summary>
@@ -59,20 +56,9 @@ public static partial class ThatMethods
 		/// </summary>
 		public MethodsReturnResult<TValue, TResult> OrReturn(Type returnType)
 		{
-			_returnTypes.Add(returnType);
+			returnTypes.Add(returnType);
 			return this;
 		}
-
-		/// <summary>
-		///     Implicitly converts to the constraint result.
-		/// </summary>
-		public static implicit operator AndOrResult<TValue, TResult>(MethodsReturnResult<TValue, TResult> result)
-			=> result._constraintFactory(result._subject, result._returnTypes);
-
-		/// <summary>
-		///     Gets the awaiter for async operations.
-		/// </summary>
-		public TaskAwaiter<TValue> GetAwaiter() => ((AndOrResult<TValue, TResult>)this).GetAwaiter();
 	}
 
 	private sealed class ReturnConstraint(
@@ -85,7 +71,8 @@ public static partial class ThatMethods
 		public ConstraintResult IsMetBy(IEnumerable<MethodInfo> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(methodInfo => returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType)))
+			Outcome = actual.All(methodInfo
+				=> returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType)))
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
@@ -98,7 +85,8 @@ public static partial class ThatMethods
 		{
 			stringBuilder.Append(it).Append(" contained not matching methods ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(methodInfo => !returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
+				Actual?.Where(methodInfo
+					=> !returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -109,7 +97,8 @@ public static partial class ThatMethods
 		{
 			stringBuilder.Append(it).Append(" only contained matching methods ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(methodInfo => returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
+				Actual?.Where(methodInfo
+					=> returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
 				FormattingOptions.Indented(indentation));
 		}
 
