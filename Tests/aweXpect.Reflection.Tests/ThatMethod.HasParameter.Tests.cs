@@ -206,33 +206,6 @@ public sealed partial class ThatMethod
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task HasParameterByType_WhenParameterDoesNotExist_ShouldSucceed()
-			{
-				MethodInfo methodInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithoutParameters))!;
-
-				async Task Act()
-					=> await That(methodInfo).DoesNotComplyWith(it => it.HasParameter<int>());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task HasParameterByType_WhenParameterExists_ShouldFail()
-			{
-				MethodInfo methodInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithIntAndString))!;
-
-				async Task Act()
-					=> await That(methodInfo).DoesNotComplyWith(it => it.HasParameter<int>());
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that methodInfo
-					             does not have parameter of type int,
-					             but it did
-					             """);
-			}
-
-			[Fact]
 			public async Task HasParameterByName_WhenParameterDoesNotExist_ShouldSucceed()
 			{
 				MethodInfo methodInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithoutParameters))!;
@@ -255,6 +228,33 @@ public sealed partial class ThatMethod
 					.WithMessage("""
 					             Expected that methodInfo
 					             does not have parameter with name "value",
+					             but it did
+					             """);
+			}
+
+			[Fact]
+			public async Task HasParameterByType_WhenParameterDoesNotExist_ShouldSucceed()
+			{
+				MethodInfo methodInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithoutParameters))!;
+
+				async Task Act()
+					=> await That(methodInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task HasParameterByType_WhenParameterExists_ShouldFail()
+			{
+				MethodInfo methodInfo = typeof(TestClass).GetMethod(nameof(TestClass.MethodWithIntAndString))!;
+
+				async Task Act()
+					=> await That(methodInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that methodInfo
+					             does not have parameter of type int,
 					             but it did
 					             """);
 			}

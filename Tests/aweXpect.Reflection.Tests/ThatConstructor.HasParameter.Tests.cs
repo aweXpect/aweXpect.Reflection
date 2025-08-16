@@ -205,33 +205,6 @@ public sealed partial class ThatConstructor
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task HasParameterByType_WhenParameterDoesNotExist_ShouldSucceed()
-			{
-				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
-
-				async Task Act()
-					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task HasParameterByType_WhenParameterExists_ShouldFail()
-			{
-				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(int), typeof(string),])!;
-
-				async Task Act()
-					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that constructorInfo
-					             does not have parameter of type int,
-					             but it did
-					             """);
-			}
-
-			[Fact]
 			public async Task HasParameterByName_WhenParameterDoesNotExist_ShouldSucceed()
 			{
 				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
@@ -254,6 +227,33 @@ public sealed partial class ThatConstructor
 					.WithMessage("""
 					             Expected that constructorInfo
 					             does not have parameter with name "value",
+					             but it did
+					             """);
+			}
+
+			[Fact]
+			public async Task HasParameterByType_WhenParameterDoesNotExist_ShouldSucceed()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task HasParameterByType_WhenParameterExists_ShouldFail()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(int), typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that constructorInfo
+					             does not have parameter of type int,
 					             but it did
 					             """);
 			}
