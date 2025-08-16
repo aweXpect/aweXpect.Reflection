@@ -38,27 +38,28 @@ namespace aweXpect.Reflection
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWith OrWith<TAttribute>(System.Func<TAttribute, bool>? predicate, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
                 where TAttribute : System.Attribute { }
         }
-        public class ConstructorsWithNamedParameter<T> : aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T>
+        public class ConstructorsWithNamedParameter<T> : aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T>, aweXpect.Core.IOptionsProvider<aweXpect.Options.StringEqualityOptions>
         {
+            public ConstructorsWithNamedParameter(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions, aweXpect.Options.StringEqualityOptions options) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> AsPrefix() { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> AsRegex() { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> AsSuffix() { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> AsWildcard() { }
-            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> Exactly() { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> IgnoringCase(bool ignoreCase = true) { }
-            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true) { }
-            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithNamedParameter<T> Using(System.Collections.Generic.IEqualityComparer<string> comparer) { }
         }
-        public class ConstructorsWithParameter<T> : aweXpect.Reflection.Collections.Filtered.Constructors
+        public class ConstructorsWithParameter<T> : aweXpect.Reflection.Collections.Filtered.Constructors, aweXpect.Core.IOptionsProvider<aweXpect.Options.CollectionIndexOptions>, aweXpect.Core.IOptionsProvider<aweXpect.Reflection.Options.ParameterFilterOptions>
         {
+            public ConstructorsWithParameter(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameterAtIndex<T> AtIndex(int index) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue() { }
-            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue) { }
+            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+                where TValue : T { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithoutDefaultValue() { }
         }
-        public class ConstructorsWithParameterAtIndex<T> : aweXpect.Reflection.Collections.Filtered.Constructors
+        public class ConstructorsWithParameterAtIndex<T> : aweXpect.Reflection.Collections.Filtered.Constructors, aweXpect.Core.IOptionsProvider<aweXpect.Options.CollectionIndexOptions>
         {
+            public ConstructorsWithParameterAtIndex(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameterAtIndex<T> FromEnd() { }
         }
     }
@@ -186,27 +187,28 @@ namespace aweXpect.Reflection
             public aweXpect.Reflection.MethodFilters.MethodsWith OrWith<TAttribute>(System.Func<TAttribute, bool>? predicate, bool inherit = true, [System.Runtime.CompilerServices.CallerArgumentExpression("predicate")] string doNotPopulateThisValue = "")
                 where TAttribute : System.Attribute { }
         }
-        public class MethodsWithNamedParameter<T> : aweXpect.Reflection.MethodFilters.MethodsWithParameter<T>
+        public class MethodsWithNamedParameter<T> : aweXpect.Reflection.MethodFilters.MethodsWithParameter<T>, aweXpect.Core.IOptionsProvider<aweXpect.Options.StringEqualityOptions>
         {
+            public MethodsWithNamedParameter(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions, aweXpect.Options.StringEqualityOptions options) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> AsPrefix() { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> AsRegex() { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> AsSuffix() { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> AsWildcard() { }
-            public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> Exactly() { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> IgnoringCase(bool ignoreCase = true) { }
-            public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true) { }
-            public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithNamedParameter<T> Using(System.Collections.Generic.IEqualityComparer<string> comparer) { }
         }
-        public class MethodsWithParameter<T> : aweXpect.Reflection.Collections.Filtered.Methods
+        public class MethodsWithParameter<T> : aweXpect.Reflection.Collections.Filtered.Methods, aweXpect.Core.IOptionsProvider<aweXpect.Options.CollectionIndexOptions>, aweXpect.Core.IOptionsProvider<aweXpect.Reflection.Options.ParameterFilterOptions>
         {
+            public MethodsWithParameter(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameterAtIndex<T> AtIndex(int index) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue() { }
-            public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue) { }
+            public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+                where TValue : T { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithoutDefaultValue() { }
         }
-        public class MethodsWithParameterAtIndex<T> : aweXpect.Reflection.Collections.Filtered.Methods
+        public class MethodsWithParameterAtIndex<T> : aweXpect.Reflection.Collections.Filtered.Methods, aweXpect.Core.IOptionsProvider<aweXpect.Options.CollectionIndexOptions>
         {
+            public MethodsWithParameterAtIndex(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameterAtIndex<T> FromEnd() { }
         }
     }
@@ -605,5 +607,15 @@ namespace aweXpect.Reflection.Collections
         {
             aweXpect.Reflection.Collections.ITypeAssemblies Internal { get; }
         }
+    }
+}
+namespace aweXpect.Reflection.Options
+{
+    public class ParameterFilterOptions
+    {
+        public ParameterFilterOptions(System.Func<System.Reflection.ParameterInfo, bool> predicate, System.Func<string> description) { }
+        public void AddPredicate(System.Func<System.Reflection.ParameterInfo, bool> predicate, System.Func<string> description) { }
+        public string GetDescription() { }
+        public bool Matches(System.Reflection.ParameterInfo parameter) { }
     }
 }
