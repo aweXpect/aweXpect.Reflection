@@ -133,6 +133,136 @@ public sealed partial class ThatMethods
 			}
 		}
 
+		public sealed class NegatedTests
+		{
+			public sealed class GenericTests
+			{
+				[Fact]
+				public async Task WhenSomeMethodsDoNotReturnSpecifiedType_ShouldSucceed()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name.StartsWith("Get"));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<string>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenAllMethodsReturnSpecifiedType_ShouldFail()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name == nameof(TestClass.GetString));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<string>());
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("*all not return string*")
+						.AsWildcard();
+				}
+
+				[Fact]
+				public async Task WhenMethodsReturnInheritedTypes_ShouldFail()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name == nameof(TestClass.GetDummy));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<DummyBase>());
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("*all not return ThatMethods.Return.DummyBase*")
+						.AsWildcard();
+				}
+			}
+
+			public sealed class TypeTests
+			{
+				[Fact]
+				public async Task WhenSomeMethodsDoNotReturnSpecifiedType_ShouldSucceed()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name.StartsWith("Get"));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return(typeof(string)));
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenAllMethodsReturnSpecifiedType_ShouldFail()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name == nameof(TestClass.GetString));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return(typeof(string)));
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("*all not return string*")
+						.AsWildcard();
+				}
+
+				[Fact]
+				public async Task WhenMethodsReturnInheritedTypes_ShouldFail()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name == nameof(TestClass.GetDummy));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return(typeof(DummyBase)));
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("*all not return ThatMethods.Return.DummyBase*")
+						.AsWildcard();
+				}
+			}
+
+			public sealed class OrReturnTests
+			{
+				[Fact]
+				public async Task WithOrReturn_WhenSomeMethodsDoNotReturnAnyOfTheTypes_ShouldSucceed()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name.StartsWith("Get"));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<bool>().OrReturn<Task>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithOrReturn_WhenAllMethodsReturnOneOfTheTypes_ShouldFail()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name is nameof(TestClass.GetString) or nameof(TestClass.GetInt));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<string>().OrReturn(typeof(int)));
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("*all not return string or return int*")
+						.AsWildcard();
+				}
+
+				[Fact]
+				public async Task WithMultipleOrReturn_ShouldSupportChaining()
+				{
+					Filtered.Methods methods = In.Type<TestClass>()
+						.Methods().Which(m => m.Name == nameof(TestClass.AsyncMethod));
+
+					async Task Act()
+						=> await That(methods).DoesNotComplyWith(they => they.Return<int>().OrReturn<string>().OrReturn(typeof(bool)).OrReturn<DummyBase>());
+
+					await That(Act).DoesNotThrow();
+				}
+			}
+		}
+
 #pragma warning disable CA1822 // Mark members as static
 		// ReSharper disable UnusedMember.Local
 		private class TestClass
