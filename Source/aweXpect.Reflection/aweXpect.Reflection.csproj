@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="aweXpect.Core" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		  <PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="aweXpect.Core"/>
 	</ItemGroup>
 
 	<ItemGroup>
-		<InternalsVisibleTo Include="aweXpect.Reflection.Internal.Tests" PublicKey="$(PublicKey)" />
+		<InternalsVisibleTo Include="aweXpect.Reflection.Internal.Tests" PublicKey="$(PublicKey)"/>
 	</ItemGroup>
 
 </Project>
