@@ -97,6 +97,33 @@ namespace aweXpect.Reflection.Tests
                                      """);
                 }
 
+                [Fact]
+                public async Task WithInheritance_ShouldWorkCorrectly()
+                {
+                    Type subject = typeof(FooChildClass);
+
+                    async Task Act()
+                        => await That(subject).Has<FooAttribute>().OrHave<BarAttribute>();
+
+                    await That(Act).DoesNotThrow();
+                }
+
+                [Fact]
+                public async Task WithInheritanceFalse_ShouldWorkCorrectly()
+                {
+                    Type subject = typeof(FooChildClass);
+
+                    async Task Act()
+                        => await That(subject).Has<BazAttribute>(inherit: false).OrHave<BarAttribute>(inherit: false);
+
+                    await That(Act).Throws<XunitException>()
+                        .WithMessage("""
+                                     Expected that subject
+                                     has direct ThatType.OrHave.AttributeTests.BazAttribute or has direct ThatType.OrHave.AttributeTests.BarAttribute,
+                                     but it did not in ThatType.OrHave.AttributeTests.FooChildClass
+                                     """);
+                }
+
                 [AttributeUsage(AttributeTargets.Class)]
                 private class FooAttribute : Attribute
                 {
@@ -142,6 +169,10 @@ namespace aweXpect.Reflection.Tests
 
                 [Baz]
                 private class BazClass
+                {
+                }
+
+                private class FooChildClass : FooClass
                 {
                 }
             }
