@@ -201,5 +201,101 @@ public sealed partial class ThatConstructor
 			// ReSharper restore UnusedParameter.Local
 			// ReSharper restore UnusedMember.Local
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task HasParameterByType_WhenParameterDoesNotExist_ShouldSucceed()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task HasParameterByType_WhenParameterExists_ShouldFail()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(int), typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that constructorInfo
+					             does not have parameter of type int,
+					             but it did
+					             """);
+			}
+
+			[Fact]
+			public async Task HasParameterByName_WhenParameterDoesNotExist_ShouldSucceed()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter("value"));
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task HasParameterByName_WhenParameterExists_ShouldFail()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(int), typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter("value"));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that constructorInfo
+					             does not have parameter with name "value",
+					             but it did
+					             """);
+			}
+
+			[Fact]
+			public async Task HasParameterByTypeAndName_WhenParameterDoesNotExist_ShouldSucceed()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>("value"));
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task HasParameterByTypeAndName_WhenParameterExists_ShouldFail()
+			{
+				ConstructorInfo constructorInfo = typeof(TestClass).GetConstructor([typeof(int), typeof(string),])!;
+
+				async Task Act()
+					=> await That(constructorInfo).DoesNotComplyWith(it => it.HasParameter<int>("value"));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that constructorInfo
+					             does not have parameter of type int with name "value",
+					             but it did
+					             """);
+			}
+
+			// ReSharper disable UnusedParameter.Local
+			// ReSharper disable UnusedMember.Local
+			private class TestClass
+			{
+				public TestClass() { }
+				public TestClass(string name) { }
+				public TestClass(int value, string name) { }
+				public TestClass(int value, bool hasDefault = true, string name = "") { }
+			}
+			// ReSharper restore UnusedParameter.Local
+			// ReSharper restore UnusedMember.Local
+		}
 	}
 }
