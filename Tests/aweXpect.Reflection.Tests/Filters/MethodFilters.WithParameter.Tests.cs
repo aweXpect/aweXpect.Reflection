@@ -36,6 +36,17 @@ public sealed partial class MethodFilters
 			}
 
 			[Fact]
+			public async Task WithParameterAtIndex_WhenIndexIsNegative_ShouldThrowArgumentOutOfRangeException()
+			{
+				void Act() => In.Type<TestClassWithMethodParameters>()
+					.Methods().WithParameter<int>().AtIndex(-1);
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithParamName("index").And
+					.WithMessage("The index must be greater than or equal to 0.").AsPrefix();
+			}
+
+			[Fact]
 			public async Task WithParameterAtIndexFromEnd_ShouldFilterForMethodsWithParameterAtSpecificIndex()
 			{
 				Filtered.Methods methods = In.Type<TestClassWithMethodParameters>()

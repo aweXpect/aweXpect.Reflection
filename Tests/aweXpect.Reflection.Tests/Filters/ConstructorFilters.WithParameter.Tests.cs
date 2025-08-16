@@ -34,6 +34,17 @@ public sealed partial class ConstructorFilters
 			}
 
 			[Fact]
+			public async Task WithParameterAtIndex_WhenIndexIsNegative_ShouldThrowArgumentOutOfRangeException()
+			{
+				void Act() => In.Type<TestClassWithConstructorParameters>()
+					.Constructors().WithParameter<int>().AtIndex(-1);
+
+				await That(Act).Throws<ArgumentOutOfRangeException>()
+					.WithParamName("index").And
+					.WithMessage("The index must be greater than or equal to 0.").AsPrefix();
+			}
+
+			[Fact]
 			public async Task WithParameterAtIndexFromEnd_ShouldFilterForConstructorsWithParameterAtSpecificIndex()
 			{
 				Filtered.Constructors constructors = In.Type<TestClassWithConstructorParameters>()

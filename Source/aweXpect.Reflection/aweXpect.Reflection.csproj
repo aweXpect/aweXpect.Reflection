@@ -8,8 +8,4 @@
 		<InternalsVisibleTo Include="aweXpect.Reflection.Internal.Tests" PublicKey="$(PublicKey)"/>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Results\" />
-	</ItemGroup>
-
 </Project>
