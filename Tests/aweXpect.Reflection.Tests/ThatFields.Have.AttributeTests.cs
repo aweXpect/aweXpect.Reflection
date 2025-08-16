@@ -98,7 +98,7 @@ public sealed partial class ThatFields
 			}
 #pragma warning restore CS0414
 		}
-		
+
 		public sealed class OrHave
 		{
 			public sealed class AttributeTests
@@ -159,7 +159,7 @@ public sealed partial class ThatFields
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatFields.Have.OrHave.AttributeTests.TestAttribute or have ThatFields.Have.OrHave.AttributeTests.BarAttribute,
+						             all have ThatFields.Have.OrHave.AttributeTests.TestAttribute or ThatFields.Have.OrHave.AttributeTests.BarAttribute,
 						             but it contained not matching fields [
 						               System.String NoAttributeField
 						             ]
@@ -211,7 +211,7 @@ public sealed partial class ThatFields
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatFields.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or have ThatFields.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
+						             all have ThatFields.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or ThatFields.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
 						             but it contained not matching fields [
 						               System.String TestField1
 						             ]
@@ -239,78 +239,79 @@ public sealed partial class ThatFields
 
 					[Bar(Name = "bar")] public string BarField = "";
 
-					[Test(Value = "BothValue")]
-					[Bar(Name = "both")] public string BothField = "";
+					[Test(Value = "BothValue")] [Bar(Name = "both")]
+					public string BothField = "";
 				}
 #pragma warning restore CS0414
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenFieldsDoNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			IEnumerable<FieldInfo> subjects = new[]
+			[Fact]
+			public async Task WhenFieldsDoNotHaveAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetField("NoAttributeField")!,
-			};
+				IEnumerable<FieldInfo> subjects = new[]
+				{
+					typeof(TestClass).GetField("NoAttributeField")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenFieldsDoNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			IEnumerable<FieldInfo> subjects = new[]
+			[Fact]
+			public async Task WhenFieldsDoNotHaveMatchingAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetField("TestField1")!,
-			};
+				IEnumerable<FieldInfo> subjects = new[]
+				{
+					typeof(TestClass).GetField("TestField1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenFieldsHaveAttribute_ShouldFail()
-		{
-			IEnumerable<FieldInfo> subjects = new[]
+			[Fact]
+			public async Task WhenFieldsHaveAttribute_ShouldFail()
 			{
-				typeof(TestClass).GetField("TestField1")!,
-			};
+				IEnumerable<FieldInfo> subjects = new[]
+				{
+					typeof(TestClass).GetField("TestField1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>().OrHave<TestAttribute>(x => x.Value == "foo"));
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subjects
-				             it contained not matching fields [],
-				             but it only contained matching fields [
-				               System.String TestField1
-				             ]
-				             """);
-		}
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
+					             not all have ThatFields.Have.NegatedTests.TestAttribute or ThatFields.Have.NegatedTests.TestAttribute matching x => x.Value == "foo",
+					             but it only contained matching fields [
+					               System.String TestField1
+					             ]
+					             """);
+			}
 
-		[AttributeUsage(AttributeTargets.Field)]
-		private class TestAttribute : Attribute
-		{
-			public string Value { get; set; } = "";
-		}
+			[AttributeUsage(AttributeTargets.Field)]
+			private class TestAttribute : Attribute
+			{
+				public string Value { get; set; } = "";
+			}
 
 #pragma warning disable CS0414 // Field is assigned but its value is never used
-		private class TestClass
-		{
-			[Test(Value = "Field1Value")] public string TestField1 = "";
+			private class TestClass
+			{
+				[Test(Value = "Field1Value")] public string TestField1 = "";
 
-			public string NoAttributeField = "";
-		}
+				public string NoAttributeField = "";
+			}
 #pragma warning restore CS0414
+		}
 	}
 }

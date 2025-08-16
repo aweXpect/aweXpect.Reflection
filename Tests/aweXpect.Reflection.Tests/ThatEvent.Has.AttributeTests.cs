@@ -157,7 +157,7 @@ public sealed partial class ThatEvent
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             has ThatEvent.Has.OrHas.AttributeTests.FooAttribute or has ThatEvent.Has.OrHas.AttributeTests.BarAttribute,
+						             has ThatEvent.Has.OrHas.AttributeTests.FooAttribute or ThatEvent.Has.OrHas.AttributeTests.BarAttribute,
 						             but it did not in System.Action BazEvent
 						             """);
 				}
@@ -185,7 +185,7 @@ public sealed partial class ThatEvent
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             has ThatEvent.Has.OrHas.AttributeTests.FooAttribute matching foo => foo.Value == 5 or has ThatEvent.Has.OrHas.AttributeTests.BarAttribute matching bar => bar.Name == "test",
+						             has ThatEvent.Has.OrHas.AttributeTests.FooAttribute matching foo => foo.Value == 5 or ThatEvent.Has.OrHas.AttributeTests.BarAttribute matching bar => bar.Name == "test",
 						             but it did not in System.Action FooEvent2
 						             """);
 				}
@@ -240,61 +240,62 @@ public sealed partial class ThatEvent
 #pragma warning restore CS0067
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenEventDoesNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			EventInfo subject = typeof(TestClass).GetEvent("NoAttributeEvent")!;
+			[Fact]
+			public async Task WhenEventDoesNotHaveAttribute_ShouldSucceed()
+			{
+				EventInfo subject = typeof(TestClass).GetEvent("NoAttributeEvent")!;
 
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>());
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenEventDoesNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			EventInfo subject = typeof(TestClass).GetEvent("TestEvent")!;
+			[Fact]
+			public async Task WhenEventDoesNotHaveMatchingAttribute_ShouldSucceed()
+			{
+				EventInfo subject = typeof(TestClass).GetEvent("TestEvent")!;
 
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>(attr => attr.Value == "NonExistent"));
+				async Task Act()
+					=> await That(subject)
+						.DoesNotComplyWith(it => it.Has<TestAttribute>(attr => attr.Value == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenEventHasAttribute_ShouldFail()
-		{
-			EventInfo subject = typeof(TestClass).GetEvent("TestEvent")!;
+			[Fact]
+			public async Task WhenEventHasAttribute_ShouldFail()
+			{
+				EventInfo subject = typeof(TestClass).GetEvent("TestEvent")!;
 
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>());
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>());
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subject
-				             has no ThatEvent.NegatedTests.TestAttribute,
-				             but it did in System.Action TestEvent
-				             """);
-		}
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has no ThatEvent.Has.NegatedTests.TestAttribute,
+					             but it did in System.Action TestEvent
+					             """);
+			}
 
-		[AttributeUsage(AttributeTargets.Event)]
-		private class TestAttribute : Attribute
-		{
-			public string Value { get; set; } = "";
-		}
+			[AttributeUsage(AttributeTargets.Event)]
+			private class TestAttribute : Attribute
+			{
+				public string Value { get; set; } = "";
+			}
 
 #pragma warning disable CS0067 // Event is never used
-		private class TestClass
-		{
-			[Test(Value = "EventValue")] public event Action? TestEvent;
+			private class TestClass
+			{
+				[Test(Value = "EventValue")] public event Action? TestEvent;
 
-			public event Action? NoAttributeEvent;
-		}
+				public event Action? NoAttributeEvent;
+			}
 #pragma warning restore CS0067
+		}
 	}
 }

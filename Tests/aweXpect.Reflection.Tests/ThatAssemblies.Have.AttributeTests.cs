@@ -84,7 +84,7 @@ public sealed partial class ThatAssemblies
 			[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
 			private class TestAttribute : Attribute;
 		}
-		
+
 		public sealed class OrHave
 		{
 			public sealed class AttributeTests
@@ -145,7 +145,7 @@ public sealed partial class ThatAssemblies
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subjects
-						             all have ThatAssemblies.Have.OrHave.AttributeTests.TestAttribute or have ThatAssemblies.Have.OrHave.AttributeTests.BarAttribute,
+						             all have ThatAssemblies.Have.OrHave.AttributeTests.TestAttribute or ThatAssemblies.Have.OrHave.AttributeTests.BarAttribute,
 						             but it contained not matching assemblies [
 						               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 						             ]
@@ -197,7 +197,7 @@ public sealed partial class ThatAssemblies
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subjects
-						             all have AssemblyTitleAttribute matching attr => attr.Title == "NonExistent" or have ThatAssemblies.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "NonExistent",
+						             all have AssemblyTitleAttribute matching attr => attr.Title == "NonExistent" or ThatAssemblies.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "NonExistent",
 						             but it contained not matching assemblies [
 						               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 						             ]
@@ -214,58 +214,59 @@ public sealed partial class ThatAssemblies
 				private class BarAttribute : Attribute;
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenAssembliesDoNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			IEnumerable<Assembly> subjects = new[]
+			[Fact]
+			public async Task WhenAssembliesDoNotHaveAttribute_ShouldSucceed()
 			{
-				Assembly.GetExecutingAssembly(),
-			};
+				IEnumerable<Assembly> subjects = new[]
+				{
+					Assembly.GetExecutingAssembly(),
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenAssembliesDoNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			IEnumerable<Assembly> subjects = new[]
+			[Fact]
+			public async Task WhenAssembliesDoNotHaveMatchingAttribute_ShouldSucceed()
 			{
-				Assembly.GetExecutingAssembly(),
-			};
+				IEnumerable<Assembly> subjects = new[]
+				{
+					Assembly.GetExecutingAssembly(),
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<AssemblyTitleAttribute>(attr => attr.Title == "NonExistent"));
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<AssemblyTitleAttribute>(attr => attr.Title == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenAssembliesHaveAttribute_ShouldFail()
-		{
-			IEnumerable<Assembly> subjects = new[]
+			[Fact]
+			public async Task WhenAssembliesHaveAttribute_ShouldFail()
 			{
-				Assembly.GetExecutingAssembly(),
-			};
+				IEnumerable<Assembly> subjects = new[]
+				{
+					Assembly.GetExecutingAssembly(),
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<AssemblyTitleAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<AssemblyTitleAttribute>());
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subjects
-				             it contained not matching assemblies [],
-				             but it only contained matching assemblies *
-				             """).AsWildcard();
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
+					             not all have AssemblyTitleAttribute,
+					             but it only contained matching assemblies *
+					             """).AsWildcard();
+			}
+
+			[AttributeUsage(AttributeTargets.Assembly)]
+			private class TestAttribute : Attribute;
 		}
-
-		[AttributeUsage(AttributeTargets.Assembly)]
-		private class TestAttribute : Attribute;
 	}
 }

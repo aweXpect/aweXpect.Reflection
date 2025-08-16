@@ -90,7 +90,10 @@ public static partial class ThatAssemblies
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendNormalResult(stringBuilder, indentation);
+		{
+			stringBuilder.Append("not all ");
+			attributeFilterOptions.AppendDescription(stringBuilder, Grammars.Negate());
+		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{

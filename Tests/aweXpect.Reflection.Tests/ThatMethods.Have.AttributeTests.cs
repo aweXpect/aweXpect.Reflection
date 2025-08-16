@@ -100,7 +100,7 @@ public sealed partial class ThatMethods
 			}
 			// ReSharper restore UnusedMember.Local
 		}
-		
+
 		public sealed class OrHave
 		{
 			public sealed class AttributeTests
@@ -161,7 +161,7 @@ public sealed partial class ThatMethods
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute or have ThatMethods.Have.OrHave.AttributeTests.BarAttribute,
+						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute or ThatMethods.Have.OrHave.AttributeTests.BarAttribute,
 						             but it contained not matching methods [
 						               Void NoAttributeMethod()
 						             ]
@@ -213,7 +213,7 @@ public sealed partial class ThatMethods
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or have ThatMethods.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
+						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or ThatMethods.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
 						             but it contained not matching methods [
 						               Void TestMethod1()
 						             ]
@@ -250,73 +250,75 @@ public sealed partial class ThatMethods
 				// ReSharper restore UnusedMember.Local
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenMethodsDoNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			IEnumerable<MethodInfo> subjects = new[]
+			[Fact]
+			public async Task WhenMethodsDoNotHaveAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetMethod("NoAttributeMethod")!,
-			};
+				IEnumerable<MethodInfo> subjects = new[]
+				{
+					typeof(TestClass).GetMethod("NoAttributeMethod")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenMethodsDoNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			IEnumerable<MethodInfo> subjects = new[]
+			[Fact]
+			public async Task WhenMethodsDoNotHaveMatchingAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetMethod("TestMethod1")!,
-			};
+				IEnumerable<MethodInfo> subjects = new[]
+				{
+					typeof(TestClass).GetMethod("TestMethod1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenMethodsHaveAttribute_ShouldFail()
-		{
-			IEnumerable<MethodInfo> subjects = new[]
+			[Fact]
+			public async Task WhenMethodsHaveAttribute_ShouldFail()
 			{
-				typeof(TestClass).GetMethod("TestMethod1")!,
-			};
+				IEnumerable<MethodInfo> subjects = new[]
+				{
+					typeof(TestClass).GetMethod("TestMethod1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>().OrHave<TestAttribute>(x => x.Value == "foo"));
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subjects
-				             it contained not matching methods [],
-				             but it only contained matching methods [
-				               Void TestMethod1()
-				             ]
-				             """);
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
+					             not all have ThatMethods.Have.NegatedTests.TestAttribute or ThatMethods.Have.NegatedTests.TestAttribute matching x => x.Value == "foo",
+					             but it only contained matching methods [
+					               Void TestMethod1()
+					             ]
+					             """);
+			}
+
+			[AttributeUsage(AttributeTargets.Method)]
+			private class TestAttribute : Attribute
+			{
+				public string Value { get; set; } = "";
+			}
+
+			// ReSharper disable UnusedMember.Local
+			private class TestClass
+			{
+				[Test(Value = "Method1Value")]
+				public void TestMethod1() { }
+
+				public void NoAttributeMethod() { }
+			}
+			// ReSharper restore UnusedMember.Local
 		}
-
-		[AttributeUsage(AttributeTargets.Method)]
-		private class TestAttribute : Attribute
-		{
-			public string Value { get; set; } = "";
-		}
-
-		// ReSharper disable UnusedMember.Local
-		private class TestClass
-		{
-			[Test(Value = "Method1Value")]
-			public void TestMethod1() { }
-
-			public void NoAttributeMethod() { }
-		}
-		// ReSharper restore UnusedMember.Local
 	}
 }

@@ -98,7 +98,7 @@ public sealed partial class ThatEvents
 			}
 #pragma warning restore CS0067
 		}
-		
+
 		public sealed class OrHave
 		{
 			public sealed class AttributeTests
@@ -159,7 +159,7 @@ public sealed partial class ThatEvents
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatEvents.Have.OrHave.AttributeTests.TestAttribute or have ThatEvents.Have.OrHave.AttributeTests.BarAttribute,
+						             all have ThatEvents.Have.OrHave.AttributeTests.TestAttribute or ThatEvents.Have.OrHave.AttributeTests.BarAttribute,
 						             but it contained not matching events [
 						               System.Action NoAttributeEvent
 						             ]
@@ -211,7 +211,7 @@ public sealed partial class ThatEvents
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatEvents.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or have ThatEvents.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
+						             all have ThatEvents.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or ThatEvents.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
 						             but it contained not matching events [
 						               System.Action TestEvent1
 						             ]
@@ -238,79 +238,81 @@ public sealed partial class ThatEvents
 					[Bar(Name = "bar")] public event Action? BarEvent;
 
 					[Test(Value = "BothValue")]
-					[Bar(Name = "both")] public event Action? BothEvent;
+					[Bar(Name = "both")]
+					public event Action? BothEvent;
 
 					public event Action? NoAttributeEvent;
 				}
 #pragma warning restore CS0067
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenEventsDoNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			IEnumerable<EventInfo> subjects = new[]
+			[Fact]
+			public async Task WhenEventsDoNotHaveAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetEvent("NoAttributeEvent")!,
-			};
+				IEnumerable<EventInfo> subjects = new[]
+				{
+					typeof(TestClass).GetEvent("NoAttributeEvent")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenEventsDoNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			IEnumerable<EventInfo> subjects = new[]
+			[Fact]
+			public async Task WhenEventsDoNotHaveMatchingAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetEvent("TestEvent1")!,
-			};
+				IEnumerable<EventInfo> subjects = new[]
+				{
+					typeof(TestClass).GetEvent("TestEvent1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenEventsHaveAttribute_ShouldFail()
-		{
-			IEnumerable<EventInfo> subjects = new[]
+			[Fact]
+			public async Task WhenEventsHaveAttribute_ShouldFail()
 			{
-				typeof(TestClass).GetEvent("TestEvent1")!,
-			};
+				IEnumerable<EventInfo> subjects = new[]
+				{
+					typeof(TestClass).GetEvent("TestEvent1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>().OrHave<TestAttribute>(x => x.Value == "foo"));
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subjects
-				             it contained not matching events [],
-				             but it only contained matching events [
-				               System.Action TestEvent1
-				             ]
-				             """);
-		}
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
+					             not all have ThatEvents.Have.NegatedTests.TestAttribute or ThatEvents.Have.NegatedTests.TestAttribute matching x => x.Value == "foo",
+					             but it only contained matching events [
+					               System.Action TestEvent1
+					             ]
+					             """);
+			}
 
-		[AttributeUsage(AttributeTargets.Event)]
-		private class TestAttribute : Attribute
-		{
-			public string Value { get; set; } = "";
-		}
+			[AttributeUsage(AttributeTargets.Event)]
+			private class TestAttribute : Attribute
+			{
+				public string Value { get; set; } = "";
+			}
 
 #pragma warning disable CS0067 // Event is never used
-		private class TestClass
-		{
-			[Test(Value = "Event1Value")] public event Action? TestEvent1;
+			private class TestClass
+			{
+				[Test(Value = "Event1Value")] public event Action? TestEvent1;
 
-			public event Action? NoAttributeEvent;
-		}
+				public event Action? NoAttributeEvent;
+			}
 #pragma warning restore CS0067
+		}
 	}
 }

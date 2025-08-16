@@ -43,7 +43,8 @@ public sealed partial class ThatProperties
 			{
 				IEnumerable<PropertyInfo> subject = new[]
 				{
-					typeof(TestClass).GetProperty("TestProperty1")!, typeof(TestClass).GetProperty("NoAttributeProperty")!,
+					typeof(TestClass).GetProperty("TestProperty1")!,
+					typeof(TestClass).GetProperty("NoAttributeProperty")!,
 				};
 
 				async Task Act()
@@ -98,7 +99,7 @@ public sealed partial class ThatProperties
 			}
 			// ReSharper restore UnusedMember.Local
 		}
-		
+
 		public sealed class OrHave
 		{
 			public sealed class AttributeTests
@@ -159,7 +160,7 @@ public sealed partial class ThatProperties
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatProperties.Have.OrHave.AttributeTests.TestAttribute or have ThatProperties.Have.OrHave.AttributeTests.BarAttribute,
+						             all have ThatProperties.Have.OrHave.AttributeTests.TestAttribute or ThatProperties.Have.OrHave.AttributeTests.BarAttribute,
 						             but it contained not matching properties [
 						               System.String NoAttributeProperty
 						             ]
@@ -211,7 +212,7 @@ public sealed partial class ThatProperties
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             all have ThatProperties.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or have ThatProperties.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
+						             all have ThatProperties.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or ThatProperties.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
 						             but it contained not matching properties [
 						               System.String TestProperty1
 						             ]
@@ -238,79 +239,82 @@ public sealed partial class ThatProperties
 					[Bar(Name = "bar")] public string BarProperty { get; set; } = "";
 
 					[Test(Value = "BothValue")]
-					[Bar(Name = "both")] public string BothProperty { get; set; } = "";
+					[Bar(Name = "both")]
+					public string BothProperty { get; set; } = "";
 
 					public string NoAttributeProperty { get; set; } = "";
 				}
 				// ReSharper restore UnusedMember.Local
 			}
 		}
-	}
 
-	public sealed class NegatedTests
-	{
-		[Fact]
-		public async Task WhenPropertiesDoNotHaveAttribute_ShouldSucceed()
+		public sealed class NegatedTests
 		{
-			IEnumerable<PropertyInfo> subjects = new[]
+			[Fact]
+			public async Task WhenPropertiesDoNotHaveAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetProperty("NoAttributeProperty")!,
-			};
+				IEnumerable<PropertyInfo> subjects = new[]
+				{
+					typeof(TestClass).GetProperty("NoAttributeProperty")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenPropertiesDoNotHaveMatchingAttribute_ShouldSucceed()
-		{
-			IEnumerable<PropertyInfo> subjects = new[]
+			[Fact]
+			public async Task WhenPropertiesDoNotHaveMatchingAttribute_ShouldSucceed()
 			{
-				typeof(TestClass).GetProperty("TestProperty1")!,
-			};
+				IEnumerable<PropertyInfo> subjects = new[]
+				{
+					typeof(TestClass).GetProperty("TestProperty1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
 
-			await That(Act).DoesNotThrow();
-		}
+				await That(Act).DoesNotThrow();
+			}
 
-		[Fact]
-		public async Task WhenPropertiesHaveAttribute_ShouldFail()
-		{
-			IEnumerable<PropertyInfo> subjects = new[]
+			[Fact]
+			public async Task WhenPropertiesHaveAttribute_ShouldFail()
 			{
-				typeof(TestClass).GetProperty("TestProperty1")!,
-			};
+				IEnumerable<PropertyInfo> subjects = new[]
+				{
+					typeof(TestClass).GetProperty("TestProperty1")!,
+				};
 
-			async Task Act()
-				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+				async Task Act()
+					=> await That(subjects).DoesNotComplyWith(they
+						=> they.Have<TestAttribute>().OrHave<TestAttribute>(x => x.Value == "foo"));
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subjects
-				             it contained not matching properties [],
-				             but it only contained matching properties [
-				               System.String TestProperty1
-				             ]
-				             """);
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
+					             not all have ThatProperties.Have.NegatedTests.TestAttribute or ThatProperties.Have.NegatedTests.TestAttribute matching x => x.Value == "foo",
+					             but it only contained matching properties [
+					               System.String TestProperty1
+					             ]
+					             """);
+			}
+
+			[AttributeUsage(AttributeTargets.Property)]
+			private class TestAttribute : Attribute
+			{
+				public string Value { get; set; } = "";
+			}
+
+			// ReSharper disable UnusedMember.Local
+			private class TestClass
+			{
+				[Test(Value = "Property1Value")] public string TestProperty1 { get; set; } = "";
+
+				public string NoAttributeProperty { get; set; } = "";
+			}
+			// ReSharper restore UnusedMember.Local
 		}
-
-		[AttributeUsage(AttributeTargets.Property)]
-		private class TestAttribute : Attribute
-		{
-			public string Value { get; set; } = "";
-		}
-
-		// ReSharper disable UnusedMember.Local
-		private class TestClass
-		{
-			[Test(Value = "Property1Value")] public string TestProperty1 { get; set; } = "";
-
-			public string NoAttributeProperty { get; set; } = "";
-		}
-		// ReSharper restore UnusedMember.Local
 	}
 }
