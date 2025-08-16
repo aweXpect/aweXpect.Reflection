@@ -338,6 +338,50 @@ public sealed partial class ThatMethod
 						.AsWildcard();
 				}
 			}
+
+			public sealed class OrReturnsExactlyTests
+			{
+				[Fact]
+				public async Task WithMultipleOrReturns_ShouldSupportChaining()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject).DoesNotComplyWith(it
+							=> it.Returns<string>().OrReturnsExactly(typeof(bool)).OrReturnsExactly<Task>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithOrReturns_WhenMethodReturnsNoneOfTheTypes_ShouldSucceed()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject).DoesNotComplyWith(it => it.Returns<string>().OrReturnsExactly<bool>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithOrReturns_WhenMethodReturnsOneOfTheTypes_ShouldFail()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject)
+							.DoesNotComplyWith(it => it.Returns(typeof(string)).OrReturnsExactly<int>());
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             does not return string or exactly int,
+						             but it did
+						             """)
+						.AsWildcard();
+				}
+			}
 		}
 	}
 }

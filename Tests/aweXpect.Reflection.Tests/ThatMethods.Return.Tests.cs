@@ -133,6 +133,45 @@ public sealed partial class ThatMethods
 			}
 		}
 
+		public sealed class OrReturnExactlyTests
+		{
+			[Fact]
+			public async Task WithMultipleOrReturn_ShouldSupportChaining()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				await That(methods).Return<int>().OrReturn<string>().OrReturnExactly(typeof(bool))
+					.OrReturn<DummyBase>();
+			}
+
+			[Fact]
+			public async Task WithOrReturn_WhenAllMethodsReturnOneOfTheTypes_ShouldSucceed()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name is nameof(TestClass.GetString) or nameof(TestClass.GetInt));
+
+				await That(methods).Return<string>().OrReturnExactly(typeof(int));
+			}
+
+			[Fact]
+			public async Task WithOrReturn_WhenSomeMethodsDoNotReturnAnyOfTheTypes_ShouldFail()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				async Task Act()
+					=> await That(methods).Return<bool>().OrReturnExactly<Task>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that methods matching m => m.Name.StartsWith("Get") in type ThatMethods.TestClass
+					             all return bool or exactly Task,
+					             but it contained not matching methods [*]
+					             """).AsWildcard();
+			}
+		}
+
 		public sealed class NegatedTests
 		{
 			public sealed class GenericTests

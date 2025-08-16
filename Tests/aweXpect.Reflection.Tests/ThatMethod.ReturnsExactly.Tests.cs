@@ -158,7 +158,7 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             returns exactly string or bool,
+					             returns exactly string or exactly bool,
 					             but it returned int
 					             """);
 			}
@@ -185,7 +185,7 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             returns exactly ThatMethod.BaseClass or string,
+					             returns exactly ThatMethod.BaseClass or exactly string,
 					             but it returned ThatMethod.DerivedClass
 					             """)
 					.AsWildcard();
@@ -236,6 +236,50 @@ public sealed partial class ThatMethod
 				}
 			}
 
+			public sealed class OrReturnsTests
+			{
+				[Fact]
+				public async Task WithMultipleOrReturnsExactly_ShouldSupportChaining()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject).DoesNotComplyWith(it
+							=> it.ReturnsExactly<string>().OrReturnsExactly(typeof(bool)).OrReturns<Task>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithOrReturnsExactly_WhenMethodReturnsNoneOfTheTypes_ShouldSucceed()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject)
+							.DoesNotComplyWith(it => it.ReturnsExactly<string>().OrReturns<bool>());
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithOrReturnsExactly_WhenMethodReturnsOneOfTheTypes_ShouldFail()
+				{
+					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+					async Task Act()
+						=> await That(subject)
+							.DoesNotComplyWith(it => it.ReturnsExactly<string>().OrReturns<int>());
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             does not return exactly string or int,
+						             but it did
+						             """);
+				}
+			}
+
 			public sealed class OrReturnsExactlyTests
 			{
 				[Fact]
@@ -274,7 +318,7 @@ public sealed partial class ThatMethod
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
 						             Expected that subject
-						             does not return exactly string or int,
+						             does not return exactly string or exactly int,
 						             but it did
 						             """);
 				}

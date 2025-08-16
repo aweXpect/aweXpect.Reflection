@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Reflection.Helpers;
+using aweXpect.Reflection.Options;
 using aweXpect.Results;
 
 namespace aweXpect.Reflection;
@@ -25,33 +24,13 @@ public static partial class ThatMethod
 	public static MethodReturnResult<MethodInfo?, IThat<MethodInfo?>> Returns(
 		this IThat<MethodInfo?> subject, Type returnType)
 	{
-		List<Type> returnTypes = [returnType,];
+		TypeFilterOptions typeFilterOptions = new();
+		typeFilterOptions.RegisterType(returnType, false);
 		return new MethodReturnResult<MethodInfo?, IThat<MethodInfo?>>(
 			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnsConstraint(it, grammars, returnTypes)),
+				=> new ReturnsConstraint(it, grammars, typeFilterOptions)),
 			subject,
-			returnTypes);
-	}
-
-	/// <summary>
-	///     Verifies that the method returns exactly type <typeparamref name="TReturn" />.
-	/// </summary>
-	public static MethodReturnExactlyResult<MethodInfo?, IThat<MethodInfo?>> ReturnsExactly<TReturn>(
-		this IThat<MethodInfo?> subject)
-		=> ReturnsExactly(subject, typeof(TReturn));
-
-	/// <summary>
-	///     Verifies that the method returns exactly type <paramref name="returnType" />.
-	/// </summary>
-	public static MethodReturnExactlyResult<MethodInfo?, IThat<MethodInfo?>> ReturnsExactly(
-		this IThat<MethodInfo?> subject, Type returnType)
-	{
-		List<Type> returnTypes = [returnType,];
-		return new MethodReturnExactlyResult<MethodInfo?, IThat<MethodInfo?>>(
-			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnsExactlyConstraint(it, grammars, returnTypes)),
-			subject,
-			returnTypes);
+			typeFilterOptions);
 	}
 
 	/// <summary>
@@ -60,10 +39,14 @@ public static partial class ThatMethod
 	public sealed class MethodReturnResult<TValue, TResult>(
 		ExpectationBuilder expectationBuilder,
 		TResult subject,
-		List<Type> returnTypes)
-		: AndOrResult<TValue, TResult>(expectationBuilder, subject)
+		TypeFilterOptions typeFilterOptions)
+		: AndOrResult<TValue, TResult>(expectationBuilder, subject),
+			IOptionsProvider<TypeFilterOptions>
 		where TResult : IThat<TValue>
 	{
+		/// <inheritdoc cref="IOptionsProvider{TypeFilterOptions}.Options" />
+		TypeFilterOptions IOptionsProvider<TypeFilterOptions>.Options => typeFilterOptions;
+
 		/// <summary>
 		///     Allow an alternative return type <typeparamref name="TReturn" />.
 		/// </summary>
@@ -75,33 +58,22 @@ public static partial class ThatMethod
 		/// </summary>
 		public MethodReturnResult<TValue, TResult> OrReturns(Type returnType)
 		{
-			returnTypes.Add(returnType);
+			typeFilterOptions.RegisterType(returnType, false);
 			return this;
 		}
-	}
 
-	/// <summary>
-	///     Result that allows chaining additional exact return types for a single method.
-	/// </summary>
-	public sealed class MethodReturnExactlyResult<TValue, TResult>(
-		ExpectationBuilder expectationBuilder,
-		TResult subject,
-		List<Type> returnTypes)
-		: AndOrResult<TValue, TResult>(expectationBuilder, subject)
-		where TResult : IThat<TValue>
-	{
 		/// <summary>
 		///     Allow an alternative exact return type <typeparamref name="TReturn" />.
 		/// </summary>
-		public MethodReturnExactlyResult<TValue, TResult> OrReturnsExactly<TReturn>()
+		public MethodReturnResult<TValue, TResult> OrReturnsExactly<TReturn>()
 			=> OrReturnsExactly(typeof(TReturn));
 
 		/// <summary>
 		///     Allow an alternative exact return type <paramref name="returnType" />.
 		/// </summary>
-		public MethodReturnExactlyResult<TValue, TResult> OrReturnsExactly(Type returnType)
+		public MethodReturnResult<TValue, TResult> OrReturnsExactly(Type returnType)
 		{
-			returnTypes.Add(returnType);
+			typeFilterOptions.RegisterType(returnType, true);
 			return this;
 		}
 	}
@@ -109,21 +81,21 @@ public static partial class ThatMethod
 	private sealed class ReturnsConstraint(
 		string it,
 		ExpectationGrammars grammars,
-		List<Type> returnTypes)
+		TypeFilterOptions typeFilterOptions)
 		: ConstraintResult.WithNotNullValue<MethodInfo?>(it, grammars),
 			IValueConstraint<MethodInfo?>
 	{
 		public ConstraintResult IsMetBy(MethodInfo? actual)
 		{
 			Actual = actual;
-			Outcome = returnTypes.Any(returnType => actual?.ReturnType.IsOrInheritsFrom(returnType) == true)
+			Outcome = typeFilterOptions.Matches(actual?.ReturnType)
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendReturnDescription(stringBuilder, Grammars);
+			=> typeFilterOptions.AppendDescription(stringBuilder, Grammars);
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("it returned ").Append(Formatter.Format(Actual?.ReturnType));
@@ -133,72 +105,5 @@ public static partial class ThatMethod
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("it did");
-
-
-		private void AppendReturnDescription(StringBuilder stringBuilder, ExpectationGrammars grammars)
-		{
-			stringBuilder.Append(grammars.HasFlag(ExpectationGrammars.Negated)
-				? "does not return "
-				: "returns ");
-
-			int index = 0;
-			foreach (Type returnType in returnTypes)
-			{
-				if (index++ > 0)
-				{
-					stringBuilder.Append(" or ");
-				}
-
-				Formatter.Format(stringBuilder, returnType);
-			}
-		}
-	}
-
-	private sealed class ReturnsExactlyConstraint(
-		string it,
-		ExpectationGrammars grammars,
-		List<Type> returnTypes)
-		: ConstraintResult.WithNotNullValue<MethodInfo?>(it, grammars),
-			IValueConstraint<MethodInfo?>
-	{
-		public ConstraintResult IsMetBy(MethodInfo? actual)
-		{
-			Actual = actual;
-			Outcome = returnTypes.Any(returnType => actual?.ReturnType.IsOrInheritsFrom(returnType, true) == true)
-				? Outcome.Success
-				: Outcome.Failure;
-			return this;
-		}
-
-		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendReturnExactlyDescription(stringBuilder, Grammars);
-
-		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("it returned ").Append(Formatter.Format(Actual?.ReturnType));
-
-		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendReturnExactlyDescription(stringBuilder, Grammars);
-
-		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("it did");
-
-
-		private void AppendReturnExactlyDescription(StringBuilder stringBuilder, ExpectationGrammars grammars)
-		{
-			stringBuilder.Append(grammars.HasFlag(ExpectationGrammars.Negated)
-				? "does not return exactly "
-				: "returns exactly ");
-
-			int index = 0;
-			foreach (Type returnType in returnTypes)
-			{
-				if (index++ > 0)
-				{
-					stringBuilder.Append(" or ");
-				}
-
-				Formatter.Format(stringBuilder, returnType);
-			}
-		}
 	}
 }
