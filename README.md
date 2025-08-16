@@ -98,6 +98,10 @@ In.AllLoadedAssemblies().Types()
     .WhichAreStatic()
     .WhichAreGeneric()
     .WhichAreNested()
+	
+// Or alternatively
+In.AllLoadedAssemblies().Public.Abstract.Classes()
+In.AllLoadedAssemblies().Internal.Generic.Interfaces()
 
 // Filter by name or namespace
 In.AllLoadedAssemblies().Types()
@@ -784,19 +788,16 @@ await Expect.That(complexTypes).HaveName("Manager").AsSuffix();
 
 ### Assembly Exclusions
 
-By default, system assemblies are excluded from `In.AllLoadedAssemblies()`. You can customize this behavior:
+By default, system assemblies that start with the following prefixes are excluded from `In.AllLoadedAssemblies()`:
+- "mscorlib"
+- "System"
+- "Microsoft"
+- "JetBrains"
+- "xunit"
+- "Castle"
+- "DynamicProxyGenAssembly2"
 
-```csharp
-// The library automatically excludes assemblies with these prefixes:
-// - "System."
-// - "Microsoft."
-// - "Windows."
-// - "mscorlib"
-// - "netstandard"
-// - etc.
-
-// This can be configured through aweXpect's customization system
-```
+You can customize this behavior through aweXpect's customization system via `Customize.aweXpect.Reflection().ExcludedAssemblyPrefixes`.
 
 ### Thread Safety
 
@@ -807,66 +808,4 @@ All expectations are thread-safe and can be used in parallel tests without issue
 - The `In` helper uses lazy evaluation where possible
 - Filtering operations are optimized for common scenarios
 - Consider caching reflection results if you're performing the same queries repeatedly
-
-## Integration Examples
-
-### With xUnit
-```csharp
-public class ArchitectureTests
-{
-    [Fact]
-    public async Task Controllers_Should_FollowNamingConvention()
-    {
-        await Expect.That(In.AllLoadedAssemblies()
-                .Types().WhichInheritFrom<ControllerBase>())
-            .HaveName("Controller").AsSuffix();
-    }
-
-    [Fact]
-    public async Task Services_Should_BeRegisteredAsInterfaces()
-    {
-        await Expect.That(In.AllLoadedAssemblies()
-                .Types().WithName("Service").AsSuffix()
-                .WhichAreClasses())
-            .All().Satisfy(type => type.GetInterfaces().Length > 0);
-    }
-}
-```
-
-### With NUnit
-```csharp
-[TestFixture]
-public class ArchitectureTests
-{
-    [Test]
-    public async Task AsyncMethods_Should_ReturnTask()
-    {
-        await Expect.That(In.AllLoadedAssemblies()
-                .Methods().WithName("Async").AsSuffix())
-            .Return<Task>().OrReturn<ValueTask>();
-    }
-}
-```
-
-### Architecture Testing Patterns
-```csharp
-public class LayerTests
-{
-    [Fact]
-    public async Task Domain_ShouldNotReference_Infrastructure()
-    {
-        await Expect.That(In.AllLoadedAssemblies()
-                .Types().WithNamespace("MyApp.Domain"))
-            .All().Satisfy(t => t.Assembly.GetReferencedAssemblies()
-                .All(a => !a.Name?.StartsWith("MyApp.Infrastructure") == true));
-    }
-
-    [Fact]
-    public async Task Entities_ShouldHave_IdProperty()
-    {
-        await Expect.That(In.AllLoadedAssemblies()
-                .Types().WithNamespace("MyApp.Domain.Entities"))
-            .All().Satisfy(t => t.GetProperty("Id") != null);
-    }
-}
 
