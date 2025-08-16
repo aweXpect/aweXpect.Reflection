@@ -1,7 +1,7 @@
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace aweXpect.Reflection.Tests.Filters;
+namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatMethod
 {

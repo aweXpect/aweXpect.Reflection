@@ -1,7 +1,7 @@
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace aweXpect.Reflection.Tests.Filters;
+namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatConstructor
 {
@@ -29,7 +29,7 @@ public sealed partial class ThatConstructor
 					=> await That(constructorInfo).HasParameter<int>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter of type System.Int32*");
+					.WithMessage("Expected that constructorInfo\nhas parameter of type int,\nbut it did not");
 			}
 
 			[Fact]
@@ -52,8 +52,7 @@ public sealed partial class ThatConstructor
 					=> await That(constructorInfo).HasParameter("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter with name \"value\"*");
-			}
+					.WithMessage("Expected that constructorInfo\nhas parameter with name \"value\",\nbut it did not");
 			}
 
 			[Fact]
@@ -76,8 +75,7 @@ public sealed partial class ThatConstructor
 					=> await That(constructorInfo).HasParameter<int>("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter of type System.Int32 with name \"value\"*");
-			}
+					.WithMessage("Expected that constructorInfo\nhas parameter of type int with name \"value\",\nbut it did not");
 			}
 
 			[Fact]
@@ -89,7 +87,7 @@ public sealed partial class ThatConstructor
 					=> await That(constructorInfo).HasParameter<string>("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter of type System.String with name \"value\"*");
+					.WithMessage("Expected that constructorInfo\nhas parameter of type string with name \"value\",\nbut it did not");
 			}
 
 			// ReSharper disable UnusedParameter.Local

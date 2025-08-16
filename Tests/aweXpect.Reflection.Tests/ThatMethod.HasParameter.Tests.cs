@@ -1,7 +1,7 @@
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace aweXpect.Reflection.Tests.Filters;
+namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatMethod
 {
@@ -29,7 +29,7 @@ public sealed partial class ThatMethod
 					=> await That(methodInfo).HasParameter<int>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter of type System.Int32*");
+					.WithMessage("Expected that methodInfo\nhas parameter of type int,\nbut it did not");
 			}
 
 			[Fact]
@@ -51,8 +51,8 @@ public sealed partial class ThatMethod
 				async Task Act()
 					=> await That(methodInfo).HasParameter("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("Expected that methodInfo\nhas parameter with name \"value\",\nbut it did not");
 			}
 
 			[Fact]
@@ -74,8 +74,8 @@ public sealed partial class ThatMethod
 				async Task Act()
 					=> await That(methodInfo).HasParameter<int>("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("Expected that methodInfo\nhas parameter of type int with name \"value\",\nbut it did not");
 			}
 
 			[Fact]
@@ -87,7 +87,7 @@ public sealed partial class ThatMethod
 					=> await That(methodInfo).HasParameter<string>("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*has parameter of type System.String with name \"value\"*");
+					.WithMessage("Expected that methodInfo\nhas parameter of type string with name \"value\",\nbut it did not");
 			}
 
 #pragma warning disable CA1822
