@@ -7,7 +7,7 @@ using aweXpect.Results;
 namespace aweXpect.Reflection.Results;
 
 /// <summary>
-///     Additional constraints on constructors with a parameter of a specific type.
+///     Additional constraints on a parameter collection with a parameter of a specific type.
 /// </summary>
 public class ParameterCollectionResult<TThat, TParameter>(
 	ExpectationBuilder expectationBuilder,

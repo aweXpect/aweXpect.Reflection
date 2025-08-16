@@ -5,7 +5,7 @@ using aweXpect.Results;
 namespace aweXpect.Reflection.Results;
 
 /// <summary>
-///     Additional constraints on constructors with a parameter at a specific index.
+///     Additional constraints on a parameter collection with a parameter at a specific index.
 /// </summary>
 public class ParameterCollectionAtIndexResult<TThat, TParameter>(
 	ExpectationBuilder expectationBuilder,
