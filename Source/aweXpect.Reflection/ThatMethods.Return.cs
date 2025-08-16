@@ -17,122 +17,68 @@ public static partial class ThatMethods
 	/// <summary>
 	///     Verifies that all methods in the filtered collection return type <typeparamref name="TReturn" />.
 	/// </summary>
-	public static MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return<TReturn>(
+	public static AndOrResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return<TReturn>(
 		this IThat<IEnumerable<MethodInfo>> subject)
 		=> Return(subject, typeof(TReturn));
 
 	/// <summary>
 	///     Verifies that all methods in the filtered collection return type <paramref name="returnType" />.
 	/// </summary>
-	public static MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return(
+	public static AndOrResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return(
 		this IThat<IEnumerable<MethodInfo>> subject, Type returnType)
 	{
-		ReturnTypeExpectation expectation = new(returnType);
-		return new MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>>(
-			new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnConstraint(it, grammars, expectation)),
-			subject),
-			expectation);
-	}
-
-	/// <summary>
-	///     Result for method return type expectations that supports chaining with OrReturn.
-	/// </summary>
-	public class MethodsReturnResult<TValue, TResult> : AndOrResult<TValue, TResult>
-	{
-		private readonly ReturnTypeExpectation _expectation;
-
-		public MethodsReturnResult(AndOrResult<TValue, TResult> baseResult, ReturnTypeExpectation expectation)
-			: base(baseResult.Result, baseResult.Source)
-		{
-			_expectation = expectation;
-		}
-
-		/// <summary>
-		///     Allow an alternative return type <typeparamref name="TReturn" />.
-		/// </summary>
-		public MethodsReturnResult<TValue, TResult> OrReturn<TReturn>()
-			=> OrReturn(typeof(TReturn));
-
-		/// <summary>
-		///     Allow an alternative return type <paramref name="returnType" />.
-		/// </summary>
-		public MethodsReturnResult<TValue, TResult> OrReturn(Type returnType)
-		{
-			_expectation.AddAlternative(returnType);
-			return this;
-		}
-	}
-
-	/// <summary>
-	///     Manages the expectation for return types, supporting multiple alternatives.
-	/// </summary>
-	public class ReturnTypeExpectation
-	{
-		private readonly List<Type> _returnTypes;
-
-		public ReturnTypeExpectation(Type initialReturnType)
-		{
-			_returnTypes = [initialReturnType];
-		}
-
-		public void AddAlternative(Type returnType)
-		{
-			_returnTypes.Add(returnType);
-		}
-
-		public bool MatchesAny(MethodInfo methodInfo)
-		{
-			return _returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType));
-		}
-
-		public string GetDescription()
-		{
-			if (_returnTypes.Count == 1)
-			{
-				return $"return {Formatter.Format(_returnTypes[0])}";
-			}
-
-			return string.Join(" or ", _returnTypes.Select(type => $"return {Formatter.Format(type)}"));
-		}
+		List<Type> returnTypes = [returnType];
+		return new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new ReturnConstraint(it, grammars, returnTypes)),
+			subject);
 	}
 
 	private sealed class ReturnConstraint(
 		string it,
 		ExpectationGrammars grammars,
-		ReturnTypeExpectation expectation)
+		List<Type> returnTypes)
 		: ConstraintResult.WithValue<IEnumerable<MethodInfo>>(grammars),
 			IValueConstraint<IEnumerable<MethodInfo>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<MethodInfo> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(expectation.MatchesAny)
+			Outcome = actual.All(methodInfo => returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType)))
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all ").Append(expectation.GetDescription());
+			=> stringBuilder.Append("all ").Append(GetReturnDescription());
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained not matching methods ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(methodInfo => !expectation.MatchesAny(methodInfo)),
+				Actual?.Where(methodInfo => !returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all ").Append(expectation.GetDescription());
+			=> stringBuilder.Append("all ").Append(GetReturnDescription());
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained matching methods ");
 			Formatter.Format(stringBuilder,
-				Actual?.Where(expectation.MatchesAny),
+				Actual?.Where(methodInfo => returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType))),
 				FormattingOptions.Indented(indentation));
+		}
+
+		private string GetReturnDescription()
+		{
+			if (returnTypes.Count == 1)
+			{
+				return $"return {Formatter.Format(returnTypes[0])}";
+			}
+
+			return string.Join(" or ", returnTypes.Select(type => $"return {Formatter.Format(type)}"));
 		}
 	}
 }
