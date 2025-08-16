@@ -44,8 +44,8 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has ThatAssembly.Has.AttributeTests.TestAttribute,
-					             but it did not in aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-					             """);
+					             but it did not in aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             """).AsWildcard();
 			}
 
 			[Fact]
@@ -60,8 +60,8 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has AssemblyTitleAttribute matching attr => attr.Title == "NonExistentTitle",
-					             but it did not in aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-					             """);
+					             but it did not in aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             """).AsWildcard();
 			}
 
 			[Fact]
@@ -121,8 +121,8 @@ public sealed partial class ThatAssembly
 					.WithMessage("""
 					             Expected that subject
 					             has no AssemblyTitleAttribute or ThatAssembly.Has.NegatedTests.TestAttribute,
-					             but it did in aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-					             """);
+					             but it did in aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             """).AsWildcard();
 			}
 
 			[AttributeUsage(AttributeTargets.Assembly)]
