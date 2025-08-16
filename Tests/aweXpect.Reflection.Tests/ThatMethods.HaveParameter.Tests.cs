@@ -38,7 +38,11 @@ public sealed partial class ThatMethods
 					=> await That(methods).HaveParameter<int>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that methods\nhave parameter of type int,\nbut at least one did not");
+					.WithMessage("""
+					             Expected that methods
+					             all have parameter of type int,
+					             but at least one did not
+					             """);
 			}
 
 			[Fact]
@@ -69,7 +73,11 @@ public sealed partial class ThatMethods
 					=> await That(methods).HaveParameter("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that methods\nhave parameter with name \"value\",\nbut at least one did not");
+					.WithMessage("""
+					             Expected that methods
+					             all have parameter with name "value",
+					             but at least one did not
+					             """);
 			}
 
 			[Fact]
@@ -100,7 +108,11 @@ public sealed partial class ThatMethods
 					=> await That(methods).HaveParameter<int>("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that methods\nhave parameter of type int with name \"value\",\nbut at least one did not");
+					.WithMessage("""
+					             Expected that methods
+					             all have parameter of type int with name "value",
+					             but at least one did not
+					             """);
 			}
 
 #pragma warning disable CA1822

@@ -38,7 +38,11 @@ public sealed partial class ThatConstructors
 					=> await That(constructors).HaveParameter<int>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that constructors\nhave parameter of type int,\nbut at least one did not");
+					.WithMessage("""
+					             Expected that constructors
+					             all have parameter of type int,
+					             but at least one did not
+					             """);
 			}
 
 			[Fact]
@@ -69,7 +73,11 @@ public sealed partial class ThatConstructors
 					=> await That(constructors).HaveParameter("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that constructors\nhave parameter with name \"value\",\nbut at least one did not");
+					.WithMessage("""
+					             Expected that constructors
+					             all have parameter with name "value",
+					             but at least one did not
+					             """);
 			}
 
 			[Fact]
@@ -100,7 +108,11 @@ public sealed partial class ThatConstructors
 					=> await That(constructors).HaveParameter<int>("value");
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("Expected that constructors\nhave parameter of type int with name \"value\",\nbut at least one did not");
+					.WithMessage("""
+					             Expected that constructors
+					             all have parameter of type int with name "value",
+					             but at least one did not
+					             """);
 			}
 
 			// ReSharper disable UnusedParameter.Local

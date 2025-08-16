@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Text;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
+using aweXpect.Options;
 using aweXpect.Reflection.Helpers;
-using aweXpect.Results;
+using aweXpect.Reflection.Options;
+using aweXpect.Reflection.Results;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -16,58 +18,107 @@ public static partial class ThatConstructors
 {
 	/// <summary>
 	///     Verifies that all items in the filtered collection of <see cref="ConstructorInfo" /> have
-	///     a parameter of type <typeparamref name="T" />.
+	///     a parameter of type <typeparamref name="TParameter" />.
 	/// </summary>
-	public static AndOrResult<IEnumerable<ConstructorInfo?>, IThat<IEnumerable<ConstructorInfo?>>> HaveParameter<T>(
+	public static ParameterCollectionResult<IEnumerable<ConstructorInfo?>, TParameter> HaveParameter<TParameter>(
 		this IThat<IEnumerable<ConstructorInfo?>> subject)
-		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new HaveParameterConstraint<T>(it, grammars, typeof(T), null)),
-			subject);
+	{
+		Type parameterType = typeof(TParameter);
+		CollectionIndexOptions collectionIndexOptions = new();
+		ParameterFilterOptions parameterFilterOptions = new(p => p.ParameterType == parameterType,
+			() => $"of type {Formatter.Format(parameterType)}");
+		return new ParameterCollectionResult<IEnumerable<ConstructorInfo?>, TParameter>(subject.Get().ExpectationBuilder
+				.AddConstraint((it, grammars)
+					=> new HaveParameterConstraint(it, grammars, parameterType, null,
+						collectionIndexOptions,
+						parameterFilterOptions)),
+			subject,
+			collectionIndexOptions,
+			parameterFilterOptions);
+	}
 
 	/// <summary>
 	///     Verifies that all items in the filtered collection of <see cref="ConstructorInfo" /> have
-	///     a parameter of type <typeparamref name="T" /> with the <paramref name="expected" /> name.
+	///     a parameter of type <typeparamref name="TParameter" /> with the <paramref name="expected" /> name.
 	/// </summary>
-	public static AndOrResult<IEnumerable<ConstructorInfo?>, IThat<IEnumerable<ConstructorInfo?>>> HaveParameter<T>(
+	public static NamedParameterCollectionResult<IEnumerable<ConstructorInfo?>, TParameter> HaveParameter<TParameter>(
 		this IThat<IEnumerable<ConstructorInfo?>> subject, string expected)
-		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new HaveParameterConstraint<T>(it, grammars, typeof(T), expected)),
-			subject);
+	{
+		Type parameterType = typeof(TParameter);
+		StringEqualityOptions stringEqualityOptions = new();
+		CollectionIndexOptions collectionIndexOptions = new();
+		ParameterFilterOptions parameterFilterOptions = new(p => p.ParameterType == parameterType,
+			() => $"of type {Formatter.Format(parameterType)}");
+		parameterFilterOptions.AddPredicate(p => stringEqualityOptions.AreConsideredEqual(p.Name, expected),
+			() => $"name {stringEqualityOptions.GetExpectation(expected, ExpectationGrammars.None)}");
+		return new NamedParameterCollectionResult<IEnumerable<ConstructorInfo?>, TParameter>(subject.Get()
+				.ExpectationBuilder
+				.AddConstraint((it, grammars)
+					=> new HaveParameterConstraint(it, grammars, parameterType, expected,
+						collectionIndexOptions,
+						parameterFilterOptions)),
+			subject,
+			collectionIndexOptions,
+			parameterFilterOptions,
+			stringEqualityOptions);
+	}
 
 	/// <summary>
 	///     Verifies that all items in the filtered collection of <see cref="ConstructorInfo" /> have
 	///     a parameter with the <paramref name="expected" /> name.
 	/// </summary>
-	public static AndOrResult<IEnumerable<ConstructorInfo?>, IThat<IEnumerable<ConstructorInfo?>>> HaveParameter(
+	public static NamedParameterCollectionResult<IEnumerable<ConstructorInfo?>, object?> HaveParameter(
 		this IThat<IEnumerable<ConstructorInfo?>> subject, string expected)
-		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new HaveParameterConstraint<object?>(it, grammars, null, expected)),
-			subject);
+	{
+		StringEqualityOptions stringEqualityOptions = new();
+		CollectionIndexOptions collectionIndexOptions = new();
+		ParameterFilterOptions parameterFilterOptions = new(
+			p => stringEqualityOptions.AreConsideredEqual(p.Name, expected),
+			() => $"with name {stringEqualityOptions.GetExpectation(expected, ExpectationGrammars.None)}");
+		return new NamedParameterCollectionResult<IEnumerable<ConstructorInfo?>, object?>(subject.Get()
+				.ExpectationBuilder
+				.AddConstraint((it, grammars)
+					=> new HaveParameterConstraint(it, grammars, null, expected,
+						collectionIndexOptions,
+						parameterFilterOptions)),
+			subject,
+			collectionIndexOptions,
+			parameterFilterOptions,
+			stringEqualityOptions);
+	}
 
-	private sealed class HaveParameterConstraint<T>(
+	private sealed class HaveParameterConstraint(
 		string it,
 		ExpectationGrammars grammars,
 		Type? parameterType,
-		string? expectedName)
+		string? expectedName,
+		CollectionIndexOptions collectionIndexOptions,
+		ParameterFilterOptions parameterFilterOptions)
 		: ConstraintResult.WithNotNullValue<IEnumerable<ConstructorInfo?>>(it, grammars),
 			IValueConstraint<IEnumerable<ConstructorInfo?>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<ConstructorInfo?> actual)
 		{
 			Actual = actual;
-			if (actual == null)
-			{
-				Outcome = Outcome.Failure;
-				return this;
-			}
-
 			bool allHaveParameter = actual.All(constructor =>
 			{
-				if (constructor == null) return false;
+				if (constructor == null)
+				{
+					return false;
+				}
+
 				ParameterInfo[] parameters = constructor.GetParameters();
-				return parameters.Any(p =>
-					(parameterType == null || p.ParameterType == parameterType) &&
-					(expectedName == null || string.Equals(p.Name, expectedName, StringComparison.Ordinal)));
+				bool hasParameter = parameters.Where((p, i) =>
+				{
+					bool? isIndexInRange = collectionIndexOptions.Match switch
+					{
+						CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
+						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
+						_ => true, // No index constraint means all indices are valid
+					};
+					return isIndexInRange != false && parameterFilterOptions.Matches(p);
+				}).Any();
+				return hasParameter;
 			});
 
 			Outcome = allHaveParameter ? Outcome.Success : Outcome.Failure;
@@ -76,38 +127,48 @@ public static partial class ThatConstructors
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("have parameter");
+			stringBuilder.Append("all have parameter");
 			if (parameterType != null)
 			{
 				stringBuilder.Append(" of type ").Append(Formatter.Format(parameterType));
 			}
+
 			if (expectedName != null)
 			{
 				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
+			}
+
+			string indexDescription = collectionIndexOptions.Match.GetDescription();
+			if (!string.IsNullOrEmpty(indexDescription))
+			{
+				stringBuilder.Append(indexDescription);
 			}
 		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
-		{
-			stringBuilder.Append("at least one did not");
-		}
+			=> stringBuilder.Append("at least one did not");
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("do not all have parameter");
+			stringBuilder.Append("not all have parameter");
 			if (parameterType != null)
 			{
 				stringBuilder.Append(" of type ").Append(Formatter.Format(parameterType));
 			}
+
 			if (expectedName != null)
 			{
 				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
 			}
+
+			string indexDescription = collectionIndexOptions.Match.GetDescription();
+			if (!string.IsNullOrEmpty(indexDescription))
+			{
+				stringBuilder.Append(indexDescription);
+			}
 		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
-		{
-			stringBuilder.Append("all did");
-		}
+			=> stringBuilder.Append("all did");
 	}
 }

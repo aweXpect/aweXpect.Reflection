@@ -5,6 +5,4 @@ namespace aweXpect.Reflection;
 /// <summary>
 ///     Expectations on a collection of <see cref="ConstructorInfo" />.
 /// </summary>
-public static partial class ThatConstructors
-{
-}
+public static partial class ThatConstructors;
