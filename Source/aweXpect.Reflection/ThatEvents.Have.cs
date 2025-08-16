@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using aweXpect.Core;
@@ -13,49 +14,49 @@ using aweXpect.Reflection.Results;
 
 namespace aweXpect.Reflection;
 
-public static partial class ThatTypes
+public static partial class ThatEvents
 {
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> have
+	///     Verifies that all items in the filtered collection of <see cref="EventInfo" /> have
 	///     attribute of type <typeparamref name="TAttribute" />.
 	/// </summary>
 	/// <remarks>
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static HaveAttributeResult<Type?> Have<TAttribute>(
-		this IThat<IEnumerable<Type?>> subject, bool inherit = true)
+	public static HaveAttributeResult<EventInfo?> Have<TAttribute>(
+		this IThat<IEnumerable<EventInfo?>> subject, bool inherit = true)
 		where TAttribute : Attribute
 	{
-		AttributeFilterOptions<Type?> attributeFilterOptions =
+		AttributeFilterOptions<EventInfo?> attributeFilterOptions =
 			new((a, attributeType, p, i) => a.HasAttribute(attributeType, p, i));
 		attributeFilterOptions.RegisterAttribute<TAttribute>(inherit);
-		return new HaveAttributeResult<Type?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+		return new HaveAttributeResult<EventInfo?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HaveAttributeConstraint(it, grammars | ExpectationGrammars.Plural, attributeFilterOptions)),
 			subject,
 			attributeFilterOptions);
 	}
 
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> have
+	///     Verifies that all items in the filtered collection of <see cref="EventInfo" /> have
 	///     attribute of type <typeparamref name="TAttribute" />.
 	/// </summary>
 	/// <remarks>
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" /> specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static HaveAttributeResult<Type?> Have<TAttribute>(
-		this IThat<IEnumerable<Type?>> subject,
+	public static HaveAttributeResult<EventInfo?> Have<TAttribute>(
+		this IThat<IEnumerable<EventInfo?>> subject,
 		Func<TAttribute, bool> predicate,
 		bool inherit = true,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		where TAttribute : Attribute
 	{
-		AttributeFilterOptions<Type?> attributeFilterOptions =
+		AttributeFilterOptions<EventInfo?> attributeFilterOptions =
 			new((a, attributeType, p, i) => a.HasAttribute(attributeType, p, i));
 		attributeFilterOptions.RegisterAttribute(inherit, predicate, doNotPopulateThisValue);
-		return new HaveAttributeResult<Type?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+		return new HaveAttributeResult<EventInfo?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HaveAttributeConstraint(it, grammars | ExpectationGrammars.Plural, attributeFilterOptions)),
 			subject,
 			attributeFilterOptions);
@@ -64,11 +65,11 @@ public static partial class ThatTypes
 	private sealed class HaveAttributeConstraint(
 		string it,
 		ExpectationGrammars grammars,
-		AttributeFilterOptions<Type?> attributeFilterOptions)
-		: ConstraintResult.WithNotNullValue<IEnumerable<Type?>>(it, grammars),
-			IValueConstraint<IEnumerable<Type?>>
+		AttributeFilterOptions<EventInfo?> attributeFilterOptions)
+		: ConstraintResult.WithNotNullValue<IEnumerable<EventInfo?>>(it, grammars),
+			IValueConstraint<IEnumerable<EventInfo?>>
 	{
-		public ConstraintResult IsMetBy(IEnumerable<Type?> actual)
+		public ConstraintResult IsMetBy(IEnumerable<EventInfo?> actual)
 		{
 			Actual = actual;
 			Outcome = actual.All(attributeFilterOptions.Matches) ? Outcome.Success : Outcome.Failure;
@@ -83,8 +84,8 @@ public static partial class ThatTypes
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(It).Append(" contained not matching types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !attributeFilterOptions.Matches(type)),
+			stringBuilder.Append(It).Append(" contained not matching events ");
+			Formatter.Format(stringBuilder, Actual?.Where(eventInfo => !attributeFilterOptions.Matches(eventInfo)),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -96,7 +97,7 @@ public static partial class ThatTypes
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(It).Append(" only contained matching types ");
+			stringBuilder.Append(It).Append(" only contained matching events ");
 			Formatter.Format(stringBuilder, Actual?.Where(attributeFilterOptions.Matches),
 				FormattingOptions.Indented(indentation));
 		}
