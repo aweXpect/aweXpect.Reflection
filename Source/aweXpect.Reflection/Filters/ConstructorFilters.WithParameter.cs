@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using aweXpect.Core;
@@ -16,60 +17,120 @@ public static partial class ConstructorFilters
 	public static ConstructorsWithParameter<T> WithParameter<T>(this Filtered.Constructors @this)
 	{
 		Type parameterType = typeof(T);
+		CollectionIndexOptions indexOptions = new();
+		ParameterFilterOptions parameterFilterOptions = new(p => p.ParameterType == parameterType,
+			() => $"of type {Formatter.Format(parameterType)}");
 		IChangeableFilter<ConstructorInfo> filter = Filter.Suffix<ConstructorInfo>(
-			constructorInfo => constructorInfo.GetParameters().Any(p => p.ParameterType == parameterType),
-			() => $"with parameter of type {Formatter.Format(parameterType)} ");
-		return new ConstructorsWithParameter<T>(@this.Which(filter), filter);
+			constructorInfo =>
+			{
+				ParameterInfo[] parameters = constructorInfo.GetParameters();
+				return parameters.Where((p, i) =>
+				{
+					bool? isIndexInRange = indexOptions.Match switch
+					{
+						CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
+						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
+						_ => false,
+					};
+					return isIndexInRange == true && parameterFilterOptions.Matches(p);
+				}).Any();
+			},
+			() => $"with parameter {parameterFilterOptions.GetDescription()}{indexOptions.Match.GetDescription()} ");
+		return new ConstructorsWithParameter<T>(indexOptions, parameterFilterOptions, @this.Which(filter));
 	}
 
 	/// <summary>
-	///     Filter for constructors with a parameter of type <typeparamref name="T" /> with the <paramref name="expected" /> name.
+	///     Filter for constructors with a parameter of type <typeparamref name="T" /> with the <paramref name="expected" />
+	///     name.
 	/// </summary>
 	public static ConstructorsWithNamedParameter<T> WithParameter<T>(this Filtered.Constructors @this, string expected)
 	{
 		Type parameterType = typeof(T);
 		StringEqualityOptions options = new();
+		ParameterFilterOptions parameterFilterOptions = new(p => p.ParameterType == parameterType,
+			() => $"of type {Formatter.Format(parameterType)}");
+		parameterFilterOptions.AddPredicate(p => options.AreConsideredEqual(p.Name, expected),
+			() => $"name {options.GetExpectation(expected, ExpectationGrammars.None)}");
+		CollectionIndexOptions indexOptions = new();
 		IChangeableFilter<ConstructorInfo> filter = Filter.Suffix<ConstructorInfo>(
-			constructorInfo => constructorInfo.GetParameters()
-				.Any(p => p.ParameterType == parameterType && options.AreConsideredEqual(p.Name!, expected)),
-			() => $"with parameter of type {Formatter.Format(parameterType)} with name {options.GetExpectation(expected, ExpectationGrammars.None)} ");
-		return new ConstructorsWithNamedParameter<T>(@this.Which(filter), filter, options);
+			constructorInfo =>
+			{
+				ParameterInfo[] parameters = constructorInfo.GetParameters();
+				return parameters.Where((p, i) =>
+				{
+					bool? isIndexInRange = indexOptions.Match switch
+					{
+						CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
+						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
+						_ => false,
+					};
+					return isIndexInRange != false && p.ParameterType == parameterType &&
+					       options.AreConsideredEqual(p.Name, expected);
+				}).Any();
+			},
+			() => $"with parameter {parameterFilterOptions.GetDescription()}{indexOptions.Match.GetDescription()} ");
+		return new ConstructorsWithNamedParameter<T>(indexOptions, parameterFilterOptions, @this.Which(filter),
+			options);
 	}
 
 	/// <summary>
 	///     Filter for constructors with a parameter with the <paramref name="expected" /> name.
 	/// </summary>
-	public static ConstructorsWithNamedParameter WithParameter(this Filtered.Constructors @this, string expected)
+	public static ConstructorsWithNamedParameter<object?> WithParameter(this Filtered.Constructors @this,
+		string expected)
 	{
 		StringEqualityOptions options = new();
+		CollectionIndexOptions indexOptions = new();
+		ParameterFilterOptions parameterFilterOptions = new(p => options.AreConsideredEqual(p.Name, expected),
+			() => $"with name {options.GetExpectation(expected, ExpectationGrammars.None)}");
 		IChangeableFilter<ConstructorInfo> filter = Filter.Suffix<ConstructorInfo>(
-			constructorInfo => constructorInfo.GetParameters()
-				.Any(p => options.AreConsideredEqual(p.Name!, expected)),
-			() => $"with parameter with name {options.GetExpectation(expected, ExpectationGrammars.None)} ");
-		return new ConstructorsWithNamedParameter(@this.Which(filter), filter, options);
+			constructorInfo =>
+			{
+				ParameterInfo[] parameters = constructorInfo.GetParameters();
+				return parameters.Where((p, i) =>
+				{
+					bool? isIndexInRange = indexOptions.Match switch
+					{
+						CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
+						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
+						_ => false,
+					};
+					return isIndexInRange != false && options.AreConsideredEqual(p.Name, expected);
+				}).Any();
+			},
+			() => $"with parameter {parameterFilterOptions.GetDescription()}{indexOptions.Match.GetDescription()} ");
+		return new ConstructorsWithNamedParameter<object?>(indexOptions, parameterFilterOptions, @this.Which(filter),
+			options);
 	}
+
 
 	/// <summary>
 	///     Additional filters on constructors with a parameter of a specific type.
 	/// </summary>
-	public class ConstructorsWithParameter<T>(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter)
-		: Filtered.Constructors(inner)
+	public class ConstructorsWithParameter<T> : Filtered.Constructors
 	{
+		private readonly CollectionIndexOptions _indexOptions;
+		private readonly ParameterFilterOptions _parameterFiltersOptions;
+
+		/// <summary>
+		///     Additional filters on constructors with a parameter of a specific type.
+		/// </summary>
+		internal ConstructorsWithParameter(
+			CollectionIndexOptions indexOptions,
+			ParameterFilterOptions parameterFiltersOptions,
+			Filtered.Constructors inner) : base(inner)
+		{
+			_indexOptions = indexOptions;
+			_parameterFiltersOptions = parameterFiltersOptions;
+		}
+
 		/// <summary>
 		///     Filter for parameters at the specified <paramref name="index" />.
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> AtIndex(int index)
 		{
-			Type parameterType = typeof(T);
-			filter.UpdateFilter(
-				(result, constructorInfo) =>
-				{
-					var parameters = constructorInfo.GetParameters();
-					return result && index >= 0 && index < parameters.Length && 
-					       parameters[index].ParameterType == parameterType;
-				},
-				description => $"{description}at index {index} ");
-			return new ConstructorsWithParameterAtIndex<T>(this, filter, index);
+			_indexOptions.SetMatch(new HasParameterAtIndexMatch(index));
+			return new ConstructorsWithParameterAtIndex<T>(_indexOptions, this);
 		}
 
 		/// <summary>
@@ -77,10 +138,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithParameter<T> WithoutDefaultValue()
 		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && !p.HasDefaultValue),
-				description => $"{description}without default value ");
+			_parameterFiltersOptions.AddPredicate(p => !p.HasDefaultValue, () => "without default value");
 			return this;
 		}
 
@@ -89,10 +147,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithParameter<T> WithDefaultValue()
 		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue),
-				description => $"{description}with default value ");
+			_parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue, () => "with default value");
 			return this;
 		}
 
@@ -100,16 +155,12 @@ public static partial class ConstructorFilters
 		///     Filter for parameters with a specific default value.
 		/// </summary>
 		public ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+			where TValue : T
 		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
+			_parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue),
+				() => $"with default value {Formatter.Format(expectedValue)}");
 			return this;
 		}
-
-
 	}
 
 	/// <summary>
@@ -117,15 +168,12 @@ public static partial class ConstructorFilters
 	/// </summary>
 	public class ConstructorsWithParameterAtIndex<T> : Filtered.Constructors
 	{
-		private readonly IChangeableFilter<ConstructorInfo> _filter;
-		private readonly int _index;
-		private bool _fromEnd;
+		private readonly CollectionIndexOptions _indexOptions;
 
-		internal ConstructorsWithParameterAtIndex(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter, int index) : base(inner)
+		internal ConstructorsWithParameterAtIndex(CollectionIndexOptions indexOptions, Filtered.Constructors inner) :
+			base(inner)
 		{
-			_filter = filter;
-			_index = index;
-			_fromEnd = false;
+			_indexOptions = indexOptions;
 		}
 
 		/// <summary>
@@ -133,17 +181,11 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> FromEnd()
 		{
-			_fromEnd = true;
-			Type parameterType = typeof(T);
-			_filter.UpdateFilter(
-				(result, constructorInfo) =>
-				{
-					var parameters = constructorInfo.GetParameters();
-					int actualIndex = _fromEnd ? parameters.Length - 1 - _index : _index;
-					return result && actualIndex >= 0 && actualIndex < parameters.Length && 
-					       parameters[actualIndex].ParameterType == parameterType;
-				},
-				description => $"{description}from end ");
+			if (_indexOptions.Match is CollectionIndexOptions.IMatchFromBeginning match)
+			{
+				_indexOptions.SetMatch(match.FromEnd());
+			}
+
 			return this;
 		}
 	}
@@ -151,10 +193,21 @@ public static partial class ConstructorFilters
 	/// <summary>
 	///     Additional filters on constructors with a named parameter of a specific type.
 	/// </summary>
-	public class ConstructorsWithNamedParameter<T>(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter, StringEqualityOptions options)
-		: ConstructorsWithParameter<T>(inner, filter)
+	public class ConstructorsWithNamedParameter<T> : ConstructorsWithParameter<T>
 	{
+		private readonly StringEqualityOptions _options;
 
+		/// <summary>
+		///     Additional filters on constructors with a named parameter of a specific type.
+		/// </summary>
+		internal ConstructorsWithNamedParameter(
+			CollectionIndexOptions indexOptions,
+			ParameterFilterOptions parameterFiltersOptions,
+			Filtered.Constructors inner,
+			StringEqualityOptions options) : base(indexOptions, parameterFiltersOptions, inner)
+		{
+			_options = options;
+		}
 
 		/// <summary>
 		///     Ignores casing when comparing the parameter name,
@@ -162,45 +215,16 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> IgnoringCase(bool ignoreCase = true)
 		{
-			options.IgnoringCase(ignoreCase);
-			return this;
-		}
-
-		/// <summary>
-		///     Ignores leading white-space when comparing parameter names,
-		///     according to the <paramref name="ignoreLeadingWhiteSpace" /> parameter.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true)
-		{
-			options.IgnoringLeadingWhiteSpace(ignoreLeadingWhiteSpace);
-			return this;
-		}
-
-		/// <summary>
-		///     Ignores trailing white-space when comparing parameter names,
-		///     according to the <paramref name="ignoreTrailingWhiteSpace" /> parameter.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true)
-		{
-			options.IgnoringTrailingWhiteSpace(ignoreTrailingWhiteSpace);
+			_options.IgnoringCase(ignoreCase);
 			return this;
 		}
 
 		/// <summary>
 		///     Uses the provided <paramref name="comparer" /> for comparing parameter names.
 		/// </summary>
-		public ConstructorsWithNamedParameter<T> Using(System.Collections.Generic.IEqualityComparer<string> comparer)
+		public ConstructorsWithNamedParameter<T> Using(IEqualityComparer<string> comparer)
 		{
-			options.UsingComparer(comparer);
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name to be exactly equal.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> Exactly()
-		{
-			options.Exactly();
+			_options.UsingComparer(comparer);
 			return this;
 		}
 
@@ -209,7 +233,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> AsPrefix()
 		{
-			options.AsPrefix();
+			_options.AsPrefix();
 			return this;
 		}
 
@@ -218,7 +242,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> AsRegex()
 		{
-			options.AsRegex();
+			_options.AsRegex();
 			return this;
 		}
 
@@ -227,7 +251,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> AsSuffix()
 		{
-			options.AsSuffix();
+			_options.AsSuffix();
 			return this;
 		}
 
@@ -237,211 +261,8 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> AsWildcard()
 		{
-			options.AsWildcard();
+			_options.AsWildcard();
 			return this;
 		}
-	}
-
-
-
-	/// <summary>
-	///     Additional filters on constructors with a named parameter (type-agnostic).
-	/// </summary>
-	public class ConstructorsWithNamedParameter(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter, StringEqualityOptions options)
-		: Filtered.Constructors(inner)
-	{
-		/// <summary>
-		///     Filter for parameters at the specified <paramref name="index" />.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex AtIndex(int index)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) =>
-				{
-					var parameters = constructorInfo.GetParameters();
-					return result && index >= 0 && index < parameters.Length;
-				},
-				description => $"{description}at index {index} ");
-			return new ConstructorsWithNamedParameterAtIndex(this, filter);
-		}
-
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public ConstructorsWithNamedParameter WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public ConstructorsWithNamedParameter WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameter WithDefaultValue<T>(T expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-
-
-		/// <summary>
-		///     Ignores casing when comparing the parameter name,
-		///     according to the <paramref name="ignoreCase" /> parameter.
-		/// </summary>
-		public ConstructorsWithNamedParameter IgnoringCase(bool ignoreCase = true)
-		{
-			options.IgnoringCase(ignoreCase);
-			return this;
-		}
-
-		/// <summary>
-		///     Ignores leading white-space when comparing parameter names,
-		///     according to the <paramref name="ignoreLeadingWhiteSpace" /> parameter.
-		/// </summary>
-		public ConstructorsWithNamedParameter IgnoringLeadingWhiteSpace(bool ignoreLeadingWhiteSpace = true)
-		{
-			options.IgnoringLeadingWhiteSpace(ignoreLeadingWhiteSpace);
-			return this;
-		}
-
-		/// <summary>
-		///     Ignores trailing white-space when comparing parameter names,
-		///     according to the <paramref name="ignoreTrailingWhiteSpace" /> parameter.
-		/// </summary>
-		public ConstructorsWithNamedParameter IgnoringTrailingWhiteSpace(bool ignoreTrailingWhiteSpace = true)
-		{
-			options.IgnoringTrailingWhiteSpace(ignoreTrailingWhiteSpace);
-			return this;
-		}
-
-		/// <summary>
-		///     Uses the provided <paramref name="comparer" /> for comparing parameter names.
-		/// </summary>
-		public ConstructorsWithNamedParameter Using(System.Collections.Generic.IEqualityComparer<string> comparer)
-		{
-			options.UsingComparer(comparer);
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name to be exactly equal.
-		/// </summary>
-		public ConstructorsWithNamedParameter Exactly()
-		{
-			options.Exactly();
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name as a prefix, so that the actual value starts with it.
-		/// </summary>
-		public ConstructorsWithNamedParameter AsPrefix()
-		{
-			options.AsPrefix();
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name as <see cref="System.Text.RegularExpressions.Regex" /> pattern.
-		/// </summary>
-		public ConstructorsWithNamedParameter AsRegex()
-		{
-			options.AsRegex();
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name as a suffix, so that the actual value ends with it.
-		/// </summary>
-		public ConstructorsWithNamedParameter AsSuffix()
-		{
-			options.AsSuffix();
-			return this;
-		}
-
-		/// <summary>
-		///     Interprets the expected parameter name as wildcard pattern.<br />
-		///     Supports * to match zero or more characters and ? to match exactly one character.
-		/// </summary>
-		public ConstructorsWithNamedParameter AsWildcard()
-		{
-			options.AsWildcard();
-			return this;
-		}
-	}
-
-	/// <summary>
-	///     Additional filters on constructors with a named parameter (type-agnostic) at a specific index.
-	/// </summary>
-	public class ConstructorsWithNamedParameterAtIndex(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter)
-		: Filtered.Constructors(inner)
-	{
-		/// <summary>
-		///     Filter for parameters from the end at the specified index.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex FromEnd()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result,
-				description => $"{description}from end ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex WithDefaultValue<T>(T expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-
 	}
 }
