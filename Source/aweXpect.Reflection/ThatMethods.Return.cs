@@ -79,7 +79,10 @@ public static partial class ThatMethods
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all ").Append(GetReturnDescription());
+		{
+			stringBuilder.Append("all ");
+			AppendReturnDescription(stringBuilder);
+		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -91,7 +94,10 @@ public static partial class ThatMethods
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("all ").Append(GetReturnDescription());
+		{
+			stringBuilder.Append("all not ");
+			AppendReturnDescription(stringBuilder);
+		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -102,14 +108,19 @@ public static partial class ThatMethods
 				FormattingOptions.Indented(indentation));
 		}
 
-		private string GetReturnDescription()
+		private void AppendReturnDescription(StringBuilder stringBuilder)
 		{
-			if (returnTypes.Count == 1)
+			int index = 0;
+			foreach (Type returnType in returnTypes)
 			{
-				return $"return {Formatter.Format(returnTypes[0])}";
-			}
+				if (index++ > 0)
+				{
+					stringBuilder.Append(" or ");
+				}
 
-			return string.Join(" or ", returnTypes.Select(type => $"return {Formatter.Format(type)}"));
+				stringBuilder.Append("return ");
+				Formatter.Format(stringBuilder, returnType);
+			}
 		}
 	}
 }
