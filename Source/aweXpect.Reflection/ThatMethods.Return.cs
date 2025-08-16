@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Reflection.Helpers;
@@ -17,20 +19,60 @@ public static partial class ThatMethods
 	/// <summary>
 	///     Verifies that all methods in the filtered collection return type <typeparamref name="TReturn" />.
 	/// </summary>
-	public static AndOrResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return<TReturn>(
+	public static MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return<TReturn>(
 		this IThat<IEnumerable<MethodInfo>> subject)
 		=> Return(subject, typeof(TReturn));
 
 	/// <summary>
 	///     Verifies that all methods in the filtered collection return type <paramref name="returnType" />.
 	/// </summary>
-	public static AndOrResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return(
+	public static MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> Return(
 		this IThat<IEnumerable<MethodInfo>> subject, Type returnType)
 	{
 		List<Type> returnTypes = [returnType];
-		return new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnConstraint(it, grammars, returnTypes)),
-			subject);
+		return new MethodsReturnResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>>(
+			subject, returnTypes, (subj, types) => new(subj.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new ReturnConstraint(it, grammars, types)), subj));
+	}
+
+	/// <summary>
+	///     Result that allows chaining additional return types for method collections.
+	/// </summary>
+	public sealed class MethodsReturnResult<TValue, TResult>(
+		TResult subject,
+		List<Type> returnTypes,
+		Func<TResult, List<Type>, AndOrResult<TValue, TResult>> constraintFactory)
+		where TResult : IThat<TValue>
+	{
+		private readonly TResult _subject = subject;
+		private readonly List<Type> _returnTypes = returnTypes;
+		private readonly Func<TResult, List<Type>, AndOrResult<TValue, TResult>> _constraintFactory = constraintFactory;
+
+		/// <summary>
+		///     Allow an alternative return type <typeparamref name="TReturn" />.
+		/// </summary>
+		public MethodsReturnResult<TValue, TResult> OrReturn<TReturn>()
+			=> OrReturn(typeof(TReturn));
+
+		/// <summary>
+		///     Allow an alternative return type <paramref name="returnType" />.
+		/// </summary>
+		public MethodsReturnResult<TValue, TResult> OrReturn(Type returnType)
+		{
+			_returnTypes.Add(returnType);
+			return this;
+		}
+
+		/// <summary>
+		///     Implicitly converts to the constraint result.
+		/// </summary>
+		public static implicit operator AndOrResult<TValue, TResult>(MethodsReturnResult<TValue, TResult> result)
+			=> result._constraintFactory(result._subject, result._returnTypes);
+
+		/// <summary>
+		///     Gets the awaiter for async operations.
+		/// </summary>
+		public TaskAwaiter<TValue> GetAwaiter() => ((AndOrResult<TValue, TResult>)this).GetAwaiter();
 	}
 
 	private sealed class ReturnConstraint(

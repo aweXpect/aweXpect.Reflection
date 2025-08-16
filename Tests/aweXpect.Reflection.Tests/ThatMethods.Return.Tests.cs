@@ -78,6 +78,40 @@ public sealed partial class ThatMethods
 			}
 		}
 
+		public sealed class OrReturnTests
+		{
+			[Fact]
+			public async Task WithOrReturn_WhenAllMethodsReturnOneOfTheTypes_ShouldSucceed()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name == nameof(TestClass.GetString));
+
+				await That(methods).Return<int>().OrReturn<string>();
+			}
+
+			[Fact]
+			public async Task WithOrReturn_WhenSomeMethodsDoNotReturnAnyOfTheTypes_ShouldFail()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				async Task Act()
+					=> await That(methods).Return<bool>().OrReturn<Task>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*all return bool or return Task*").AsWildcard();
+			}
+
+			[Fact]
+			public async Task WithMultipleOrReturn_ShouldSupportChaining()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				await That(methods).Return<int>().OrReturn<string>().OrReturn<bool>().OrReturn<DummyBase>();
+			}
+		}
+
 #pragma warning disable CA1822 // Mark members as static
 		private class TestClass
 		{

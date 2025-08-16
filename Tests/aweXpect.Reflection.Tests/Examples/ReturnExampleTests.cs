@@ -37,6 +37,32 @@ public sealed class ReturnExampleTests
 			.Return<BaseClass>();
 	}
 
+	[Fact]
+	public async Task SingleMethodReturnsExpectation()
+	{
+		// This demonstrates using Returns for single methods (grammatically correct)
+		MethodInfo method = typeof(TestClass).GetMethod("GetString")!;
+		
+		await That(method).Returns<string>();
+	}
+
+	[Fact]
+	public async Task OrReturnChaining()
+	{
+		// This demonstrates chaining multiple return types for collections
+		await That(In.Type<TestClass>().Methods().WithName("GetString"))
+			.Return<int>().OrReturn<string>().OrReturn<object>();
+	}
+
+	[Fact]
+	public async Task OrReturnsChainingSingleMethod()
+	{
+		// This demonstrates chaining multiple return types for single method
+		MethodInfo method = typeof(TestClass).GetMethod("GetString")!;
+		
+		await That(method).Returns<int>().OrReturns<string>().OrReturns<object>();
+	}
+
 #pragma warning disable CA1822 // Mark members as static
 	private class TestClass
 	{
