@@ -32,4 +32,22 @@ public static partial class ThatMethods
 			subject,
 			typeFilterOptions);
 	}
+
+	public sealed partial class MethodsReturnResult<TValue, TResult>
+	{
+		/// <summary>
+		///     Allow an alternative exact return type <typeparamref name="TReturn" />.
+		/// </summary>
+		public MethodsReturnResult<TValue, TResult> OrReturnExactly<TReturn>()
+			=> OrReturnExactly(typeof(TReturn));
+
+		/// <summary>
+		///     Allow an alternative exact return type <paramref name="returnType" />.
+		/// </summary>
+		public MethodsReturnResult<TValue, TResult> OrReturnExactly(Type returnType)
+		{
+			typeFilterOptions.RegisterType(returnType, true);
+			return this;
+		}
+	}
 }

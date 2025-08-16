@@ -36,7 +36,7 @@ public static partial class ThatMethod
 	/// <summary>
 	///     Result that allows chaining additional return types for a single method.
 	/// </summary>
-	public sealed class MethodReturnResult<TValue, TResult>(
+	public sealed partial class MethodReturnResult<TValue, TResult>(
 		ExpectationBuilder expectationBuilder,
 		TResult subject,
 		TypeFilterOptions typeFilterOptions)
@@ -59,21 +59,6 @@ public static partial class ThatMethod
 		public MethodReturnResult<TValue, TResult> OrReturns(Type returnType)
 		{
 			typeFilterOptions.RegisterType(returnType, false);
-			return this;
-		}
-
-		/// <summary>
-		///     Allow an alternative exact return type <typeparamref name="TReturn" />.
-		/// </summary>
-		public MethodReturnResult<TValue, TResult> OrReturnsExactly<TReturn>()
-			=> OrReturnsExactly(typeof(TReturn));
-
-		/// <summary>
-		///     Allow an alternative exact return type <paramref name="returnType" />.
-		/// </summary>
-		public MethodReturnResult<TValue, TResult> OrReturnsExactly(Type returnType)
-		{
-			typeFilterOptions.RegisterType(returnType, true);
 			return this;
 		}
 	}
