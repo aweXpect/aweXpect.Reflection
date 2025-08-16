@@ -1,4 +1,5 @@
 using System.Reflection;
+using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests.Filters;
 
@@ -27,8 +28,8 @@ public sealed partial class ThatMethod
 				async Task Act()
 					=> await That(methodInfo).HasParameter<int>();
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter of type System.Int32*");
 			}
 
 			[Fact]
@@ -85,8 +86,8 @@ public sealed partial class ThatMethod
 				async Task Act()
 					=> await That(methodInfo).HasParameter<string>("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter of type System.String with name \"value\"*");
 			}
 
 #pragma warning disable CA1822

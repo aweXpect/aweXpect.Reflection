@@ -1,4 +1,5 @@
 using System.Reflection;
+using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests.Filters;
 
@@ -27,8 +28,8 @@ public sealed partial class ThatConstructor
 				async Task Act()
 					=> await That(constructorInfo).HasParameter<int>();
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter of type System.Int32*");
 			}
 
 			[Fact]
@@ -50,8 +51,9 @@ public sealed partial class ThatConstructor
 				async Task Act()
 					=> await That(constructorInfo).HasParameter("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter with name \"value\"*");
+			}
 			}
 
 			[Fact]
@@ -73,8 +75,9 @@ public sealed partial class ThatConstructor
 				async Task Act()
 					=> await That(constructorInfo).HasParameter<int>("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter of type System.Int32 with name \"value\"*");
+			}
 			}
 
 			[Fact]
@@ -85,8 +88,8 @@ public sealed partial class ThatConstructor
 				async Task Act()
 					=> await That(constructorInfo).HasParameter<string>("value");
 
-				await That(Act).ThrowsException()
-					;
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*has parameter of type System.String with name \"value\"*");
 			}
 
 			// ReSharper disable UnusedParameter.Local
