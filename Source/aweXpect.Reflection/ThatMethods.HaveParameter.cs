@@ -135,7 +135,7 @@ public static partial class ThatMethods
 
 			if (expectedName != null)
 			{
-				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
+				stringBuilder.Append(" with name \"").Append(expectedName).Append('"');
 			}
 
 			string indexDescription = collectionIndexOptions.Match.GetDescription();
@@ -158,7 +158,7 @@ public static partial class ThatMethods
 
 			if (expectedName != null)
 			{
-				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
+				stringBuilder.Append(" with name \"").Append(expectedName).Append('"');
 			}
 
 			string indexDescription = collectionIndexOptions.Match.GetDescription();

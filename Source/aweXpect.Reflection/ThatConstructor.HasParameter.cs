@@ -127,7 +127,7 @@ public static partial class ThatConstructor
 
 			if (expectedName != null)
 			{
-				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
+				stringBuilder.Append(" with name \"").Append(expectedName).Append('"');
 			}
 
 			string indexDescription = collectionIndexOptions.Match.GetDescription();
@@ -150,7 +150,7 @@ public static partial class ThatConstructor
 
 			if (expectedName != null)
 			{
-				stringBuilder.Append(" with name \"").Append(expectedName).Append("\"");
+				stringBuilder.Append(" with name \"").Append(expectedName).Append('"');
 			}
 
 			string indexDescription = collectionIndexOptions.Match.GetDescription();
