@@ -13,27 +13,27 @@ public static partial class ThatType
 	/// <summary>
 	///     Verifies that the <see cref="Type" /> has attribute of type <typeparamref name="TAttribute" />.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> Has<TAttribute>(this IThat<Type?> subject, bool inherit = true)
+	public static HasAttributeResult Has<TAttribute>(this IThat<Type?> subject, bool inherit = true)
 		where TAttribute : Attribute
-		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+		=> new(new AndOrResult<Type?, IThat<Type?>>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasAttributeConstraint<TAttribute>(it, grammars, inherit)),
-			subject);
+			subject));
 
 
 	/// <summary>
 	///     Verifies that the <see cref="Type" /> has attribute of type <typeparamref name="TAttribute" /> that
 	///     matches the <paramref name="predicate" />.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> Has<TAttribute>(
+	public static HasAttributeResult Has<TAttribute>(
 		this IThat<Type?> subject,
 		Func<TAttribute, bool>? predicate,
 		bool inherit = true,
 		[CallerArgumentExpression("predicate")]
 		string doNotPopulateThisValue = "")
 		where TAttribute : Attribute
-		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+		=> new(new AndOrResult<Type?, IThat<Type?>>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasAttributeConstraint<TAttribute>(it, grammars, inherit, predicate, doNotPopulateThisValue)),
-			subject);
+			subject));
 
 	private sealed class HasAttributeConstraint<TAttribute>(
 		string it,
