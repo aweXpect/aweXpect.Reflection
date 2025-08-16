@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -10,40 +10,40 @@ using aweXpect.Results;
 namespace aweXpect.Reflection;
 
 /// <summary>
-///     Expectations on <see cref="MethodInfo" />.
+///     Expectations on <see cref="ConstructorInfo" />.
 /// </summary>
-public static partial class ThatMethod
+public static partial class ThatConstructor
 {
 	/// <summary>
-	///     Verifies that the <see cref="MethodInfo" /> has a parameter of type <typeparamref name="T" />.
+	///     Verifies that the <see cref="ConstructorInfo" /> has a parameter of type <typeparamref name="T" />.
 	/// </summary>
-	public static AndOrResult<MethodInfo?, IThat<MethodInfo?>> HasParameter<T>(this IThat<MethodInfo?> subject)
+	public static AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>> HasParameter<T>(this IThat<ConstructorInfo?> subject)
 	{
 		Type parameterType = typeof(T);
-		return new AndOrResult<MethodInfo?, IThat<MethodInfo?>>(
+		return new AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>>(
 			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasParameterConstraint<T>(it, grammars, parameterType, null)),
 			subject);
 	}
 
 	/// <summary>
-	///     Verifies that the <see cref="MethodInfo" /> has a parameter of type <typeparamref name="T" /> with the <paramref name="expected" /> name.
+	///     Verifies that the <see cref="ConstructorInfo" /> has a parameter of type <typeparamref name="T" /> with the <paramref name="expected" /> name.
 	/// </summary>
-	public static AndOrResult<MethodInfo?, IThat<MethodInfo?>> HasParameter<T>(this IThat<MethodInfo?> subject, string expected)
+	public static AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>> HasParameter<T>(this IThat<ConstructorInfo?> subject, string expected)
 	{
 		Type parameterType = typeof(T);
-		return new AndOrResult<MethodInfo?, IThat<MethodInfo?>>(
+		return new AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>>(
 			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasParameterConstraint<T>(it, grammars, parameterType, expected)),
 			subject);
 	}
 
 	/// <summary>
-	///     Verifies that the <see cref="MethodInfo" /> has a parameter with the <paramref name="expected" /> name.
+	///     Verifies that the <see cref="ConstructorInfo" /> has a parameter with the <paramref name="expected" /> name.
 	/// </summary>
-	public static AndOrResult<MethodInfo?, IThat<MethodInfo?>> HasParameter(this IThat<MethodInfo?> subject, string expected)
+	public static AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>> HasParameter(this IThat<ConstructorInfo?> subject, string expected)
 	{
-		return new AndOrResult<MethodInfo?, IThat<MethodInfo?>>(
+		return new AndOrResult<ConstructorInfo?, IThat<ConstructorInfo?>>(
 			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasParameterConstraint<object?>(it, grammars, null, expected)),
 			subject);
@@ -54,10 +54,10 @@ public static partial class ThatMethod
 		ExpectationGrammars grammars,
 		Type? parameterType,
 		string? expectedName)
-		: ConstraintResult.WithNotNullValue<MethodInfo?>(it, grammars),
-			IValueConstraint<MethodInfo?>
+		: ConstraintResult.WithNotNullValue<ConstructorInfo?>(it, grammars),
+			IValueConstraint<ConstructorInfo?>
 	{
-		public ConstraintResult IsMetBy(MethodInfo? actual)
+		public ConstraintResult IsMetBy(ConstructorInfo? actual)
 		{
 			Actual = actual;
 			if (actual is null)
