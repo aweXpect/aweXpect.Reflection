@@ -12,9 +12,12 @@ public static partial class ConstructorFilters
 	{
 		IChangeableFilter<ConstructorInfo> filter = Filter.Suffix<ConstructorInfo>(
 			constructorInfo => constructorInfo.GetParameters().Length == expectedCount,
-			expectedCount == 0
-				? "without parameters "
-				: $"with {expectedCount} parameter{(expectedCount == 1 ? "" : "s")} ");
+			expectedCount switch
+			{
+				0 => "without parameters ",
+				1 => "with one parameter ",
+				_ => $"with {expectedCount} parameters ",
+			});
 		return @this.Which(filter);
 	}
 }

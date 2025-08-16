@@ -9,25 +9,19 @@ public sealed partial class ConstructorFilters
 		=> typeof(ClassWithMultipleConstructors)
 			.GetConstructor(
 				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				null, new Type[0], null);
+				null, [], null);
 
 	private static ConstructorInfo? ExpectedSingleParameterConstructorInfo()
 		=> typeof(ClassWithMultipleConstructors)
 			.GetConstructor(
 				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				null, new[]
-				{
-					typeof(int),
-				}, null);
+				null, [typeof(int),], null);
 
 	private static ConstructorInfo? ExpectedMultipleParameterConstructorInfo()
 		=> typeof(ClassWithMultipleConstructors)
 			.GetConstructor(
 				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				null, new[]
-				{
-					typeof(string), typeof(int),
-				}, null);
+				null, [typeof(string), typeof(int),], null);
 
 	public sealed class WithParameterCount
 	{
@@ -53,7 +47,7 @@ public sealed partial class ConstructorFilters
 
 				await That(constructors).Contains(ExpectedSingleParameterConstructorInfo());
 				await That(constructors.GetDescription())
-					.IsEqualTo("constructors with 1 parameter in assembly")
+					.IsEqualTo("constructors with one parameter in assembly")
 					.AsPrefix();
 			}
 

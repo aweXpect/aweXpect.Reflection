@@ -41,7 +41,7 @@ public sealed partial class MethodFilters
 
 				await That(methods).Contains(ExpectedSingleParameterMethodInfo());
 				await That(methods.GetDescription())
-					.IsEqualTo("methods with 1 parameter in assembly")
+					.IsEqualTo("methods with one parameter in assembly")
 					.AsPrefix();
 			}
 
