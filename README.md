@@ -99,7 +99,7 @@ In.AllLoadedAssemblies().Types()
     .WhichAreGeneric()
     .WhichAreNested()
 	
-// Or alternatively
+// Alternatively
 In.AllLoadedAssemblies().Public.Abstract.Classes()
 In.AllLoadedAssemblies().Internal.Generic.Interfaces()
 
