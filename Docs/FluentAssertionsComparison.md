@@ -21,9 +21,9 @@ This document provides a comprehensive comparison between aweXpect.Reflection an
 | **Constructor Testing** | ✅ | ✅ | Both support constructor assertions |
 | **Attribute Testing** | ✅ | ✅ | Both support attribute presence/value testing |
 | **Collection Filtering** | ✅ | ⚠️ | aweXpect has more advanced filtering via `In` |
-| **Async Support** | ✅ | ❌ | aweXpect is fully async, FluentAssertions is sync |
+
 | **String Matching Options** | ✅ | ✅ | Both support prefix, suffix, regex, wildcards |
-| **Dependency Testing** | ✅ | ❌ | aweXpect has assembly dependency checks |
+| **Dependency Testing** | ✅ | ✅ | Both support assembly dependency checks |
 | **Access Modifier Testing** | ✅ | ✅ | Both support public/private/protected/internal |
 | **Type Kind Testing** | ✅ | ✅ | Both support class/interface/enum/abstract/etc |
 
@@ -47,13 +47,15 @@ await Expect.That(assemblies).HaveName("System").AsPrefix();
 ```csharp
 // Single assembly
 assembly.Should().HaveAssemblyName("MyAssembly");
+assembly.Should().Reference("System.Core");
+assembly.Should().NotReference("UnwantedDependency");
 
 // Multiple assemblies - requires more manual work
 Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 assemblies.Should().OnlyContain(a => a.FullName.StartsWith("System"));
 ```
 
-**Winner: aweXpect.Reflection** - More specific dependency testing features.
+
 
 ### 2. Type Assertions
 
@@ -88,7 +90,7 @@ var types = Assembly.GetExecutingAssembly().GetTypes();
 types.Should().OnlyContain(t => t.IsClass && t.IsPublic);
 ```
 
-**Winner: Tie** - Both provide comprehensive type testing, aweXpect has better collection filtering.
+
 
 ### 3. Method Assertions
 
@@ -119,7 +121,7 @@ var methods = typeof(MyClass).GetMethods();
 methods.Should().OnlyContain(m => m.IsPublic);
 ```
 
-**Winner: aweXpect.Reflection** - Superior filtering and collection handling.
+
 
 ### 4. Property Assertions
 
@@ -148,7 +150,7 @@ var properties = typeof(MyClass).GetProperties();
 properties.Should().OnlyContain(p => p.GetGetMethod().IsPublic);
 ```
 
-**Winner: aweXpect.Reflection** - Better collection support and cleaner syntax.
+
 
 ### 5. Advanced Filtering and Collection Operations
 
@@ -185,19 +187,13 @@ var stringMethods = typeof(MyClass)
 stringMethods.Should().OnlyContain(m => m.Name.StartsWith("Get"));
 ```
 
-**Winner: aweXpect.Reflection** - Significantly more powerful and intuitive filtering.
+
 
 ## Unique Features
 
 ### aweXpect.Reflection Exclusive Features
 
-1. **Assembly Dependency Testing**
-   ```csharp
-   await Expect.That(assembly).HasADependencyOn("RequiredLibrary");
-   await Expect.That(assembly).HasNoDependencyOn("ForbiddenLibrary");
-   ```
-
-2. **Advanced Collection Filtering with `In` Helper**
+1. **Advanced Collection Filtering with `In` Helper**
    ```csharp
    In.AllLoadedAssemblies()
      .Types().WhichAreClasses()
@@ -205,34 +201,13 @@ stringMethods.Should().OnlyContain(m => m.Name.StartsWith("Get"));
      .DeclaringTypes();
    ```
 
-3. **Full Async/Await Support**
-   ```csharp
-   await Expect.That(type).IsAClass();
-   ```
-
-4. **Declarative Type Navigation**
+2. **Declarative Type Navigation**
    ```csharp
    In.AssemblyContaining<MyClass>()
      .Methods().DeclaringTypes()
      .Properties().DeclaringTypes();
    ```
 
-### FluentAssertions Exclusive Features
-
-1. **Broader Ecosystem Integration**
-   - Works with any testing framework
-   - Part of larger assertion library
-   - More community resources and examples
-
-2. **Immediate Execution (No Async Required)**
-   ```csharp
-   typeof(MyClass).Should().BeClass(); // Executes immediately
-   ```
-
-3. **More Mature and Established**
-   - Longer development history
-   - More comprehensive documentation
-   - Larger user base
 
 ## Syntax Comparison Examples
 
@@ -275,50 +250,5 @@ types.Where(t => t.IsClass)
      .Should().OnlyContain(t => t.Name.EndsWith("Service"));
 ```
 
-## Migration Considerations
 
-### From FluentAssertions to aweXpect.Reflection
 
-**Advantages:**
-- More powerful collection filtering
-- Cleaner syntax for complex reflection scenarios  
-- Assembly dependency testing
-- Better integration with async test methods
-
-**Considerations:**
-- Requires adopting aweXpect testing framework
-- Learning new API surface
-- Async/await pattern throughout
-
-### From aweXpect.Reflection to FluentAssertions
-
-**Advantages:**
-- Broader ecosystem and community
-- Works with any testing framework
-- More documentation and examples available
-- No async requirement
-
-**Considerations:**
-- Loss of advanced filtering capabilities
-- More verbose syntax for complex scenarios
-- Manual implementation needed for dependency testing
-
-## Conclusion
-
-Both libraries excel in reflection testing but serve different needs:
-
-**Choose aweXpect.Reflection if:**
-- You're using the aweXpect testing framework
-- You need advanced collection filtering and navigation
-- Assembly dependency testing is important
-- You prefer async/await patterns
-- Complex reflection queries are common in your tests
-
-**Choose FluentAssertions if:**
-- You're using a different testing framework (xUnit, NUnit, MSTest)
-- You need a mature, widely-adopted library
-- Simple reflection assertions are sufficient
-- You prefer synchronous execution
-- You want the broader FluentAssertions ecosystem
-
-For teams already using aweXpect, aweXpect.Reflection provides superior filtering and collection operations. For teams using other frameworks, FluentAssertions offers broader compatibility and ecosystem support.
