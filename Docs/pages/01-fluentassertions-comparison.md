@@ -1,26 +1,30 @@
 # aweXpect.Reflection vs FluentAssertions: Feature Comparison
 
-This document provides a comprehensive comparison between aweXpect.Reflection and FluentAssertions for reflection-based testing scenarios. Both libraries offer powerful capabilities for asserting against reflection types, but with different syntax patterns and feature sets.
+This document provides a comprehensive comparison between aweXpect.Reflection and FluentAssertions for reflection-based
+testing scenarios. Both libraries offer powerful capabilities for asserting against reflection types, but with different
+syntax patterns and feature sets.
 
 ## Overview
 
-**aweXpect.Reflection** is designed as an extension to the aweXpect testing framework, providing expectations for reflection types with async/await support and rich filtering capabilities.
+**aweXpect.Reflection** is designed as an extension to the aweXpect testing framework, providing expectations for
+reflection types with async/await support and rich filtering capabilities.
 
-**FluentAssertions** is a popular general-purpose assertion library that includes extensive reflection testing features alongside other assertion types.
+**FluentAssertions** is a popular general-purpose assertion library that includes extensive reflection testing features
+alongside other assertion types.
 
 ## Feature Comparison Matrix
 
-| Feature Category | aweXpect.Reflection | FluentAssertions | Notes |
-|------------------|---------------------|------------------|-------|
-| **Assembly Testing** | ✅ | ✅ | Both support assembly-level assertions |
-| **Type Testing** | ✅ | ✅ | Both support comprehensive type assertions |
-| **Method Testing** | ✅ | ✅ | Both support method-level assertions |
-| **Property Testing** | ✅ | ✅ | Both support property assertions |
-| **Field Testing** | ✅ | ✅ | Both support field assertions |
-| **Event Testing** | ✅ | ✅ | Both support event assertions |
-| **Constructor Testing** | ✅ | ✅ | Both support constructor assertions |
-| **Attribute Testing** | ✅ | ✅ | Both support attribute presence/value testing |
-| **Collection Filtering** | ✅ | ⚠️ | aweXpect has more advanced filtering via `In` |
+| Feature Category         | aweXpect.Reflection | FluentAssertions | Notes                                         |
+|--------------------------|---------------------|------------------|-----------------------------------------------|
+| **Assembly Testing**     | ✅                   | ✅                | Both support assembly-level assertions        |
+| **Type Testing**         | ✅                   | ✅                | Both support comprehensive type assertions    |
+| **Method Testing**       | ✅                   | ✅                | Both support method-level assertions          |
+| **Property Testing**     | ✅                   | ✅                | Both support property assertions              |
+| **Field Testing**        | ✅                   | ✅                | Both support field assertions                 |
+| **Event Testing**        | ✅                   | ✅                | Both support event assertions                 |
+| **Constructor Testing**  | ✅                   | ✅                | Both support constructor assertions           |
+| **Attribute Testing**    | ✅                   | ✅                | Both support attribute presence/value testing |
+| **Collection Filtering** | ✅                   | ⚠️               | aweXpect has more advanced filtering via `In` |
 
 | **String Matching Options** | ✅ | ✅ | Both support prefix, suffix, regex, wildcards |
 | **Dependency Testing** | ✅ | ✅ | Both support assembly dependency checks |
@@ -32,6 +36,7 @@ This document provides a comprehensive comparison between aweXpect.Reflection an
 ### 1. Assembly Assertions
 
 #### aweXpect.Reflection
+
 ```csharp
 // Single assembly
 await Expect.That(assembly).HasName("MyAssembly");
@@ -44,6 +49,7 @@ await Expect.That(assemblies).HaveName("System").AsPrefix();
 ```
 
 #### FluentAssertions
+
 ```csharp
 // Single assembly
 assembly.Should().HaveAssemblyName("MyAssembly");
@@ -55,15 +61,14 @@ Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 assemblies.Should().OnlyContain(a => a.FullName.StartsWith("System"));
 ```
 
-
-
 ### 2. Type Assertions
 
 #### aweXpect.Reflection
+
 ```csharp
 // Single type
 await Expect.That(typeof(MyClass)).IsAClass();
-await Expect.That(typeof(MyInterface)).IsAnInterface();
+await Expect.That(typeof(IMyInterface)).IsAnInterface();
 await Expect.That(typeof(MyEnum)).IsAnEnum();
 await Expect.That(typeof(AbstractClass)).IsAbstract();
 await Expect.That(typeof(MyClass)).HasNamespace("MyNamespace");
@@ -76,6 +81,7 @@ await Expect.That(In.AllLoadedAssemblies()
 ```
 
 #### FluentAssertions
+
 ```csharp
 // Single type
 typeof(MyClass).Should().BeClass();
@@ -90,11 +96,10 @@ var types = Assembly.GetExecutingAssembly().GetTypes();
 types.Should().OnlyContain(t => t.IsClass && t.IsPublic);
 ```
 
-
-
 ### 3. Method Assertions
 
 #### aweXpect.Reflection
+
 ```csharp
 // Single method
 MethodInfo method = typeof(MyClass).GetMethod("MyMethod");
@@ -109,6 +114,7 @@ await Expect.That(In.AssemblyContaining<MyClass>()
 ```
 
 #### FluentAssertions
+
 ```csharp
 // Single method
 MethodInfo method = typeof(MyClass).GetMethod("MyMethod");
@@ -121,11 +127,10 @@ var methods = typeof(MyClass).GetMethods();
 methods.Should().OnlyContain(m => m.IsPublic);
 ```
 
-
-
 ### 4. Property Assertions
 
 #### aweXpect.Reflection
+
 ```csharp
 // Single property
 PropertyInfo property = typeof(MyClass).GetProperty("MyProperty");
@@ -139,6 +144,7 @@ await Expect.That(In.AssemblyContaining<MyClass>()
 ```
 
 #### FluentAssertions
+
 ```csharp
 // Single property
 PropertyInfo property = typeof(MyClass).GetProperty("MyProperty");
@@ -150,105 +156,38 @@ var properties = typeof(MyClass).GetProperties();
 properties.Should().OnlyContain(p => p.GetGetMethod().IsPublic);
 ```
 
-
-
 ### 5. Advanced Filtering and Collection Operations
 
 #### aweXpect.Reflection
+
 ```csharp
 // Complex filtering scenarios
 await Expect.That(In.AllLoadedAssemblies()
-    .Types().WhichAreClasses().WhichArePublic()
-    .Methods().WhichArePublic().With<TestAttribute>()
-    .DeclaringTypes())
+        .Methods().With<FactAttribute>().OrWith<TheoryAttribute>()
+        .DeclaringTypes())
     .HaveName("Tests").AsSuffix();
 
 // Filter by return types
-await Expect.That(In.AssemblyContaining<MyClass>()
-    .Methods().WhichReturn<string>().WhichArePublic())
-    .HaveName("Get").AsPrefix();
+await Expect.That(In.AssemblyContaining(typeof(In))
+        .Methods().WhichReturn<Task>().OrReturn<ValueTask>())
+    .HaveName("Async").AsSuffix();
 ```
 
 #### FluentAssertions
+
 ```csharp
 // Requires more manual LINQ operations
-var testClasses = Assembly.GetExecutingAssembly()
-    .GetTypes()
-    .Where(t => t.IsClass && t.IsPublic)
+var testClasses = AppDomain.CurrentDomain.GetAssemblies()
+    .SelectMany(a => a.GetTypes())
     .Where(t => t.GetMethods()
-        .Any(m => m.GetCustomAttribute<TestAttribute>() != null));
-    
+        .Any(m => m.HasAttribute<FactAttribute>() || m.HasAttribute<TheoryAttribute>()));
+
 testClasses.Should().OnlyContain(t => t.Name.EndsWith("Tests"));
 
 // Return type filtering requires manual work
-var stringMethods = typeof(MyClass)
-    .GetMethods()
-    .Where(m => m.ReturnType == typeof(string) && m.IsPublic);
-stringMethods.Should().OnlyContain(m => m.Name.StartsWith("Get"));
+var methods = AppDomain.CurrentDomain.GetAssemblies()
+    .SelectMany(a => a.GetTypes().SelectMany(t => t.GetMethods()))
+    .Where(m => m.ReturnType == typeof(Task) || m.ReturnType == typeof(ValueTask));
+methods.Should().OnlyContain(m => m.Name.EndsWith("Async"));
 ```
-
-
-
-## Unique Features
-
-### aweXpect.Reflection Exclusive Features
-
-1. **Advanced Collection Filtering with `In` Helper**
-   ```csharp
-   In.AllLoadedAssemblies()
-     .Types().WhichAreClasses()
-     .Methods().With<TestAttribute>()
-     .DeclaringTypes();
-   ```
-
-2. **Declarative Type Navigation**
-   ```csharp
-   In.AssemblyContaining<MyClass>()
-     .Methods().DeclaringTypes()
-     .Properties().DeclaringTypes();
-   ```
-
-
-## Syntax Comparison Examples
-
-### Type Testing
-```csharp
-// aweXpect.Reflection
-await Expect.That(typeof(MyClass)).IsAClass();
-await Expect.That(typeof(MyClass)).IsAbstract();
-await Expect.That(typeof(MyClass)).HasNamespace("MyApp.Domain");
-
-// FluentAssertions  
-typeof(MyClass).Should().BeClass();
-typeof(MyClass).Should().BeAbstract();
-typeof(MyClass).Should().BeInNamespace("MyApp.Domain");
-```
-
-### Method Testing
-```csharp
-// aweXpect.Reflection
-await Expect.That(method).IsPublic();
-await Expect.That(method).HasName("Execute");
-await Expect.That(method).Has<ObsoleteAttribute>();
-
-// FluentAssertions
-method.Should().BePublic();
-method.Should().HaveName("Execute");
-method.Should().BeDecoratedWith<ObsoleteAttribute>();
-```
-
-### Collection Testing
-```csharp
-// aweXpect.Reflection
-await Expect.That(In.AssemblyContaining<MyClass>()
-    .Types().WhichAreClasses())
-    .HaveName("Service").AsSuffix();
-
-// FluentAssertions
-var types = Assembly.GetAssembly(typeof(MyClass)).GetTypes();
-types.Where(t => t.IsClass)
-     .Should().OnlyContain(t => t.Name.EndsWith("Service"));
-```
-
-
 
