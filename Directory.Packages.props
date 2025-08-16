@@ -5,6 +5,10 @@
   <ItemGroup>
     <PackageVersion Include="aweXpect" Version="2.21.1" />
     <PackageVersion Include="aweXpect.Core" Version="2.16.1" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Nullable" Version="1.3.1" />
