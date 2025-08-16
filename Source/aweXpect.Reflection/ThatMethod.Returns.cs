@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
 using aweXpect.Core;
 using aweXpect.Core.Constraints;
 using aweXpect.Reflection.Helpers;
@@ -17,20 +16,21 @@ public static partial class ThatMethod
 	/// <summary>
 	///     Verifies that the method returns type <typeparamref name="TReturn" />.
 	/// </summary>
-	public static MethodReturnResult<MethodInfo, IThat<MethodInfo>> Returns<TReturn>(
-		this IThat<MethodInfo> subject)
+	public static MethodReturnResult<MethodInfo?, IThat<MethodInfo?>> Returns<TReturn>(
+		this IThat<MethodInfo?> subject)
 		=> Returns(subject, typeof(TReturn));
 
 	/// <summary>
 	///     Verifies that the method returns type <paramref name="returnType" />.
 	/// </summary>
-	public static MethodReturnResult<MethodInfo, IThat<MethodInfo>> Returns(
-		this IThat<MethodInfo> subject, Type returnType)
+	public static MethodReturnResult<MethodInfo?, IThat<MethodInfo?>> Returns(
+		this IThat<MethodInfo?> subject, Type returnType)
 	{
-		List<Type> returnTypes = [returnType];
-		return new MethodReturnResult<MethodInfo, IThat<MethodInfo>>(
-			subject, returnTypes, (subj, types) => new(subj.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new ReturnsConstraint(it, grammars, types)), subj));
+		List<Type> returnTypes = [returnType,];
+		return new MethodReturnResult<MethodInfo?, IThat<MethodInfo?>>(
+			subject, returnTypes, (subj, types) => new AndOrResult<MethodInfo?, IThat<MethodInfo?>>(subj.Get()
+				.ExpectationBuilder.AddConstraint((it, grammars)
+					=> new ReturnsConstraint(it, grammars, types)), subj));
 	}
 
 	/// <summary>
@@ -42,9 +42,9 @@ public static partial class ThatMethod
 		Func<TResult, List<Type>, AndOrResult<TValue, TResult>> constraintFactory)
 		where TResult : IThat<TValue>
 	{
-		private readonly TResult _subject = subject;
-		private readonly List<Type> _returnTypes = returnTypes;
 		private readonly Func<TResult, List<Type>, AndOrResult<TValue, TResult>> _constraintFactory = constraintFactory;
+		private readonly List<Type> _returnTypes = returnTypes;
+		private readonly TResult _subject = subject;
 
 		/// <summary>
 		///     Allow an alternative return type <typeparamref name="TReturn" />.
@@ -65,7 +65,9 @@ public static partial class ThatMethod
 		///     Implicitly converts to the constraint result.
 		/// </summary>
 		public static implicit operator AndOrResult<TValue, TResult>(MethodReturnResult<TValue, TResult> result)
-			=> result._constraintFactory(result._subject, result._returnTypes);
+		{
+			return result._constraintFactory(result._subject, result._returnTypes);
+		}
 
 		/// <summary>
 		///     Gets the awaiter for async operations.
@@ -77,13 +79,13 @@ public static partial class ThatMethod
 		string it,
 		ExpectationGrammars grammars,
 		List<Type> returnTypes)
-		: ConstraintResult.WithNotNullValue<MethodInfo>(it, grammars),
-			IValueConstraint<MethodInfo>
+		: ConstraintResult.WithNotNullValue<MethodInfo?>(it, grammars),
+			IValueConstraint<MethodInfo?>
 	{
-		public ConstraintResult IsMetBy(MethodInfo actual)
+		public ConstraintResult IsMetBy(MethodInfo? actual)
 		{
 			Actual = actual;
-			Outcome = returnTypes.Any(returnType => actual.ReturnType.IsOrInheritsFrom(returnType))
+			Outcome = returnTypes.Any(returnType => actual?.ReturnType.IsOrInheritsFrom(returnType) == true)
 				? Outcome.Success
 				: Outcome.Failure;
 			return this;

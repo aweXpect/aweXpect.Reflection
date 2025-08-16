@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -8,28 +7,12 @@ public sealed partial class ThatMethod
 {
 	public sealed class Returns
 	{
-		public sealed class Tests
+		public sealed class GenericTests
 		{
-			[Fact]
-			public async Task WhenMethodReturnsExpectedType_ShouldSucceed()
-			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
-
-				await That(subject).Returns<int>();
-			}
-
-			[Fact]
-			public async Task WhenMethodReturnsExpectedTypeNonGeneric_ShouldSucceed()
-			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
-
-				await That(subject).Returns(typeof(int));
-			}
-
 			[Fact]
 			public async Task WhenMethodDoesNotReturnExpectedType_ShouldFail()
 			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
 
 				async Task Act()
 					=> await That(subject).Returns<string>();
@@ -37,8 +20,8 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             returns System.String,
-					             but it returned System.Int32
+					             returns string,
+					             but it returned int
 					             """);
 			}
 
@@ -53,31 +36,108 @@ public sealed partial class ThatMethod
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             returns System.Int32,
+					             returns int,
 					             but it was <null>
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenReturnTypeInheritsFromExpectedType_ShouldSucceed()
+			public async Task WhenMethodReturnsExpectedType_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(ClassWithInheritance).GetMethod("GetDerived")!;
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
 
-				await That(subject).Returns<BaseClass>();
+				async Task Act()
+					=> await That(subject).Returns<int>();
+
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
-			public async Task WithOrReturns_WhenMethodReturnsOneOfTheTypes_ShouldSucceed()
+			public async Task WhenReturnTypeInheritsFromExpectedType_ShouldSucceed()
 			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
+				MethodInfo subject = typeof(ClassWithInheritance).GetMethod(nameof(ClassWithInheritance.GetDerived))!;
 
-				await That(subject).Returns<string>().OrReturns<int>();
+				async Task Act()
+					=> await That(subject).Returns<BaseClass>();
+
+				await That(Act).DoesNotThrow();
+			}
+		}
+
+		public sealed class TypeTests
+		{
+			[Fact]
+			public async Task WhenMethodDoesNotReturnExpectedType_ShouldFail()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).Returns(typeof(string));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             returns string,
+					             but it returned int
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenMethodInfoIsNull_ShouldFail()
+			{
+				MethodInfo? subject = null;
+
+				async Task Act()
+					=> await That(subject).Returns(typeof(int));
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             returns int,
+					             but it was <null>
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenMethodReturnsExpectedType_ShouldSucceed()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).Returns(typeof(int));
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenReturnTypeInheritsFromExpectedType_ShouldSucceed()
+			{
+				MethodInfo subject = typeof(ClassWithInheritance).GetMethod(nameof(ClassWithInheritance.GetDerived))!;
+
+				async Task Act()
+					=> await That(subject).Returns(typeof(BaseClass));
+
+				await That(Act).DoesNotThrow();
+			}
+		}
+
+		public sealed class OrReturnsTests
+		{
+			[Fact]
+			public async Task WithMultipleOrReturns_ShouldSupportChaining()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).Returns<string>().OrReturns(typeof(bool)).OrReturns<int>();
+
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
 			public async Task WithOrReturns_WhenMethodReturnsNoneOfTheTypes_ShouldFail()
 			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
 
 				async Task Act()
 					=> await That(subject).Returns<string>().OrReturns<bool>();
@@ -85,28 +145,32 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             returns System.String or returns System.Boolean,
-					             but it returned System.Int32
+					             returns string or returns bool,
+					             but it returned int
 					             """);
 			}
 
 			[Fact]
-			public async Task WithMultipleOrReturns_ShouldSupportChaining()
+			public async Task WithOrReturns_WhenMethodReturnsOneOfTheTypes_ShouldSucceed()
 			{
-				MethodInfo subject = GetMethod("PublicMethod")!;
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
 
-				await That(subject).Returns<string>().OrReturns<bool>().OrReturns<int>();
+				async Task Act()
+					=> await That(subject).Returns(typeof(string)).OrReturns<int>();
+
+				await That(Act).DoesNotThrow();
 			}
+		}
 
 #pragma warning disable CA1822 // Mark members as static
-			public class ClassWithInheritance
-			{
-				public DerivedClass GetDerived() => new();
-			}
-
-			public abstract class BaseClass;
-			public class DerivedClass : BaseClass;
-#pragma warning restore CA1822 // Mark members as static
+		public class ClassWithInheritance
+		{
+			public DerivedClass GetDerived() => new();
 		}
+
+		public abstract class BaseClass;
+
+		public class DerivedClass : BaseClass;
+#pragma warning restore CA1822 // Mark members as static
 	}
 }

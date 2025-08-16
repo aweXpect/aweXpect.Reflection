@@ -311,8 +311,8 @@ namespace aweXpect.Reflection
     }
     public static class ThatMethod
     {
-        public static aweXpect.Reflection.ThatMethod.MethodReturnResult<System.Reflection.MethodInfo, aweXpect.Core.IThat<System.Reflection.MethodInfo>> Returns(this aweXpect.Core.IThat<System.Reflection.MethodInfo> subject, System.Type returnType) { }
-        public static aweXpect.Reflection.ThatMethod.MethodReturnResult<System.Reflection.MethodInfo, aweXpect.Core.IThat<System.Reflection.MethodInfo>> Returns<TReturn>(this aweXpect.Core.IThat<System.Reflection.MethodInfo> subject) { }
+        public static aweXpect.Reflection.ThatMethod.MethodReturnResult<System.Reflection.MethodInfo?, aweXpect.Core.IThat<System.Reflection.MethodInfo?>> Returns(this aweXpect.Core.IThat<System.Reflection.MethodInfo?> subject, System.Type returnType) { }
+        public static aweXpect.Reflection.ThatMethod.MethodReturnResult<System.Reflection.MethodInfo?, aweXpect.Core.IThat<System.Reflection.MethodInfo?>> Returns<TReturn>(this aweXpect.Core.IThat<System.Reflection.MethodInfo?> subject) { }
         public sealed class MethodReturnResult<TValue, TResult>
             where TResult : aweXpect.Core.IThat<TValue>
         {

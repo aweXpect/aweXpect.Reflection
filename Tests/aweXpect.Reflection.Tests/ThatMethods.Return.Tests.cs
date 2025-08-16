@@ -1,6 +1,3 @@
-using System;
-using System.Reflection;
-using System.Threading.Tasks;
 using aweXpect.Reflection.Collections;
 using Xunit.Sdk;
 
@@ -13,18 +10,6 @@ public sealed partial class ThatMethods
 		public sealed class GenericTests
 		{
 			[Fact]
-			public async Task ShouldSucceedWhenAllMethodsReturnSpecifiedType()
-			{
-				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().Which(m => m.Name == nameof(TestClass.GetString));
-
-				async Task Act()
-					=> await That(methods).Return<string>();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task ShouldFailWhenSomeMethodsDoNotReturnSpecifiedType()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
@@ -34,7 +19,23 @@ public sealed partial class ThatMethods
 					=> await That(methods).Return<string>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*all return string*").AsWildcard();
+					.WithMessage("""
+					             Expected that methods matching m => m.Name.StartsWith("Get") in type ThatMethods.Return.TestClass
+					             all return string,
+					             but it contained not matching methods [*]
+					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task ShouldSucceedWhenAllMethodsReturnSpecifiedType()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name == nameof(TestClass.GetString));
+
+				async Task Act()
+					=> await That(methods).Return<string>();
+
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -53,6 +54,23 @@ public sealed partial class ThatMethods
 		public sealed class TypeTests
 		{
 			[Fact]
+			public async Task ShouldFailWhenSomeMethodsDoNotReturnSpecifiedType()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				async Task Act()
+					=> await That(methods).Return(typeof(string));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that methods matching m => m.Name.StartsWith("Get") in type ThatMethods.Return.TestClass
+					             all return string,
+					             but it contained not matching methods [*]
+					             """).AsWildcard();
+			}
+
+			[Fact]
 			public async Task ShouldSucceedWhenAllMethodsReturnSpecifiedType()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
@@ -65,28 +83,36 @@ public sealed partial class ThatMethods
 			}
 
 			[Fact]
-			public async Task ShouldFailWhenSomeMethodsDoNotReturnSpecifiedType()
+			public async Task ShouldSucceedWithInheritance()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().Which(m => m.Name.StartsWith("Get"));
+					.Methods().Which(m => m.Name == nameof(TestClass.GetDummy));
 
 				async Task Act()
-					=> await That(methods).Return(typeof(string));
+					=> await That(methods).Return(typeof(DummyBase));
 
-				await That(Act).Throws<XunitException>()
-					.WithMessage("*all return string*").AsWildcard();
+				await That(Act).DoesNotThrow();
 			}
 		}
 
 		public sealed class OrReturnTests
 		{
 			[Fact]
+			public async Task WithMultipleOrReturn_ShouldSupportChaining()
+			{
+				Filtered.Methods methods = In.Type<TestClass>()
+					.Methods().Which(m => m.Name.StartsWith("Get"));
+
+				await That(methods).Return<int>().OrReturn<string>().OrReturn(typeof(bool)).OrReturn<DummyBase>();
+			}
+
+			[Fact]
 			public async Task WithOrReturn_WhenAllMethodsReturnOneOfTheTypes_ShouldSucceed()
 			{
 				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().Which(m => m.Name == nameof(TestClass.GetString));
+					.Methods().Which(m => m.Name is nameof(TestClass.GetString) or nameof(TestClass.GetInt));
 
-				await That(methods).Return<int>().OrReturn<string>();
+				await That(methods).Return<string>().OrReturn(typeof(int));
 			}
 
 			[Fact]
@@ -99,20 +125,16 @@ public sealed partial class ThatMethods
 					=> await That(methods).Return<bool>().OrReturn<Task>();
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*all return bool or return Task*").AsWildcard();
-			}
-
-			[Fact]
-			public async Task WithMultipleOrReturn_ShouldSupportChaining()
-			{
-				Filtered.Methods methods = In.Type<TestClass>()
-					.Methods().Which(m => m.Name.StartsWith("Get"));
-
-				await That(methods).Return<int>().OrReturn<string>().OrReturn<bool>().OrReturn<DummyBase>();
+					.WithMessage("""
+					             Expected that methods matching m => m.Name.StartsWith("Get") in type ThatMethods.Return.TestClass
+					             all return bool or return Task,
+					             but it contained not matching methods [*]
+					             """).AsWildcard();
 			}
 		}
 
 #pragma warning disable CA1822 // Mark members as static
+		// ReSharper disable UnusedMember.Local
 		private class TestClass
 		{
 			public string GetString() => "test";
@@ -122,6 +144,7 @@ public sealed partial class ThatMethods
 			public Dummy GetDummy() => new();
 			public async Task AsyncMethod() => await Task.CompletedTask;
 		}
+		// ReSharper restore UnusedMember.Local
 #pragma warning restore CA1822
 
 		private class DummyBase
