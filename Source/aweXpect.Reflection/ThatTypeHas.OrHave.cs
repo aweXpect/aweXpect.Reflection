@@ -8,10 +8,7 @@ using aweXpect.Results;
 
 namespace aweXpect.Reflection;
 
-/// <summary>
-///     Extensions for combining multiple attribute expectations with OR logic.
-/// </summary>
-public static partial class ThatTypeHasExtensions
+public static partial class ThatType
 {
 	/// <summary>
 	///     Allows an alternative attribute of type <typeparamref name="TAttribute" />.
@@ -25,7 +22,7 @@ public static partial class ThatTypeHasExtensions
 		bool inherit = true)
 		where TAttribute : Attribute
 	{
-		// Try using the Or property instead of And
+		// Use the Or property to create OR logic instead of AND logic
 		return result.Or.Has<TAttribute>(inherit);
 	}
 
@@ -45,7 +42,7 @@ public static partial class ThatTypeHasExtensions
 		string doNotPopulateThisValue = "")
 		where TAttribute : Attribute
 	{
-		// Try using the Or property instead of And
+		// Use the Or property to create OR logic instead of AND logic
 		return result.Or.Has<TAttribute>(predicate, inherit, doNotPopulateThisValue);
 	}
 }
