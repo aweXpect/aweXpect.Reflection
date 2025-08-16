@@ -69,7 +69,7 @@ public static partial class MethodFilters
 					       parameters[index].ParameterType == parameterType;
 				},
 				description => $"{description}at index {index} ");
-			return new MethodsWithParameterAtIndex<T>(this, filter);
+			return new MethodsWithParameterAtIndex<T>(this, filter, index);
 		}
 
 		/// <summary>
@@ -109,92 +109,41 @@ public static partial class MethodFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithParameter<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 	}
 
 	/// <summary>
 	///     Additional filters on methods with a parameter of a specific type at a specific index.
 	/// </summary>
-	public class MethodsWithParameterAtIndex<T>(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter)
-		: Filtered.Methods(inner)
+	public class MethodsWithParameterAtIndex<T> : Filtered.Methods
 	{
+		private readonly IChangeableFilter<MethodInfo> _filter;
+		private readonly int _index;
+		private bool _fromEnd;
+
+		internal MethodsWithParameterAtIndex(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter, int index) : base(inner)
+		{
+			_filter = filter;
+			_index = index;
+			_fromEnd = false;
+		}
+
 		/// <summary>
 		///     Filter for parameters from the end at the specified index.
 		/// </summary>
 		public MethodsWithParameterAtIndex<T> FromEnd()
 		{
-			// Update the filter to work from the end instead
-			filter.UpdateFilter(
+			_fromEnd = true;
+			Type parameterType = typeof(T);
+			_filter.UpdateFilter(
 				(result, methodInfo) =>
 				{
-					// This is a bit tricky - we need to modify the existing filter logic
-					// For now, we'll handle this in a simple way by noting it's from end
-					return result; // The actual logic would be more complex
+					var parameters = methodInfo.GetParameters();
+					int actualIndex = _fromEnd ? parameters.Length - 1 - _index : _index;
+					return result && actualIndex >= 0 && actualIndex < parameters.Length && 
+					       parameters[actualIndex].ParameterType == parameterType;
 				},
 				description => $"{description}from end ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public MethodsWithParameterAtIndex<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && !methodInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public MethodsWithParameterAtIndex<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithParameterAtIndex<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithParameterAtIndex<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
 			return this;
 		}
 	}
@@ -203,74 +152,10 @@ public static partial class MethodFilters
 	///     Additional filters on methods with a named parameter of a specific type.
 	/// </summary>
 	public class MethodsWithNamedParameter<T>(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter, StringEqualityOptions options)
-		: Filtered.Methods(inner)
+		: MethodsWithParameter<T>(inner, filter)
 	{
-		/// <summary>
-		///     Filter for parameters at the specified <paramref name="index" />.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> AtIndex(int index)
-		{
-			Type parameterType = typeof(T);
-			filter.UpdateFilter(
-				(result, methodInfo) =>
-				{
-					var parameters = methodInfo.GetParameters();
-					return result && index >= 0 && index < parameters.Length && 
-					       parameters[index].ParameterType == parameterType;
-				},
-				description => $"{description}at index {index} ");
-			return new MethodsWithNamedParameterAtIndex<T>(this, filter);
-		}
 
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public MethodsWithNamedParameter<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
 
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public MethodsWithNamedParameter<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameter<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
 
 		/// <summary>
 		///     Ignores casing when comparing the parameter name,
@@ -358,73 +243,7 @@ public static partial class MethodFilters
 		}
 	}
 
-	/// <summary>
-	///     Additional filters on methods with a named parameter of a specific type at a specific index.
-	/// </summary>
-	public class MethodsWithNamedParameterAtIndex<T>(Filtered.Methods inner, IChangeableFilter<MethodInfo> filter)
-		: Filtered.Methods(inner)
-	{
-		/// <summary>
-		///     Filter for parameters from the end at the specified index.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> FromEnd()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result,
-				description => $"{description}from end ");
-			return this;
-		}
 
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-	}
 
 	/// <summary>
 	///     Additional filters on methods with a named parameter (type-agnostic).
@@ -483,17 +302,7 @@ public static partial class MethodFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameter WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 
 		/// <summary>
 		///     Ignores casing when comparing the parameter name,
@@ -634,16 +443,6 @@ public static partial class MethodFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public MethodsWithNamedParameterAtIndex WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, methodInfo) => result && methodInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 	}
 }

@@ -69,7 +69,7 @@ public static partial class ConstructorFilters
 					       parameters[index].ParameterType == parameterType;
 				},
 				description => $"{description}at index {index} ");
-			return new ConstructorsWithParameterAtIndex<T>(this, filter);
+			return new ConstructorsWithParameterAtIndex<T>(this, filter, index);
 		}
 
 		/// <summary>
@@ -109,92 +109,41 @@ public static partial class ConstructorFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithParameter<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 	}
 
 	/// <summary>
 	///     Additional filters on constructors with a parameter of a specific type at a specific index.
 	/// </summary>
-	public class ConstructorsWithParameterAtIndex<T>(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter)
-		: Filtered.Constructors(inner)
+	public class ConstructorsWithParameterAtIndex<T> : Filtered.Constructors
 	{
+		private readonly IChangeableFilter<ConstructorInfo> _filter;
+		private readonly int _index;
+		private bool _fromEnd;
+
+		internal ConstructorsWithParameterAtIndex(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter, int index) : base(inner)
+		{
+			_filter = filter;
+			_index = index;
+			_fromEnd = false;
+		}
+
 		/// <summary>
 		///     Filter for parameters from the end at the specified index.
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> FromEnd()
 		{
-			// Update the filter to work from the end instead
-			filter.UpdateFilter(
+			_fromEnd = true;
+			Type parameterType = typeof(T);
+			_filter.UpdateFilter(
 				(result, constructorInfo) =>
 				{
-					// This is a bit tricky - we need to modify the existing filter logic
-					// For now, we'll handle this in a simple way by noting it's from end
-					return result; // The actual logic would be more complex
+					var parameters = constructorInfo.GetParameters();
+					int actualIndex = _fromEnd ? parameters.Length - 1 - _index : _index;
+					return result && actualIndex >= 0 && actualIndex < parameters.Length && 
+					       parameters[actualIndex].ParameterType == parameterType;
 				},
 				description => $"{description}from end ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public ConstructorsWithParameterAtIndex<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && !constructorInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public ConstructorsWithParameterAtIndex<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithParameterAtIndex<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithParameterAtIndex<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Where(p => p.ParameterType == typeof(T))
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
 			return this;
 		}
 	}
@@ -203,74 +152,9 @@ public static partial class ConstructorFilters
 	///     Additional filters on constructors with a named parameter of a specific type.
 	/// </summary>
 	public class ConstructorsWithNamedParameter<T>(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter, StringEqualityOptions options)
-		: Filtered.Constructors(inner)
+		: ConstructorsWithParameter<T>(inner, filter)
 	{
-		/// <summary>
-		///     Filter for parameters at the specified <paramref name="index" />.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> AtIndex(int index)
-		{
-			Type parameterType = typeof(T);
-			filter.UpdateFilter(
-				(result, constructorInfo) =>
-				{
-					var parameters = constructorInfo.GetParameters();
-					return result && index >= 0 && index < parameters.Length && 
-					       parameters[index].ParameterType == parameterType;
-				},
-				description => $"{description}at index {index} ");
-			return new ConstructorsWithNamedParameterAtIndex<T>(this, filter);
-		}
 
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameter<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
 
 		/// <summary>
 		///     Ignores casing when comparing the parameter name,
@@ -358,73 +242,7 @@ public static partial class ConstructorFilters
 		}
 	}
 
-	/// <summary>
-	///     Additional filters on constructors with a named parameter of a specific type at a specific index.
-	/// </summary>
-	public class ConstructorsWithNamedParameterAtIndex<T>(Filtered.Constructors inner, IChangeableFilter<ConstructorInfo> filter)
-		: Filtered.Constructors(inner)
-	{
-		/// <summary>
-		///     Filter for parameters from the end at the specified index.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> FromEnd()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result,
-				description => $"{description}from end ");
-			return this;
-		}
 
-		/// <summary>
-		///     Filter for parameters without default values.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> WithoutDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && !p.HasDefaultValue),
-				description => $"{description}without default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with default values.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> WithDefaultValue()
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue),
-				description => $"{description}with default value ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> WithDefaultValue<TValue>(TValue expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex<T> WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.ParameterType == typeof(T) && p.HasDefaultValue && 
-					         Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
-	}
 
 	/// <summary>
 	///     Additional filters on constructors with a named parameter (type-agnostic).
@@ -483,17 +301,7 @@ public static partial class ConstructorFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameter WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 
 		/// <summary>
 		///     Ignores casing when comparing the parameter name,
@@ -634,16 +442,6 @@ public static partial class ConstructorFilters
 			return this;
 		}
 
-		/// <summary>
-		///     Filter for parameters with a specific default value.
-		/// </summary>
-		public ConstructorsWithNamedParameterAtIndex WithDefaultValue(object expectedValue)
-		{
-			filter.UpdateFilter(
-				(result, constructorInfo) => result && constructorInfo.GetParameters()
-					.Any(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue)),
-				description => $"{description}with default value {Formatter.Format(expectedValue)} ");
-			return this;
-		}
+
 	}
 }
