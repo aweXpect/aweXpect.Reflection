@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Collections;
 
@@ -6,62 +5,34 @@ namespace aweXpect.Reflection.Tests.Filters;
 
 public sealed partial class ConstructorFilters
 {
-	public sealed class WithoutParameters
-	{
-		public sealed class Tests
-		{
-			[Fact]
-			public async Task ShouldFilterForConstructorsWithoutParameters()
-			{
-				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WithoutParameters();
+	private static ConstructorInfo? ExpectedParameterlessConstructorInfo()
+		=> typeof(ClassWithMultipleConstructors)
+			.GetConstructor(
+				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+				null, new Type[0], null);
 
-				await That(constructors).Contains(ExpectedParameterlessConstructorInfo());
-				await That(constructors.GetDescription())
-					.IsEqualTo("constructors without parameters in assembly")
-					.AsPrefix();
-			}
+	private static ConstructorInfo? ExpectedSingleParameterConstructorInfo()
+		=> typeof(ClassWithMultipleConstructors)
+			.GetConstructor(
+				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+				null, new[]
+				{
+					typeof(int),
+				}, null);
 
-			[Fact]
-			public async Task ShouldNotIncludeConstructorsWithParameters()
-			{
-				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WithoutParameters();
-
-				await That(constructors).DoesNotContain(ExpectedSingleParameterConstructorInfo());
-				await That(constructors).DoesNotContain(ExpectedMultipleParameterConstructorInfo());
-			}
-
-			[Fact]
-			public async Task ShouldBeEquivalentToWithParameterCountZero()
-			{
-				Filtered.Constructors constructorsWithoutParameters = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WithoutParameters();
-				Filtered.Constructors constructorsWithParameterCountZero = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WithParameterCount(0);
-
-				await That(constructorsWithoutParameters.ToArray())
-					.IsEquivalentTo(constructorsWithParameterCountZero.ToArray());
-			}
-		}
-	}
+	private static ConstructorInfo? ExpectedMultipleParameterConstructorInfo()
+		=> typeof(ClassWithMultipleConstructors)
+			.GetConstructor(
+				BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
+				null, new[]
+				{
+					typeof(string), typeof(int),
+				}, null);
 
 	public sealed class WithParameterCount
 	{
 		public sealed class Tests
 		{
-			[Fact]
-			public async Task ShouldFilterForConstructorsWithSpecifiedParameterCount()
-			{
-				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WithParameterCount(1);
-
-				await That(constructors).Contains(ExpectedSingleParameterConstructorInfo());
-				await That(constructors.GetDescription())
-					.IsEqualTo("constructors with 1 parameter in assembly")
-					.AsPrefix();
-			}
-
 			[Fact]
 			public async Task ShouldFilterForConstructorsWithMultipleParameters()
 			{
@@ -71,6 +42,18 @@ public sealed partial class ConstructorFilters
 				await That(constructors).Contains(ExpectedMultipleParameterConstructorInfo());
 				await That(constructors.GetDescription())
 					.IsEqualTo("constructors with 2 parameters in assembly")
+					.AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldFilterForConstructorsWithSpecifiedParameterCount()
+			{
+				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
+					.Constructors().WithParameterCount(1);
+
+				await That(constructors).Contains(ExpectedSingleParameterConstructorInfo());
+				await That(constructors.GetDescription())
+					.IsEqualTo("constructors with 1 parameter in assembly")
 					.AsPrefix();
 			}
 
@@ -98,21 +81,8 @@ public sealed partial class ConstructorFilters
 		}
 	}
 
-	private static ConstructorInfo? ExpectedParameterlessConstructorInfo()
-		=> typeof(ClassWithMultipleConstructors)
-			.GetConstructor(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance, 
-				null, new System.Type[0], null);
-
-	private static ConstructorInfo? ExpectedSingleParameterConstructorInfo()
-		=> typeof(ClassWithMultipleConstructors)
-			.GetConstructor(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				null, new[] { typeof(int) }, null);
-
-	private static ConstructorInfo? ExpectedMultipleParameterConstructorInfo()
-		=> typeof(ClassWithMultipleConstructors)
-			.GetConstructor(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
-				null, new[] { typeof(string), typeof(int) }, null);
-
+	// ReSharper disable UnusedMember.Local
+	// ReSharper disable UnusedParameter.Local
 	private class ClassWithMultipleConstructors
 	{
 		public ClassWithMultipleConstructors()
@@ -127,4 +97,6 @@ public sealed partial class ConstructorFilters
 		{
 		}
 	}
+	// ReSharper restore UnusedParameter.Local
+	// ReSharper restore UnusedMember.Local
 }

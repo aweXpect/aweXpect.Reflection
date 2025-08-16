@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Collections;
 
@@ -6,62 +5,22 @@ namespace aweXpect.Reflection.Tests.Filters;
 
 public sealed partial class MethodFilters
 {
-	public sealed class WithoutParameters
-	{
-		public sealed class Tests
-		{
-			[Fact]
-			public async Task ShouldFilterForMethodsWithoutParameters()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WithoutParameters();
+	private static MethodInfo? ExpectedParameterlessMethodInfo()
+		=> typeof(ClassWithMultipleMethods)
+			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithoutParameters));
 
-				await That(methods).Contains(ExpectedParameterlessMethodInfo());
-				await That(methods.GetDescription())
-					.IsEqualTo("methods without parameters in assembly")
-					.AsPrefix();
-			}
+	private static MethodInfo? ExpectedSingleParameterMethodInfo()
+		=> typeof(ClassWithMultipleMethods)
+			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithSingleParameter));
 
-			[Fact]
-			public async Task ShouldNotIncludeMethodsWithParameters()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WithoutParameters();
-
-				await That(methods).DoesNotContain(ExpectedSingleParameterMethodInfo());
-				await That(methods).DoesNotContain(ExpectedMultipleParameterMethodInfo());
-			}
-
-			[Fact]
-			public async Task ShouldBeEquivalentToWithParameterCountZero()
-			{
-				Filtered.Methods methodsWithoutParameters = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WithoutParameters();
-				Filtered.Methods methodsWithParameterCountZero = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WithParameterCount(0);
-
-				await That(methodsWithoutParameters.ToArray())
-					.IsEquivalentTo(methodsWithParameterCountZero.ToArray());
-			}
-		}
-	}
+	private static MethodInfo? ExpectedMultipleParameterMethodInfo()
+		=> typeof(ClassWithMultipleMethods)
+			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithMultipleParameters));
 
 	public sealed class WithParameterCount
 	{
 		public sealed class Tests
 		{
-			[Fact]
-			public async Task ShouldFilterForMethodsWithSpecifiedParameterCount()
-			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WithParameterCount(1);
-
-				await That(methods).Contains(ExpectedSingleParameterMethodInfo());
-				await That(methods.GetDescription())
-					.IsEqualTo("methods with 1 parameter in assembly")
-					.AsPrefix();
-			}
-
 			[Fact]
 			public async Task ShouldFilterForMethodsWithMultipleParameters()
 			{
@@ -71,6 +30,18 @@ public sealed partial class MethodFilters
 				await That(methods).Contains(ExpectedMultipleParameterMethodInfo());
 				await That(methods.GetDescription())
 					.IsEqualTo("methods with 2 parameters in assembly")
+					.AsPrefix();
+			}
+
+			[Fact]
+			public async Task ShouldFilterForMethodsWithSpecifiedParameterCount()
+			{
+				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
+					.Methods().WithParameterCount(1);
+
+				await That(methods).Contains(ExpectedSingleParameterMethodInfo());
+				await That(methods.GetDescription())
+					.IsEqualTo("methods with 1 parameter in assembly")
 					.AsPrefix();
 			}
 
@@ -98,21 +69,10 @@ public sealed partial class MethodFilters
 		}
 	}
 
-	private static MethodInfo? ExpectedParameterlessMethodInfo()
-		=> typeof(ClassWithMultipleMethods)
-			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithoutParameters));
-
-	private static MethodInfo? ExpectedSingleParameterMethodInfo()
-		=> typeof(ClassWithMultipleMethods)
-			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithSingleParameter));
-
-	private static MethodInfo? ExpectedMultipleParameterMethodInfo()
-		=> typeof(ClassWithMultipleMethods)
-			.GetMethod(nameof(ClassWithMultipleMethods.MethodWithMultipleParameters));
-
 	private class ClassWithMultipleMethods
 	{
 #pragma warning disable CA1822
+		// ReSharper disable UnusedParameter.Local
 		public void MethodWithoutParameters()
 		{
 		}
@@ -124,6 +84,7 @@ public sealed partial class MethodFilters
 		public void MethodWithMultipleParameters(string name, int value)
 		{
 		}
+		// ReSharper restore UnusedParameter.Local
 #pragma warning restore CA1822
 	}
 }
