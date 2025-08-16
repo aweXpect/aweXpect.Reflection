@@ -36,6 +36,27 @@ public static partial class ThatMethods
 	}
 
 	/// <summary>
+	///     Verifies that all methods in the filtered collection return exactly type <typeparamref name="TReturn" />.
+	/// </summary>
+	public static MethodsReturnExactlyResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> ReturnExactly<TReturn>(
+		this IThat<IEnumerable<MethodInfo>> subject)
+		=> ReturnExactly(subject, typeof(TReturn));
+
+	/// <summary>
+	///     Verifies that all methods in the filtered collection return exactly type <paramref name="returnType" />.
+	/// </summary>
+	public static MethodsReturnExactlyResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>> ReturnExactly(
+		this IThat<IEnumerable<MethodInfo>> subject, Type returnType)
+	{
+		List<Type> returnTypes = [returnType,];
+		return new MethodsReturnExactlyResult<IEnumerable<MethodInfo>, IThat<IEnumerable<MethodInfo>>>(
+			subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
+				=> new ReturnExactlyConstraint(it, grammars, returnTypes)),
+			subject,
+			returnTypes);
+	}
+
+	/// <summary>
 	///     Result that allows chaining additional return types for method collections.
 	/// </summary>
 	public sealed class MethodsReturnResult<TValue, TResult>(
@@ -55,6 +76,32 @@ public static partial class ThatMethods
 		///     Allow an alternative return type <paramref name="returnType" />.
 		/// </summary>
 		public MethodsReturnResult<TValue, TResult> OrReturn(Type returnType)
+		{
+			returnTypes.Add(returnType);
+			return this;
+		}
+	}
+
+	/// <summary>
+	///     Result that allows chaining additional exact return types for method collections.
+	/// </summary>
+	public sealed class MethodsReturnExactlyResult<TValue, TResult>(
+		ExpectationBuilder expectationBuilder,
+		TResult subject,
+		List<Type> returnTypes)
+		: AndOrResult<TValue, TResult>(expectationBuilder, subject)
+		where TResult : IThat<TValue>
+	{
+		/// <summary>
+		///     Allow an alternative exact return type <typeparamref name="TReturn" />.
+		/// </summary>
+		public MethodsReturnExactlyResult<TValue, TResult> OrReturnExactly<TReturn>()
+			=> OrReturnExactly(typeof(TReturn));
+
+		/// <summary>
+		///     Allow an alternative exact return type <paramref name="returnType" />.
+		/// </summary>
+		public MethodsReturnExactlyResult<TValue, TResult> OrReturnExactly(Type returnType)
 		{
 			returnTypes.Add(returnType);
 			return this;
@@ -111,6 +158,70 @@ public static partial class ThatMethods
 		private void AppendReturnDescription(StringBuilder stringBuilder)
 		{
 			stringBuilder.Append("return ");
+
+			int index = 0;
+			foreach (Type returnType in returnTypes)
+			{
+				if (index++ > 0)
+				{
+					stringBuilder.Append(" or ");
+				}
+
+				Formatter.Format(stringBuilder, returnType);
+			}
+		}
+	}
+
+	private sealed class ReturnExactlyConstraint(
+		string it,
+		ExpectationGrammars grammars,
+		List<Type> returnTypes)
+		: ConstraintResult.WithValue<IEnumerable<MethodInfo>>(grammars),
+			IValueConstraint<IEnumerable<MethodInfo>>
+	{
+		public ConstraintResult IsMetBy(IEnumerable<MethodInfo> actual)
+		{
+			Actual = actual;
+			Outcome = actual.All(methodInfo
+				=> returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType, true)))
+				? Outcome.Success
+				: Outcome.Failure;
+			return this;
+		}
+
+		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
+		{
+			stringBuilder.Append("all ");
+			AppendReturnExactlyDescription(stringBuilder);
+		}
+
+		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
+		{
+			stringBuilder.Append(it).Append(" contained not matching methods ");
+			Formatter.Format(stringBuilder,
+				Actual?.Where(methodInfo
+					=> !returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType, true))),
+				FormattingOptions.Indented(indentation));
+		}
+
+		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
+		{
+			stringBuilder.Append("not all ");
+			AppendReturnExactlyDescription(stringBuilder);
+		}
+
+		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
+		{
+			stringBuilder.Append(it).Append(" only contained matching methods ");
+			Formatter.Format(stringBuilder,
+				Actual?.Where(methodInfo
+					=> returnTypes.Any(returnType => methodInfo.ReturnType.IsOrInheritsFrom(returnType, true))),
+				FormattingOptions.Indented(indentation));
+		}
+
+		private void AppendReturnExactlyDescription(StringBuilder stringBuilder)
+		{
+			stringBuilder.Append("return exactly ");
 
 			int index = 0;
 			foreach (Type returnType in returnTypes)
