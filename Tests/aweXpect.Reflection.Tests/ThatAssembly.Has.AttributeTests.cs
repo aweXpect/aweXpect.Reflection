@@ -84,4 +84,48 @@ public sealed partial class ThatAssembly
 			private class TestAttribute : Attribute;
 		}
 	}
+
+	public sealed class NegatedTests
+	{
+		[Fact]
+		public async Task WhenAssemblyDoesNotHaveAttribute_ShouldSucceed()
+		{
+			Assembly subject = Assembly.GetExecutingAssembly();
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.Has<TestAttribute>());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenAssemblyDoesNotHaveMatchingAttribute_ShouldSucceed()
+		{
+			Assembly subject = Assembly.GetExecutingAssembly();
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.Has<AssemblyTitleAttribute>(attr => attr.Title == "NonExistentTitle"));
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenAssemblyHasAttribute_ShouldFail()
+		{
+			Assembly subject = Assembly.GetExecutingAssembly();
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.Has<AssemblyTitleAttribute>());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("""
+				             Expected that subject
+				             has no AssemblyTitleAttribute,
+				             but it did in aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+				             """);
+		}
+
+		[AttributeUsage(AttributeTargets.Assembly)]
+		private class TestAttribute : Attribute;
+	}
 }

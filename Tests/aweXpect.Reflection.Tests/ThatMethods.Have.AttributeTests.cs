@@ -100,5 +100,223 @@ public sealed partial class ThatMethods
 			}
 			// ReSharper restore UnusedMember.Local
 		}
+		
+		public sealed class OrHave
+		{
+			public sealed class AttributeTests
+			{
+				[Fact]
+				public async Task WhenMethodsHaveFirstAttribute_ShouldSucceed()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("TestMethod1")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenMethodsHaveSecondAttribute_ShouldSucceed()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("BarMethod")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenMethodsHaveBothAttributes_ShouldSucceed()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("BothMethod")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenMethodsHaveNeitherAttribute_ShouldFail()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("NoAttributeMethod")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute or have ThatMethods.Have.OrHave.AttributeTests.BarAttribute,
+						             but it contained not matching methods [
+						               Void NoAttributeMethod()
+						             ]
+						             """);
+				}
+
+				[Fact]
+				public async Task WhenMethodsHaveMatchingFirstAttribute_ShouldSucceed()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("TestMethod1")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>(attr => attr.Value == "Method1Value")
+							.OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenMethodsHaveMatchingSecondAttribute_ShouldSucceed()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("BarMethod")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>(attr => attr.Value == "NonExistent")
+							.OrHave<BarAttribute>(attr => attr.Name == "bar");
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WithPredicate_WhenMethodsHaveNotMatchingAttribute_ShouldFail()
+				{
+					IEnumerable<MethodInfo> subject = new[]
+					{
+						typeof(TestClass).GetMethod("TestMethod1")!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>(attr => attr.Value == "WrongValue")
+							.OrHave<BarAttribute>(attr => attr.Name == "wrong");
+
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             all have ThatMethods.Have.OrHave.AttributeTests.TestAttribute matching attr => attr.Value == "WrongValue" or have ThatMethods.Have.OrHave.AttributeTests.BarAttribute matching attr => attr.Name == "wrong",
+						             but it contained not matching methods [
+						               Void TestMethod1()
+						             ]
+						             """);
+				}
+
+				[AttributeUsage(AttributeTargets.Method)]
+				private class TestAttribute : Attribute
+				{
+					public string Value { get; set; } = "";
+				}
+
+				[AttributeUsage(AttributeTargets.Method)]
+				private class BarAttribute : Attribute
+				{
+					public string Name { get; set; } = "";
+				}
+
+				// ReSharper disable UnusedMember.Local
+				private class TestClass
+				{
+					[Test(Value = "Method1Value")]
+					public void TestMethod1() { }
+
+					[Bar(Name = "bar")]
+					public void BarMethod() { }
+
+					[Test(Value = "BothValue")]
+					[Bar(Name = "both")]
+					public void BothMethod() { }
+
+					public void NoAttributeMethod() { }
+				}
+				// ReSharper restore UnusedMember.Local
+			}
+		}
+	}
+
+	public sealed class NegatedTests
+	{
+		[Fact]
+		public async Task WhenMethodsDoNotHaveAttribute_ShouldSucceed()
+		{
+			IEnumerable<MethodInfo> subjects = new[]
+			{
+				typeof(TestClass).GetMethod("NoAttributeMethod")!,
+			};
+
+			async Task Act()
+				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenMethodsDoNotHaveMatchingAttribute_ShouldSucceed()
+		{
+			IEnumerable<MethodInfo> subjects = new[]
+			{
+				typeof(TestClass).GetMethod("TestMethod1")!,
+			};
+
+			async Task Act()
+				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>(attr => attr.Value == "NonExistent"));
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenMethodsHaveAttribute_ShouldFail()
+		{
+			IEnumerable<MethodInfo> subjects = new[]
+			{
+				typeof(TestClass).GetMethod("TestMethod1")!,
+			};
+
+			async Task Act()
+				=> await That(subjects).DoesNotComplyWith(they => they.Have<TestAttribute>());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("""
+				             Expected that subjects
+				             it contained not matching methods [],
+				             but it only contained matching methods [
+				               Void TestMethod1()
+				             ]
+				             """);
+		}
+
+		[AttributeUsage(AttributeTargets.Method)]
+		private class TestAttribute : Attribute
+		{
+			public string Value { get; set; } = "";
+		}
+
+		// ReSharper disable UnusedMember.Local
+		private class TestClass
+		{
+			[Test(Value = "Method1Value")]
+			public void TestMethod1() { }
+
+			public void NoAttributeMethod() { }
+		}
+		// ReSharper restore UnusedMember.Local
 	}
 }
