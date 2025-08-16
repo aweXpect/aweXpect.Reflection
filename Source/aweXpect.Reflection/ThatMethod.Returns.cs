@@ -76,23 +76,24 @@ public static partial class ThatMethod
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> AppendReturnDescription(stringBuilder);
+			=> AppendReturnDescription(stringBuilder, Grammars);
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("it returned ").Append(Formatter.Format(Actual?.ReturnType));
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-		{
-			stringBuilder.Append("not ");
-			AppendReturnDescription(stringBuilder);
-		}
+			=> AppendNormalExpectation(stringBuilder, indentation);
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 			=> stringBuilder.Append("it did");
 
 
-		private void AppendReturnDescription(StringBuilder stringBuilder)
+		private void AppendReturnDescription(StringBuilder stringBuilder, ExpectationGrammars grammars)
 		{
+			stringBuilder.Append(grammars.HasFlag(ExpectationGrammars.Negated)
+				? "does not return "
+				: "returns ");
+
 			int index = 0;
 			foreach (Type returnType in returnTypes)
 			{
@@ -101,7 +102,6 @@ public static partial class ThatMethod
 					stringBuilder.Append(" or ");
 				}
 
-				stringBuilder.Append("returns ");
 				Formatter.Format(stringBuilder, returnType);
 			}
 		}

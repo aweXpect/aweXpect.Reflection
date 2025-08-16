@@ -145,7 +145,7 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             returns string or returns bool,
+					             returns string or bool,
 					             but it returned int
 					             """);
 			}
@@ -186,7 +186,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns<int>());
 
 					await That(Act).ThrowsException()
-						.WithMessage("*not returns int*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return int,
+						             but it was <null>
+						             """)
 						.AsWildcard();
 				}
 
@@ -199,7 +203,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns<int>());
 
 					await That(Act).Throws<XunitException>()
-						.WithMessage("*not returns int*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return int,
+						             but it did
+						             """)
 						.AsWildcard();
 				}
 
@@ -212,7 +220,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns<BaseClass>());
 
 					await That(Act).Throws<XunitException>()
-						.WithMessage("*not returns*BaseClass*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return ThatMethod.Returns.BaseClass,
+						             but it did
+						             """)
 						.AsWildcard();
 				}
 			}
@@ -239,7 +251,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns(typeof(int)));
 
 					await That(Act).ThrowsException()
-						.WithMessage("*not returns int*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return int,
+						             but it was <null>
+						             """)
 						.AsWildcard();
 				}
 
@@ -252,7 +268,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns(typeof(int)));
 
 					await That(Act).Throws<XunitException>()
-						.WithMessage("*not returns int*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return int,
+						             but it did
+						             """)
 						.AsWildcard();
 				}
 
@@ -265,7 +285,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns(typeof(BaseClass)));
 
 					await That(Act).Throws<XunitException>()
-						.WithMessage("*not returns*BaseClass*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return ThatMethod.Returns.BaseClass,
+						             but it did
+						             """)
 						.AsWildcard();
 				}
 			}
@@ -292,7 +316,11 @@ public sealed partial class ThatMethod
 						=> await That(subject).DoesNotComplyWith(it => it.Returns(typeof(string)).OrReturns<int>());
 
 					await That(Act).Throws<XunitException>()
-						.WithMessage("*not returns string or returns int*")
+						.WithMessage("""
+						             Expected that subject
+						             does not return string or int,
+						             but it did
+						             """)
 						.AsWildcard();
 				}
 

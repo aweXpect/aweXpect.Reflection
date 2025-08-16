@@ -95,7 +95,7 @@ public static partial class ThatMethods
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("all not ");
+			stringBuilder.Append("not all ");
 			AppendReturnDescription(stringBuilder);
 		}
 
@@ -110,6 +110,8 @@ public static partial class ThatMethods
 
 		private void AppendReturnDescription(StringBuilder stringBuilder)
 		{
+			stringBuilder.Append("return ");
+
 			int index = 0;
 			foreach (Type returnType in returnTypes)
 			{
@@ -118,7 +120,6 @@ public static partial class ThatMethods
 					stringBuilder.Append(" or ");
 				}
 
-				stringBuilder.Append("return ");
 				Formatter.Format(stringBuilder, returnType);
 			}
 		}
