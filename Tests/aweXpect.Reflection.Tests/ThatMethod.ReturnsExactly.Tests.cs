@@ -192,6 +192,65 @@ public sealed partial class ThatMethod
 			}
 		}
 
+		public sealed class OrReturnsTests
+		{
+			[Fact]
+			public async Task WithMultipleOrReturnsExactly_ShouldSupportChaining()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).ReturnsExactly<string>().OrReturns(typeof(bool))
+						.OrReturnsExactly<int>();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithOrReturnsExactly_WhenMethodReturnsNoneOfTheTypes_ShouldFail()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).ReturnsExactly<string>().OrReturns<bool>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             returns exactly string or bool,
+					             but it returned int
+					             """);
+			}
+
+			[Fact]
+			public async Task WithOrReturnsExactly_WhenMethodReturnsOneOfTheTypes_ShouldSucceed()
+			{
+				MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
+
+				async Task Act()
+					=> await That(subject).ReturnsExactly<string>().OrReturns<int>();
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WithOrReturnsExactly_WhenReturnTypeInheritsFromExpectedType_ShouldFail()
+			{
+				MethodInfo subject = typeof(ClassWithInheritance).GetMethod(nameof(ClassWithInheritance.GetDerived))!;
+
+				async Task Act()
+					=> await That(subject).ReturnsExactly<BaseClass>().OrReturns<string>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             returns exactly ThatMethod.BaseClass or string,
+					             but it returned ThatMethod.DerivedClass
+					             """)
+					.AsWildcard();
+			}
+		}
+
 		public sealed class NegatedTests
 		{
 			public sealed class GenericTests
@@ -275,50 +334,6 @@ public sealed partial class ThatMethod
 						.WithMessage("""
 						             Expected that subject
 						             does not return exactly string or int,
-						             but it did
-						             """);
-				}
-			}
-
-			public sealed class OrReturnsExactlyTests
-			{
-				[Fact]
-				public async Task WithMultipleOrReturnsExactly_ShouldSupportChaining()
-				{
-					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
-
-					async Task Act()
-						=> await That(subject).DoesNotComplyWith(it
-							=> it.ReturnsExactly<string>().OrReturnsExactly(typeof(bool)).OrReturnsExactly<Task>());
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
-				public async Task WithOrReturnsExactly_WhenMethodReturnsNoneOfTheTypes_ShouldSucceed()
-				{
-					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
-
-					async Task Act()
-						=> await That(subject)
-							.DoesNotComplyWith(it => it.ReturnsExactly<string>().OrReturnsExactly<bool>());
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
-				public async Task WithOrReturnsExactly_WhenMethodReturnsOneOfTheTypes_ShouldFail()
-				{
-					MethodInfo subject = GetMethod(nameof(ClassWithMethods.PublicMethod))!;
-
-					async Task Act()
-						=> await That(subject)
-							.DoesNotComplyWith(it => it.ReturnsExactly<string>().OrReturnsExactly<int>());
-
-					await That(Act).Throws<XunitException>()
-						.WithMessage("""
-						             Expected that subject
-						             does not return exactly string or exactly int,
 						             but it did
 						             """);
 				}
