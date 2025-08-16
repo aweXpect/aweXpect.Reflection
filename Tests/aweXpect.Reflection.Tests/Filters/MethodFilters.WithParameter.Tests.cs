@@ -214,7 +214,7 @@ public sealed partial class MethodFilters
 						[typeof(string), typeof(int),])!,
 				]).InAnyOrder();
 				await That(methods.GetDescription())
-					.IsEqualTo("methods with parameter of type int and with default value in").AsPrefix();
+					.IsEqualTo("methods with parameter of type int and with a default value in").AsPrefix();
 			}
 
 			[Fact]

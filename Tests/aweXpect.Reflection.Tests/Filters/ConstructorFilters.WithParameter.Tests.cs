@@ -188,7 +188,7 @@ public sealed partial class ConstructorFilters
 					typeof(TestClassWithConstructorParameters).GetConstructor([typeof(string), typeof(int),])!,
 				]).InAnyOrder();
 				await That(constructors.GetDescription())
-					.IsEqualTo("constructors with parameter of type int and with default value in").AsPrefix();
+					.IsEqualTo("constructors with parameter of type int and with a default value in").AsPrefix();
 			}
 
 			[Fact]

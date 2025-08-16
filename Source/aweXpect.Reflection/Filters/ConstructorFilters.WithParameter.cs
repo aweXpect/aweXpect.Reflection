@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using aweXpect.Core;
 using aweXpect.Options;
 using aweXpect.Reflection.Collections;
@@ -124,7 +125,7 @@ public static partial class ConstructorFilters
 		ParameterFilterOptions IOptionsProvider<ParameterFilterOptions>.Options => parameterFiltersOptions;
 
 		/// <summary>
-		///     Filter for parameters at the specified <paramref name="index" />.
+		///     …at the given <paramref name="index" />.
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> AtIndex(int index)
 		{
@@ -133,37 +134,37 @@ public static partial class ConstructorFilters
 		}
 
 		/// <summary>
-		///     Filter for parameters without default values.
+		///     …without a default value.
 		/// </summary>
 		public ConstructorsWithParameter<T> WithoutDefaultValue()
 		{
-			parameterFiltersOptions.AddPredicate(p => !p.HasDefaultValue, () => "without default value");
+			parameterFiltersOptions.AddPredicate(p => !p.HasDefaultValue, () => "without a default value");
 			return this;
 		}
 
 		/// <summary>
-		///     Filter for parameters with default values.
+		///     …with a default value.
 		/// </summary>
 		public ConstructorsWithParameter<T> WithDefaultValue()
 		{
-			parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue, () => "with default value");
+			parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue, () => "with a default value");
 			return this;
 		}
 
 		/// <summary>
-		///     Filter for parameters with a specific default value.
+		///     …with the <paramref name="expected"/> default value.
 		/// </summary>
-		public ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+		public ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expected)
 			where TValue : T
 		{
-			parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue && Equals(p.DefaultValue, expectedValue),
-				() => $"with default value {Formatter.Format(expectedValue)}");
+			parameterFiltersOptions.AddPredicate(p => p.HasDefaultValue && Equals(p.DefaultValue, expected),
+				() => $"with default value {Formatter.Format(expected)}");
 			return this;
 		}
 	}
 
 	/// <summary>
-	///     Additional filters on constructors with a parameter of a specific type at a specific index.
+	///     Additional filters on constructors with a parameter at a specific index.
 	/// </summary>
 	public class ConstructorsWithParameterAtIndex<T>(
 		Filtered.Constructors inner,
@@ -175,7 +176,7 @@ public static partial class ConstructorFilters
 		CollectionIndexOptions IOptionsProvider<CollectionIndexOptions>.Options => collectionIndexOptions;
 
 		/// <summary>
-		///     Filter for parameters from the end at the specified index.
+		///     …from end.
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> FromEnd()
 		{
@@ -231,7 +232,7 @@ public static partial class ConstructorFilters
 		}
 
 		/// <summary>
-		///     Interprets the expected parameter name as <see cref="System.Text.RegularExpressions.Regex" /> pattern.
+		///     Interprets the expected parameter name as a <see cref="Regex" /> pattern.
 		/// </summary>
 		public ConstructorsWithNamedParameter<T> AsRegex()
 		{

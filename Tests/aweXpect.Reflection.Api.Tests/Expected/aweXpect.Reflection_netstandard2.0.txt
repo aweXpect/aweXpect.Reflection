@@ -53,7 +53,7 @@ namespace aweXpect.Reflection
             public ConstructorsWithParameter(aweXpect.Reflection.Collections.Filtered.Constructors inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameterAtIndex<T> AtIndex(int index) { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue() { }
-            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+            public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithDefaultValue<TValue>(TValue expected)
                 where TValue : T { }
             public aweXpect.Reflection.ConstructorFilters.ConstructorsWithParameter<T> WithoutDefaultValue() { }
         }
@@ -202,7 +202,7 @@ namespace aweXpect.Reflection
             public MethodsWithParameter(aweXpect.Reflection.Collections.Filtered.Methods inner, aweXpect.Options.CollectionIndexOptions collectionIndexOptions, aweXpect.Reflection.Options.ParameterFilterOptions parameterFiltersOptions) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameterAtIndex<T> AtIndex(int index) { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue() { }
-            public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue<TValue>(TValue expectedValue)
+            public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithDefaultValue<TValue>(TValue expected)
                 where TValue : T { }
             public aweXpect.Reflection.MethodFilters.MethodsWithParameter<T> WithoutDefaultValue() { }
         }
