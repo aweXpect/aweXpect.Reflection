@@ -19,7 +19,8 @@ public static partial class ThatProperty
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" />) specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static HasAttributeResult<PropertyInfo?> Has<TAttribute>(this IThat<PropertyInfo?> subject, bool inherit = true)
+	public static HasAttributeResult<PropertyInfo?> Has<TAttribute>(this IThat<PropertyInfo?> subject,
+		bool inherit = true)
 		where TAttribute : Attribute
 	{
 		AttributeFilterOptions<PropertyInfo?> attributeFilterOptions =
@@ -49,7 +50,7 @@ public static partial class ThatProperty
 	{
 		AttributeFilterOptions<PropertyInfo?> attributeFilterOptions =
 			new((a, attributeType, p, i) => a.HasAttribute(attributeType, p, i));
-		attributeFilterOptions.RegisterAttribute<TAttribute>(inherit, predicate, doNotPopulateThisValue);
+		attributeFilterOptions.RegisterAttribute(inherit, predicate, doNotPopulateThisValue);
 		return new HasAttributeResult<PropertyInfo?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HasAttributeConstraint(it, grammars, attributeFilterOptions)),
 			subject,

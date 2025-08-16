@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -10,6 +9,22 @@ public sealed partial class ThatProperty
 	{
 		public sealed class AttributeTests
 		{
+			[Fact]
+			public async Task WhenPropertyDoesNotHaveAttribute_ShouldFail()
+			{
+				PropertyInfo subject = typeof(TestClass).GetProperty("NoAttributeProperty")!;
+
+				async Task Act()
+					=> await That(subject).Has<TestAttribute>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has ThatProperty.Has.AttributeTests.TestAttribute,
+					             but it did not in System.String NoAttributeProperty
+					             """);
+			}
+
 			[Fact]
 			public async Task WhenPropertyHasAttribute_ShouldSucceed()
 			{
@@ -30,22 +45,6 @@ public sealed partial class ThatProperty
 					=> await That(subject).Has<TestAttribute>(attr => attr.Value == "PropertyValue");
 
 				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenPropertyDoesNotHaveAttribute_ShouldFail()
-			{
-				PropertyInfo subject = typeof(TestClass).GetProperty("NoAttributeProperty")!;
-
-				async Task Act()
-					=> await That(subject).Has<TestAttribute>();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has ThatProperty.Has.AttributeTests.TestAttribute,
-					             but it did not in System.String NoAttributeProperty
-					             """);
 			}
 
 			[Fact]
@@ -86,13 +85,14 @@ public sealed partial class ThatProperty
 				public string Value { get; set; } = "";
 			}
 
+			// ReSharper disable UnusedMember.Local
 			private class TestClass
 			{
-				[Test(Value = "PropertyValue")]
-				public string TestProperty { get; set; } = "";
+				[Test(Value = "PropertyValue")] public string TestProperty { get; set; } = "";
 
 				public string NoAttributeProperty { get; set; } = "";
 			}
+			// ReSharper restore UnusedMember.Local
 		}
 	}
 }

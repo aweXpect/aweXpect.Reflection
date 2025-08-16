@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -17,8 +15,7 @@ public sealed partial class ThatEvents
 			{
 				IEnumerable<EventInfo> subject = new[]
 				{
-					typeof(TestClass).GetEvent("TestEvent1")!,
-					typeof(TestClass).GetEvent("TestEvent2")!
+					typeof(TestClass).GetEvent("TestEvent1")!, typeof(TestClass).GetEvent("TestEvent2")!,
 				};
 
 				async Task Act()
@@ -32,8 +29,7 @@ public sealed partial class ThatEvents
 			{
 				IEnumerable<EventInfo> subject = new[]
 				{
-					typeof(TestClass).GetEvent("TestEvent1")!,
-					typeof(TestClass).GetEvent("TestEvent2")!
+					typeof(TestClass).GetEvent("TestEvent1")!, typeof(TestClass).GetEvent("TestEvent2")!,
 				};
 
 				async Task Act()
@@ -47,8 +43,7 @@ public sealed partial class ThatEvents
 			{
 				IEnumerable<EventInfo> subject = new[]
 				{
-					typeof(TestClass).GetEvent("TestEvent1")!,
-					typeof(TestClass).GetEvent("NoAttributeEvent")!
+					typeof(TestClass).GetEvent("TestEvent1")!, typeof(TestClass).GetEvent("NoAttributeEvent")!,
 				};
 
 				async Task Act()
@@ -69,8 +64,7 @@ public sealed partial class ThatEvents
 			{
 				IEnumerable<EventInfo> subject = new[]
 				{
-					typeof(TestClass).GetEvent("TestEvent1")!,
-					typeof(TestClass).GetEvent("TestEvent2")!
+					typeof(TestClass).GetEvent("TestEvent1")!, typeof(TestClass).GetEvent("TestEvent2")!,
 				};
 
 				async Task Act()
@@ -93,16 +87,16 @@ public sealed partial class ThatEvents
 				public string Value { get; set; } = "";
 			}
 
+#pragma warning disable CS0067 // Event is never used
 			private class TestClass
 			{
-				[Test(Value = "Event1Value")]
-				public event Action? TestEvent1;
+				[Test(Value = "Event1Value")] public event Action? TestEvent1;
 
-				[Test(Value = "Event2Value")]
-				public event Action? TestEvent2;
+				[Test(Value = "Event2Value")] public event Action? TestEvent2;
 
 				public event Action? NoAttributeEvent;
 			}
+#pragma warning restore CS0067
 		}
 	}
 }

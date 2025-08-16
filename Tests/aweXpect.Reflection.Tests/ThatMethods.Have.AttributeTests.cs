@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -17,8 +15,7 @@ public sealed partial class ThatMethods
 			{
 				IEnumerable<MethodInfo> subject = new[]
 				{
-					typeof(TestClass).GetMethod("TestMethod1")!,
-					typeof(TestClass).GetMethod("TestMethod2")!
+					typeof(TestClass).GetMethod("TestMethod1")!, typeof(TestClass).GetMethod("TestMethod2")!,
 				};
 
 				async Task Act()
@@ -32,8 +29,7 @@ public sealed partial class ThatMethods
 			{
 				IEnumerable<MethodInfo> subject = new[]
 				{
-					typeof(TestClass).GetMethod("TestMethod1")!,
-					typeof(TestClass).GetMethod("TestMethod2")!
+					typeof(TestClass).GetMethod("TestMethod1")!, typeof(TestClass).GetMethod("TestMethod2")!,
 				};
 
 				async Task Act()
@@ -47,8 +43,7 @@ public sealed partial class ThatMethods
 			{
 				IEnumerable<MethodInfo> subject = new[]
 				{
-					typeof(TestClass).GetMethod("TestMethod1")!,
-					typeof(TestClass).GetMethod("NoAttributeMethod")!
+					typeof(TestClass).GetMethod("TestMethod1")!, typeof(TestClass).GetMethod("NoAttributeMethod")!,
 				};
 
 				async Task Act()
@@ -69,8 +64,7 @@ public sealed partial class ThatMethods
 			{
 				IEnumerable<MethodInfo> subject = new[]
 				{
-					typeof(TestClass).GetMethod("TestMethod1")!,
-					typeof(TestClass).GetMethod("TestMethod2")!
+					typeof(TestClass).GetMethod("TestMethod1")!, typeof(TestClass).GetMethod("TestMethod2")!,
 				};
 
 				async Task Act()
@@ -93,6 +87,7 @@ public sealed partial class ThatMethods
 				public string Value { get; set; } = "";
 			}
 
+			// ReSharper disable UnusedMember.Local
 			private class TestClass
 			{
 				[Test(Value = "Method1Value")]
@@ -103,6 +98,7 @@ public sealed partial class ThatMethods
 
 				public void NoAttributeMethod() { }
 			}
+			// ReSharper restore UnusedMember.Local
 		}
 	}
 }

@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -17,8 +15,7 @@ public sealed partial class ThatFields
 			{
 				IEnumerable<FieldInfo> subject = new[]
 				{
-					typeof(TestClass).GetField("TestField1")!,
-					typeof(TestClass).GetField("TestField2")!
+					typeof(TestClass).GetField("TestField1")!, typeof(TestClass).GetField("TestField2")!,
 				};
 
 				async Task Act()
@@ -32,8 +29,7 @@ public sealed partial class ThatFields
 			{
 				IEnumerable<FieldInfo> subject = new[]
 				{
-					typeof(TestClass).GetField("TestField1")!,
-					typeof(TestClass).GetField("TestField2")!
+					typeof(TestClass).GetField("TestField1")!, typeof(TestClass).GetField("TestField2")!,
 				};
 
 				async Task Act()
@@ -47,8 +43,7 @@ public sealed partial class ThatFields
 			{
 				IEnumerable<FieldInfo> subject = new[]
 				{
-					typeof(TestClass).GetField("TestField1")!,
-					typeof(TestClass).GetField("NoAttributeField")!
+					typeof(TestClass).GetField("TestField1")!, typeof(TestClass).GetField("NoAttributeField")!,
 				};
 
 				async Task Act()
@@ -69,8 +64,7 @@ public sealed partial class ThatFields
 			{
 				IEnumerable<FieldInfo> subject = new[]
 				{
-					typeof(TestClass).GetField("TestField1")!,
-					typeof(TestClass).GetField("TestField2")!
+					typeof(TestClass).GetField("TestField1")!, typeof(TestClass).GetField("TestField2")!,
 				};
 
 				async Task Act()
@@ -93,16 +87,16 @@ public sealed partial class ThatFields
 				public string Value { get; set; } = "";
 			}
 
+#pragma warning disable CS0414 // Field is assigned but its value is never used
 			private class TestClass
 			{
-				[Test(Value = "Field1Value")]
-				public string TestField1 = "";
-
-				[Test(Value = "Field2Value")]
-				public string TestField2 = "";
-
 				public string NoAttributeField = "";
+
+				[Test(Value = "Field1Value")] public string TestField1 = "";
+
+				[Test(Value = "Field2Value")] public string TestField2 = "";
 			}
+#pragma warning restore CS0414
 		}
 	}
 }

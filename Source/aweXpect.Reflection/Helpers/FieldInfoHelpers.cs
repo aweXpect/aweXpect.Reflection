@@ -27,7 +27,7 @@ internal static class FieldInfoHelpers
 		{
 			return false;
 		}
-		
+
 		if (accessModifiers.HasFlag(AccessModifiers.Internal) &&
 		    fieldInfo.IsAssembly)
 		{

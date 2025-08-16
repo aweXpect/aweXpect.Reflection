@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -10,6 +9,22 @@ public sealed partial class ThatMethod
 	{
 		public sealed class AttributeTests
 		{
+			[Fact]
+			public async Task WhenMethodDoesNotHaveAttribute_ShouldFail()
+			{
+				MethodInfo subject = typeof(TestClass).GetMethod("NoAttributeMethod")!;
+
+				async Task Act()
+					=> await That(subject).Has<TestAttribute>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has ThatMethod.Has.AttributeTests.TestAttribute,
+					             but it did not in Void NoAttributeMethod()
+					             """);
+			}
+
 			[Fact]
 			public async Task WhenMethodHasAttribute_ShouldSucceed()
 			{
@@ -30,22 +45,6 @@ public sealed partial class ThatMethod
 					=> await That(subject).Has<TestAttribute>(attr => attr.Value == "MethodValue");
 
 				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenMethodDoesNotHaveAttribute_ShouldFail()
-			{
-				MethodInfo subject = typeof(TestClass).GetMethod("NoAttributeMethod")!;
-
-				async Task Act()
-					=> await That(subject).Has<TestAttribute>();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has ThatMethod.Has.AttributeTests.TestAttribute,
-					             but it did not in Void NoAttributeMethod()
-					             """);
 			}
 
 			[Fact]
@@ -86,6 +85,7 @@ public sealed partial class ThatMethod
 				public string Value { get; set; } = "";
 			}
 
+			// ReSharper disable UnusedMember.Local
 			private class TestClass
 			{
 				[Test(Value = "MethodValue")]
@@ -93,6 +93,7 @@ public sealed partial class ThatMethod
 
 				public void NoAttributeMethod() { }
 			}
+			// ReSharper restore UnusedMember.Local
 		}
 	}
 }

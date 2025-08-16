@@ -81,9 +81,7 @@ public sealed partial class ThatAssembly
 			}
 
 			[AttributeUsage(AttributeTargets.Assembly)]
-			private class TestAttribute : Attribute
-			{
-			}
+			private class TestAttribute : Attribute;
 		}
 	}
 }

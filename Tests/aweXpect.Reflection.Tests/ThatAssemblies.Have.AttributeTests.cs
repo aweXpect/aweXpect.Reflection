@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Sdk;
@@ -14,13 +13,13 @@ public sealed partial class ThatAssemblies
 			[Fact]
 			public async Task WhenAllAssembliesHaveAttribute_ShouldSucceed()
 			{
-				IEnumerable<Assembly> subject = new[]
+				IEnumerable<Assembly> subjects = new[]
 				{
-					typeof(AttributeTests).Assembly
+					typeof(AttributeTests).Assembly,
 				};
 
 				async Task Act()
-					=> await That(subject).Have<AssemblyTitleAttribute>();
+					=> await That(subjects).Have<AssemblyTitleAttribute>();
 
 				await That(Act).DoesNotThrow();
 			}
@@ -28,37 +27,62 @@ public sealed partial class ThatAssemblies
 			[Fact]
 			public async Task WhenAllAssembliesHaveMatchingAttribute_ShouldSucceed()
 			{
-				IEnumerable<Assembly> subject = new[]
+				IEnumerable<Assembly> subjects = new[]
 				{
-					typeof(AttributeTests).Assembly
+					typeof(AttributeTests).Assembly,
 				};
 
 				async Task Act()
-					=> await That(subject).Have<AssemblyTitleAttribute>(attr => !string.IsNullOrEmpty(attr.Title));
+					=> await That(subjects)
+						.Have<AssemblyTitleAttribute>(attr => attr.Title == "aweXpect.Reflection.Tests");
 
 				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
-			public async Task WhenNotAllAssembliesHaveMatchingAttribute_ShouldFail()
+			public async Task WhenNotAllAssembliesHaveAttribute_ShouldFail()
 			{
-				IEnumerable<Assembly> subject = new[]
+				IEnumerable<Assembly> subjects = new[]
 				{
-					typeof(AttributeTests).Assembly
+					typeof(AttributeTests).Assembly,
 				};
 
 				async Task Act()
-					=> await That(subject).Have<AssemblyTitleAttribute>(attr => attr.Title == "NonExistentTitle");
+					=> await That(subjects).Have<TestAttribute>();
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
-					             Expected that subject
+					             Expected that subjects
+					             all have ThatAssemblies.Have.AttributeTests.TestAttribute,
+					             but it contained not matching assemblies [
+					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
+					             ]
+					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenNotAllAssembliesHaveMatchingAttribute_ShouldFail()
+			{
+				IEnumerable<Assembly> subjects = new[]
+				{
+					typeof(AttributeTests).Assembly,
+				};
+
+				async Task Act()
+					=> await That(subjects).Have<AssemblyTitleAttribute>(attr => attr.Title == "NonExistentTitle");
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subjects
 					             all have AssemblyTitleAttribute matching attr => attr.Title == "NonExistentTitle",
 					             but it contained not matching assemblies [
-					               aweXpect.Reflection.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+					               aweXpect.Reflection.Tests, Version=*, Culture=neutral, PublicKeyToken=null
 					             ]
-					             """);
+					             """).AsWildcard();
 			}
+
+			[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+			private class TestAttribute : Attribute;
 		}
 	}
 }

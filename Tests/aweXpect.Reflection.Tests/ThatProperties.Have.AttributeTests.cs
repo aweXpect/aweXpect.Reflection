@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -17,8 +14,7 @@ public sealed partial class ThatProperties
 			{
 				IEnumerable<PropertyInfo> subject = new[]
 				{
-					typeof(TestClass).GetProperty("TestProperty1")!,
-					typeof(TestClass).GetProperty("TestProperty2")!
+					typeof(TestClass).GetProperty("TestProperty1")!, typeof(TestClass).GetProperty("TestProperty2")!,
 				};
 
 				async Task Act()
@@ -32,8 +28,7 @@ public sealed partial class ThatProperties
 			{
 				IEnumerable<PropertyInfo> subject = new[]
 				{
-					typeof(TestClass).GetProperty("TestProperty1")!,
-					typeof(TestClass).GetProperty("TestProperty2")!
+					typeof(TestClass).GetProperty("TestProperty1")!, typeof(TestClass).GetProperty("TestProperty2")!,
 				};
 
 				async Task Act()
@@ -48,16 +43,16 @@ public sealed partial class ThatProperties
 				public string Value { get; set; } = "";
 			}
 
+			// ReSharper disable UnusedMember.Local
 			private class TestClass
 			{
-				[Test(Value = "Property1Value")]
-				public string TestProperty1 { get; set; } = "";
+				[Test(Value = "Property1Value")] public string TestProperty1 { get; set; } = "";
 
-				[Test(Value = "Property2Value")]
-				public string TestProperty2 { get; set; } = "";
+				[Test(Value = "Property2Value")] public string TestProperty2 { get; set; } = "";
 
 				public string NoAttributeProperty { get; set; } = "";
 			}
+			// ReSharper restore UnusedMember.Local
 		}
 	}
 }

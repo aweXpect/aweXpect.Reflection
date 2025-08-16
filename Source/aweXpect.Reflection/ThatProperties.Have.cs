@@ -55,7 +55,7 @@ public static partial class ThatProperties
 	{
 		AttributeFilterOptions<PropertyInfo?> attributeFilterOptions =
 			new((a, attributeType, p, i) => a.HasAttribute(attributeType, p, i));
-		attributeFilterOptions.RegisterAttribute<TAttribute>(inherit, predicate, doNotPopulateThisValue);
+		attributeFilterOptions.RegisterAttribute(inherit, predicate, doNotPopulateThisValue);
 		return new HaveAttributeResult<PropertyInfo?>(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
 				=> new HaveAttributeConstraint(it, grammars | ExpectationGrammars.Plural, attributeFilterOptions)),
 			subject,
@@ -85,7 +85,8 @@ public static partial class ThatProperties
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" contained not matching properties ");
-			Formatter.Format(stringBuilder, Actual?.Where(propertyInfo => !attributeFilterOptions.Matches(propertyInfo)),
+			Formatter.Format(stringBuilder,
+				Actual?.Where(propertyInfo => !attributeFilterOptions.Matches(propertyInfo)),
 				FormattingOptions.Indented(indentation));
 		}
 

@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -10,6 +9,22 @@ public sealed partial class ThatEvent
 	{
 		public sealed class AttributeTests
 		{
+			[Fact]
+			public async Task WhenEventDoesNotHaveAttribute_ShouldFail()
+			{
+				EventInfo subject = typeof(TestClass).GetEvent("NoAttributeEvent")!;
+
+				async Task Act()
+					=> await That(subject).Has<TestAttribute>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has ThatEvent.Has.AttributeTests.TestAttribute,
+					             but it did not in System.Action NoAttributeEvent
+					             """);
+			}
+
 			[Fact]
 			public async Task WhenEventHasAttribute_ShouldSucceed()
 			{
@@ -30,22 +45,6 @@ public sealed partial class ThatEvent
 					=> await That(subject).Has<TestAttribute>(attr => attr.Value == 42);
 
 				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenEventDoesNotHaveAttribute_ShouldFail()
-			{
-				EventInfo subject = typeof(TestClass).GetEvent("NoAttributeEvent")!;
-
-				async Task Act()
-					=> await That(subject).Has<TestAttribute>();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has ThatEvent.Has.AttributeTests.TestAttribute,
-					             but it did not in System.Action NoAttributeEvent
-					             """);
 			}
 
 			[Fact]
@@ -86,22 +85,33 @@ public sealed partial class ThatEvent
 				public int Value { get; set; }
 			}
 
+#pragma warning disable CS0067 // Event is never used
 			private class TestClass
 			{
-				[Test]
-				public event Action? TestEvent;
+				[Test] public event Action? TestEvent;
 
-				[Test(Value = 42)]
-				public event Action? TestEventWithValue;
+				[Test(Value = 42)] public event Action? TestEventWithValue;
 
 				public event Action? NoAttributeEvent;
 			}
+#pragma warning restore CS0067
 		}
 
 		public sealed class OrHas
 		{
 			public sealed class AttributeTests
 			{
+				[Fact]
+				public async Task WhenEventHasBothAttributes_ShouldSucceed()
+				{
+					EventInfo subject = typeof(FooBarClass).GetEvent("FooBarEvent")!;
+
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
 				[Fact]
 				public async Task WhenEventHasFirstAttribute_ShouldSucceed()
 				{
@@ -114,23 +124,24 @@ public sealed partial class ThatEvent
 				}
 
 				[Fact]
-				public async Task WhenEventHasSecondAttribute_ShouldSucceed()
+				public async Task WhenEventHasMatchingAttribute_ShouldSucceed()
 				{
-					EventInfo subject = typeof(BarClass).GetEvent("BarEvent")!;
+					EventInfo subject = typeof(FooClass2).GetEvent("FooEvent2")!;
 
 					async Task Act()
-						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 2).OrHas<BarAttribute>();
 
 					await That(Act).DoesNotThrow();
 				}
 
 				[Fact]
-				public async Task WhenEventHasBothAttributes_ShouldSucceed()
+				public async Task WhenEventHasMatchingSecondAttribute_ShouldSucceed()
 				{
-					EventInfo subject = typeof(FooBarClass).GetEvent("FooBarEvent")!;
+					EventInfo subject = typeof(BarClass3).GetEvent("BarEvent3")!;
 
 					async Task Act()
-						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5)
+							.OrHas<BarAttribute>(bar => bar.Name == "test");
 
 					await That(Act).DoesNotThrow();
 				}
@@ -152,23 +163,12 @@ public sealed partial class ThatEvent
 				}
 
 				[Fact]
-				public async Task WhenEventHasMatchingAttribute_ShouldSucceed()
+				public async Task WhenEventHasSecondAttribute_ShouldSucceed()
 				{
-					EventInfo subject = typeof(FooClass2).GetEvent("FooEvent2")!;
+					EventInfo subject = typeof(BarClass).GetEvent("BarEvent")!;
 
 					async Task Act()
-						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 2).OrHas<BarAttribute>();
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
-				public async Task WhenEventHasMatchingSecondAttribute_ShouldSucceed()
-				{
-					EventInfo subject = typeof(BarClass3).GetEvent("BarEvent3")!;
-
-					async Task Act()
-						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5).OrHas<BarAttribute>(bar => bar.Name == "test");
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
 					await That(Act).DoesNotThrow();
 				}
@@ -179,7 +179,8 @@ public sealed partial class ThatEvent
 					EventInfo subject = typeof(FooClass2).GetEvent("FooEvent2")!;
 
 					async Task Act()
-						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5).OrHas<BarAttribute>(bar => bar.Name == "test");
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5)
+							.OrHas<BarAttribute>(bar => bar.Name == "test");
 
 					await That(Act).Throws<XunitException>()
 						.WithMessage("""
@@ -206,42 +207,37 @@ public sealed partial class ThatEvent
 				{
 				}
 
+#pragma warning disable CS0067 // Event is never used
 				private class FooClass
 				{
-					[Foo]
-					public event Action? FooEvent;
+					[Foo] public event Action? FooEvent;
 				}
 
 				private class FooClass2
 				{
-					[Foo(Value = 2)]
-					public event Action? FooEvent2;
+					[Foo(Value = 2)] public event Action? FooEvent2;
 				}
 
 				private class BarClass
 				{
-					[Bar]
-					public event Action? BarEvent;
+					[Bar] public event Action? BarEvent;
 				}
 
 				private class BarClass3
 				{
-					[Bar(Name = "test")]
-					public event Action? BarEvent3;
+					[Bar(Name = "test")] public event Action? BarEvent3;
 				}
 
 				private class FooBarClass
 				{
-					[Foo]
-					[Bar]
-					public event Action? FooBarEvent;
+					[Foo] [Bar] public event Action? FooBarEvent;
 				}
 
 				private class BazClass
 				{
-					[Baz]
-					public event Action? BazEvent;
+					[Baz] public event Action? BazEvent;
 				}
+#pragma warning restore CS0067
 			}
 		}
 	}

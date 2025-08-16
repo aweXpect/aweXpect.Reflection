@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using Xunit.Sdk;
 
@@ -10,6 +9,22 @@ public sealed partial class ThatField
 	{
 		public sealed class AttributeTests
 		{
+			[Fact]
+			public async Task WhenFieldDoesNotHaveAttribute_ShouldFail()
+			{
+				FieldInfo subject = typeof(TestClass).GetField("NoAttributeField")!;
+
+				async Task Act()
+					=> await That(subject).Has<TestAttribute>();
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has ThatField.Has.AttributeTests.TestAttribute,
+					             but it did not in System.String NoAttributeField
+					             """);
+			}
+
 			[Fact]
 			public async Task WhenFieldHasAttribute_ShouldSucceed()
 			{
@@ -30,22 +45,6 @@ public sealed partial class ThatField
 					=> await That(subject).Has<TestAttribute>(attr => attr.Value == 42);
 
 				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenFieldDoesNotHaveAttribute_ShouldFail()
-			{
-				FieldInfo subject = typeof(TestClass).GetField("NoAttributeField")!;
-
-				async Task Act()
-					=> await That(subject).Has<TestAttribute>();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             has ThatField.Has.AttributeTests.TestAttribute,
-					             but it did not in System.String NoAttributeField
-					             """);
 			}
 
 			[Fact]
@@ -86,16 +85,16 @@ public sealed partial class ThatField
 				public int Value { get; set; }
 			}
 
+#pragma warning disable CS0414 // Field is assigned but its value is never used
 			private class TestClass
 			{
-				[Test]
-				public string TestField = "";
-
-				[Test(Value = 42)]
-				public string TestFieldWithValue = "";
-
 				public string NoAttributeField = "";
+
+				[Test] public string TestField = "";
+
+				[Test(Value = 42)] public string TestFieldWithValue = "";
 			}
+#pragma warning restore CS0414
 		}
 	}
 }
