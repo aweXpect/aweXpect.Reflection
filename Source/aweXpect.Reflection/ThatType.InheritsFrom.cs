@@ -95,6 +95,7 @@ public static partial class ThatType
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 		}
 
@@ -105,6 +106,7 @@ public static partial class ThatType
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(", but was ");
 			Formatter.Format(stringBuilder, Actual);
@@ -117,6 +119,7 @@ public static partial class ThatType
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 		}
 
@@ -127,6 +130,7 @@ public static partial class ThatType
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 		}
 	}

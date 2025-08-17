@@ -14,7 +14,8 @@ namespace aweXpect.Reflection;
 public static partial class ThatTypes
 {
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> inherit from <typeparamref name="TBaseType" />.
+	///     Verifies that all items in the filtered collection of <see cref="Type" /> inherit from
+	///     <typeparamref name="TBaseType" />.
 	/// </summary>
 	/// <param name="subject">The type collection subject.</param>
 	/// <param name="forceDirect">
@@ -28,7 +29,8 @@ public static partial class ThatTypes
 		=> subject.InheritFrom(typeof(TBaseType), forceDirect);
 
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> inherit from <paramref name="baseType" />.
+	///     Verifies that all items in the filtered collection of <see cref="Type" /> inherit
+	///     from <paramref name="baseType" />.
 	/// </summary>
 	/// <param name="subject">The type collection subject.</param>
 	/// <param name="baseType">The base type to check inheritance from.</param>
@@ -46,7 +48,8 @@ public static partial class ThatTypes
 			subject);
 
 	/// <summary>
-	///     Verifies that not all items in the filtered collection of <see cref="Type" /> inherit from <typeparamref name="TBaseType" />.
+	///     Verifies that not all items in the filtered collection of <see cref="Type" /> inherit from
+	///     <typeparamref name="TBaseType" />.
 	/// </summary>
 	/// <param name="subject">The type collection subject.</param>
 	/// <param name="forceDirect">
@@ -60,7 +63,8 @@ public static partial class ThatTypes
 		=> subject.DoNotInheritFrom(typeof(TBaseType), forceDirect);
 
 	/// <summary>
-	///     Verifies that not all items in the filtered collection of <see cref="Type" /> inherit from <paramref name="baseType" />.
+	///     Verifies that not all items in the filtered collection of <see cref="Type" /> inherit from
+	///     <paramref name="baseType" />.
 	/// </summary>
 	/// <param name="subject">The type collection subject.</param>
 	/// <param name="baseType">The base type to check inheritance from.</param>
@@ -74,7 +78,8 @@ public static partial class ThatTypes
 		Type baseType,
 		bool forceDirect = false)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new InheritFromConstraint(it, grammars | ExpectationGrammars.Plural, baseType, forceDirect).Invert()),
+				=> new InheritFromConstraint(it, grammars | ExpectationGrammars.Plural, baseType, forceDirect)
+					.Invert()),
 			subject);
 
 	private sealed class InheritFromConstraint(
@@ -88,7 +93,9 @@ public static partial class ThatTypes
 		public ConstraintResult IsMetBy(IEnumerable<Type?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => type?.InheritsFrom(baseType, forceDirect) == true) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => type?.InheritsFrom(baseType, forceDirect) == true)
+				? Outcome.Success
+				: Outcome.Failure;
 			return this;
 		}
 
@@ -99,6 +106,7 @@ public static partial class ThatTypes
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 		}
 
@@ -109,9 +117,11 @@ public static partial class ThatTypes
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(" ");
-			var nonMatchingTypes = Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
+			IEnumerable<Type?>? nonMatchingTypes =
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
 			Formatter.Format(stringBuilder, nonMatchingTypes, FormattingOptions.Indented(indentation));
 		}
 
@@ -122,6 +132,7 @@ public static partial class ThatTypes
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 		}
 
@@ -132,9 +143,11 @@ public static partial class ThatTypes
 			{
 				stringBuilder.Append("directly ");
 			}
+
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(" ");
-			var matchingTypes = Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
+			IEnumerable<Type?>? matchingTypes =
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
 			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
 		}
 	}

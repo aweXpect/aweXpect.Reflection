@@ -1,4 +1,3 @@
-using System;
 using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
@@ -10,14 +9,19 @@ public sealed partial class ThatType
 		public sealed class GenericTests
 		{
 			[Fact]
-			public async Task WhenTypeInheritsFromBaseClass_ShouldSucceed()
+			public async Task WhenTypeDoesNotInherit_ShouldFail()
 			{
-				Type subject = typeof(DerivedClass);
+				Type subject = typeof(UnrelatedClass);
 
 				async Task Act()
 					=> await That(subject).InheritsFrom<BaseClass>();
 
-				await That(Act).DoesNotThrow();
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             inherits from ThatType.BaseClass,
+					             but it did not inherit from ThatType.BaseClass, but was ThatType.UnrelatedClass
+					             """);
 			}
 
 			[Fact]
@@ -32,35 +36,25 @@ public sealed partial class ThatType
 			}
 
 			[Fact]
-			public async Task WhenTypeDoesNotInherit_ShouldFail()
+			public async Task WhenTypeInheritsDirectly_WithForceDirect_ShouldSucceed()
 			{
-				Type subject = typeof(UnrelatedClass);
+				Type subject = typeof(DerivedClass);
 
 				async Task Act()
-					=> await That(subject).InheritsFrom<BaseClass>();
+					=> await That(subject).InheritsFrom<BaseClass>(true);
 
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             inherits from ThatType.InheritsFrom.GenericTests.BaseClass,
-					             but it did not inherit from ThatType.InheritsFrom.GenericTests.BaseClass, but was ThatType.InheritsFrom.GenericTests.UnrelatedClass
-					             """);
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
-			public async Task WhenTypeIsSameAsBaseType_ShouldFail()
+			public async Task WhenTypeInheritsFromBaseClass_ShouldSucceed()
 			{
-				Type subject = typeof(BaseClass);
+				Type subject = typeof(DerivedClass);
 
 				async Task Act()
 					=> await That(subject).InheritsFrom<BaseClass>();
 
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             inherits from ThatType.InheritsFrom.GenericTests.BaseClass,
-					             but it did not inherit from ThatType.InheritsFrom.GenericTests.BaseClass, but was ThatType.InheritsFrom.GenericTests.BaseClass
-					             """);
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -80,47 +74,50 @@ public sealed partial class ThatType
 				Type subject = typeof(GrandChildClass);
 
 				async Task Act()
-					=> await That(subject).InheritsFrom<BaseClass>(forceDirect: true);
+					=> await That(subject).InheritsFrom<BaseClass>(true);
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             inherits from directly ThatType.InheritsFrom.GenericTests.BaseClass,
-					             but it did not inherit from directly ThatType.InheritsFrom.GenericTests.BaseClass, but was ThatType.InheritsFrom.GenericTests.GrandChildClass
+					             inherits from directly ThatType.BaseClass,
+					             but it did not inherit from directly ThatType.BaseClass, but was ThatType.GrandChildClass
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenTypeInheritsDirectly_WithForceDirect_ShouldSucceed()
+			public async Task WhenTypeIsSameAsBaseType_ShouldFail()
 			{
-				Type subject = typeof(DerivedClass);
+				Type subject = typeof(BaseClass);
 
 				async Task Act()
-					=> await That(subject).InheritsFrom<BaseClass>(forceDirect: true);
+					=> await That(subject).InheritsFrom<BaseClass>();
 
-				await That(Act).DoesNotThrow();
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             inherits from ThatType.BaseClass,
+					             but it did not inherit from ThatType.BaseClass, but was ThatType.BaseClass
+					             """);
 			}
-
-			private class BaseClass;
-			private class DerivedClass : BaseClass;
-			private class GrandChildClass : DerivedClass;
-			private class UnrelatedClass;
-			private class ClassWithInterface : ITestInterface;
-			private interface ITestInterface;
 		}
 
 		public sealed class TypeTests
 		{
 			[Fact]
-			public async Task WhenTypeInheritsFromBaseClass_ShouldSucceed()
+			public async Task WhenTypeDoesNotInherit_ShouldFail()
 			{
-				Type subject = typeof(DerivedClass);
+				Type subject = typeof(UnrelatedClass);
 				Type baseType = typeof(BaseClass);
 
 				async Task Act()
 					=> await That(subject).InheritsFrom(baseType);
 
-				await That(Act).DoesNotThrow();
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             inherits from ThatType.BaseClass,
+					             but it did not inherit from ThatType.BaseClass, but was ThatType.UnrelatedClass
+					             """);
 			}
 
 			[Fact]
@@ -136,20 +133,27 @@ public sealed partial class ThatType
 			}
 
 			[Fact]
-			public async Task WhenTypeDoesNotInherit_ShouldFail()
+			public async Task WhenTypeInheritsDirectly_WithForceDirect_ShouldSucceed()
 			{
-				Type subject = typeof(UnrelatedClass);
+				Type subject = typeof(DerivedClass);
+				Type baseType = typeof(BaseClass);
+
+				async Task Act()
+					=> await That(subject).InheritsFrom(baseType, true);
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeInheritsFromBaseClass_ShouldSucceed()
+			{
+				Type subject = typeof(DerivedClass);
 				Type baseType = typeof(BaseClass);
 
 				async Task Act()
 					=> await That(subject).InheritsFrom(baseType);
 
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             inherits from ThatType.InheritsFrom.TypeTests.BaseClass,
-					             but it did not inherit from ThatType.InheritsFrom.TypeTests.BaseClass, but was ThatType.InheritsFrom.TypeTests.UnrelatedClass
-					             """);
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -159,68 +163,15 @@ public sealed partial class ThatType
 				Type baseType = typeof(BaseClass);
 
 				async Task Act()
-					=> await That(subject).InheritsFrom(baseType, forceDirect: true);
+					=> await That(subject).InheritsFrom(baseType, true);
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             inherits from directly ThatType.InheritsFrom.TypeTests.BaseClass,
-					             but it did not inherit from directly ThatType.InheritsFrom.TypeTests.BaseClass, but was ThatType.InheritsFrom.TypeTests.GrandChildClass
+					             inherits from directly ThatType.BaseClass,
+					             but it did not inherit from directly ThatType.BaseClass, but was ThatType.GrandChildClass
 					             """);
 			}
-
-			[Fact]
-			public async Task WhenTypeInheritsDirectly_WithForceDirect_ShouldSucceed()
-			{
-				Type subject = typeof(DerivedClass);
-				Type baseType = typeof(BaseClass);
-
-				async Task Act()
-					=> await That(subject).InheritsFrom(baseType, forceDirect: true);
-
-				await That(Act).DoesNotThrow();
-			}
-
-			private class BaseClass;
-			private class DerivedClass : BaseClass;
-			private class GrandChildClass : DerivedClass;
-			private class UnrelatedClass;
-			private class ClassWithInterface : ITestInterface;
-			private interface ITestInterface;
-		}
-
-		public sealed class NegatedTests
-		{
-			[Fact]
-			public async Task WhenTypeDoesNotInherit_ShouldSucceed()
-			{
-				Type subject = typeof(UnrelatedClass);
-
-				async Task Act()
-					=> await That(subject).DoesNotInheritFrom<BaseClass>();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
-			public async Task WhenTypeInherits_ShouldFail()
-			{
-				Type subject = typeof(DerivedClass);
-
-				async Task Act()
-					=> await That(subject).DoesNotInheritFrom<BaseClass>();
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             does not inherit from ThatType.InheritsFrom.NegatedTests.BaseClass,
-					             but it did inherit from ThatType.InheritsFrom.NegatedTests.BaseClass
-					             """);
-			}
-
-			private class BaseClass;
-			private class DerivedClass : BaseClass;
-			private class UnrelatedClass;
 		}
 	}
 }
