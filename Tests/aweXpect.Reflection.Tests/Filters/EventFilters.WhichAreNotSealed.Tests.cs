@@ -14,7 +14,7 @@ public sealed partial class EventFilters
 				Filtered.Events events = In.AssemblyContaining<ConcreteEventClass>()
 					.Types().Events().WhichAreNotSealed();
 
-				await That(events).All().Satisfy(x => !x.AddMethod.IsFinal).And.IsNotEmpty();
+				await That(events).All().Satisfy(x => x.AddMethod?.IsFinal == false).And.IsNotEmpty();
 				await That(events.GetDescription())
 					.IsEqualTo("non-sealed events in types in assembly").AsPrefix();
 			}

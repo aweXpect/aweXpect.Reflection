@@ -25,8 +25,12 @@ public sealed partial class MethodFilters
 
 	private class ConcreteMethodClass
 	{
+		// ReSharper disable once UnusedMember.Global
 		public virtual void VirtualMethod() { }
+#pragma warning disable CA1822
+		// ReSharper disable once UnusedMember.Local
 		public void ConcreteMethod() { }
+#pragma warning restore CA1822
 	}
 
 	private class SealedMethodClass : ConcreteMethodClass

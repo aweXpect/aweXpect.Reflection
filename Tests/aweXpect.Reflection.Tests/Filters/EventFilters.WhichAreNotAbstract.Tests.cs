@@ -14,7 +14,7 @@ public sealed partial class EventFilters
 				Filtered.Events events = In.AssemblyContaining<ConcreteEventClass>()
 					.Types().Events().WhichAreNotAbstract();
 
-				await That(events).All().Satisfy(x => !x.AddMethod.IsAbstract).And.IsNotEmpty();
+				await That(events).All().Satisfy(x => x.AddMethod?.IsAbstract == false).And.IsNotEmpty();
 				await That(events.GetDescription())
 					.IsEqualTo("non-abstract events in types in assembly").AsPrefix();
 			}
