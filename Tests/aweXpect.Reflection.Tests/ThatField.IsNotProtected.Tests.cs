@@ -13,6 +13,8 @@ public sealed partial class ThatField
 			[InlineData("InternalField")]
 			[InlineData("PublicField")]
 			[InlineData("PrivateField")]
+			[InlineData("ProtectedInternalField")]
+			[InlineData("PrivateProtectedField")]
 			public async Task WhenFieldInfoIsNotProtected_ShouldSucceed(string fieldName)
 			{
 				FieldInfo? subject = GetField(fieldName);
@@ -58,6 +60,27 @@ public sealed partial class ThatField
 
 		public sealed class NegatedTests
 		{
+			[Theory]
+			[InlineData("InternalField")]
+			[InlineData("PublicField")]
+			[InlineData("PrivateField")]
+			[InlineData("ProtectedInternalField")]
+			[InlineData("PrivateProtectedField")]
+			public async Task WhenFieldInfoIsNotProtected_ShouldFail(string fieldName)
+			{
+				FieldInfo? subject = GetField(fieldName);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotProtected());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage($"""
+					              Expected that subject
+					              is protected,
+					              but it was {GetExpectedAccessModifier(fieldName)}
+					              """);
+			}
+
 			[Fact]
 			public async Task WhenFieldInfoIsProtected_ShouldSucceed()
 			{
@@ -69,34 +92,14 @@ public sealed partial class ThatField
 				await That(Act).DoesNotThrow();
 			}
 
-			[Theory]
-			[InlineData("InternalField")]
-			[InlineData("PublicField")]
-			[InlineData("PrivateField")]
-			public async Task WhenFieldInfoIsNotProtected_ShouldFail(string fieldName)
-			{
-				FieldInfo? subject = GetField(fieldName);
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsNotProtected());
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage($"""
-					             Expected that subject
-					             is protected,
-					             but it was {GetExpectedAccessModifier(fieldName)}
-					             """);
-			}
-
 			private static string GetExpectedAccessModifier(string fieldName) => fieldName switch
 			{
-				"ProtectedField" => "protected",
-				"PublicField" => "public", 
+				"PublicField" => "public",
 				"PrivateField" => "private",
 				"InternalField" => "internal",
 				"ProtectedInternalField" => "protected internal",
 				"PrivateProtectedField" => "private protected",
-				_ => throw new ArgumentException($"Unknown field name: {fieldName}")
+				_ => throw new ArgumentException($"Unknown field name: {fieldName}"),
 			};
 		}
 	}
