@@ -37,5 +37,37 @@ public sealed partial class ThatMethods
 					             """).AsWildcard();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenMethodsContainNonGenericMethods_ShouldSucceed()
+			{
+				Filtered.Methods subject = GetMethods();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreGeneric());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyGenericMethods_ShouldFail()
+			{
+				Filtered.Methods subject = GetMethods("GenericMethod");
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreGeneric());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that *
+					             are not all generic,
+					             but it only contained generic methods [
+					               *
+					             ]
+					             """).AsWildcard();
+			}
+		}
 	}
 }

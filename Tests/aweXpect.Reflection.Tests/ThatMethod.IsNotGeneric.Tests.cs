@@ -51,5 +51,35 @@ public sealed partial class ThatMethod
 					             """);
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenMethodIsGeneric_ShouldSucceed()
+			{
+				MethodInfo? subject = GetMethod("GenericMethod");
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotGeneric());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenMethodIsNotGeneric_ShouldFail()
+			{
+				MethodInfo? subject = GetMethod("NonGenericMethod");
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotGeneric());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             is generic,
+					             but it was non-generic Int32 NonGenericMethod()
+					             """);
+			}
+		}
 	}
 }
