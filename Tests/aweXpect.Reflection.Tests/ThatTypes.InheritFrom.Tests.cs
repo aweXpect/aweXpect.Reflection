@@ -194,5 +194,83 @@ public sealed partial class ThatTypes
 					             """);
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenAllTypesInheritFromBaseClass_ShouldFail()
+			{
+				Filtered.Types subject = In.AssemblyContaining<NegatedTests>()
+					.Types()
+					.Which(type => type == typeof(DerivedClass1) || type == typeof(DerivedClass2));
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.InheritFrom<BaseClass>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that types matching type => type == typeof(DerivedClass1) || type == typeof(DerivedClass2) in assembly containing type ThatTypes.InheritFrom.NegatedTests
+					             not all inherit from ThatTypes.BaseClass,
+					             but it only contained types that inherit from ThatTypes.BaseClass [
+					               ThatTypes.DerivedClass1,
+					               ThatTypes.DerivedClass2
+					             ]
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenSomeTypesDoNotInherit_ShouldSucceed()
+			{
+				Filtered.Types subject = In.AssemblyContaining<NegatedTests>()
+					.Types()
+					.Which(type => type == typeof(DerivedClass1) || type == typeof(UnrelatedClass));
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.InheritFrom<BaseClass>());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenAllTypesImplementInterface_ShouldFail()
+			{
+				Filtered.Types subject = In.AssemblyContaining<NegatedTests>()
+					.Types()
+					.Which(type => type == typeof(ClassWithInterface1) || type == typeof(ClassWithInterface2));
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.InheritFrom<ITestInterface>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that types matching type => type == typeof(ClassWithInterface1) || type == typeof(ClassWithInterface2) in assembly containing type ThatTypes.InheritFrom.NegatedTests
+					             not all inherit from ThatTypes.ITestInterface,
+					             but it only contained types that inherit from ThatTypes.ITestInterface [
+					               ThatTypes.ClassWithInterface1,
+					               ThatTypes.ClassWithInterface2
+					             ]
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenTypesInheritIndirectly_ShouldFail()
+			{
+				Filtered.Types subject = In.AssemblyContaining<NegatedTests>()
+					.Types()
+					.Which(type => type == typeof(GrandChildClass));
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.InheritFrom<BaseClass>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that types matching type => type == typeof(GrandChildClass) in assembly containing type ThatTypes.InheritFrom.NegatedTests
+					             not all inherit from ThatTypes.BaseClass,
+					             but it only contained types that inherit from ThatTypes.BaseClass [
+					               ThatTypes.GrandChildClass
+					             ]
+					             """);
+			}
+		}
 	}
 }
