@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using aweXpect.Reflection.Collections;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 
 namespace aweXpect.Reflection.Tests;
@@ -16,7 +14,8 @@ public sealed partial class ThatFields
 			public async Task WhenFieldsContainStaticFields_ShouldFail()
 			{
 				IEnumerable<FieldInfo> subject = typeof(TestClassWithStaticMembers)
-					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+					           BindingFlags.DeclaredOnly);
 
 				async Task Act()
 					=> await That(subject).AreNotStatic();
@@ -50,7 +49,8 @@ public sealed partial class ThatFields
 			public async Task WhenFieldsContainStaticFields_ShouldSucceed()
 			{
 				IEnumerable<FieldInfo> subject = typeof(TestClassWithStaticMembers)
-					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+					           BindingFlags.DeclaredOnly);
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
@@ -70,7 +70,7 @@ public sealed partial class ThatFields
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             also contain an static field,
+					             also contain a static field,
 					             but it only contained non-static fields [
 					               *
 					             ]

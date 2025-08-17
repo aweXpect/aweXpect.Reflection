@@ -70,7 +70,7 @@ public sealed partial class ThatConstructors
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             also contain an static constructor,
+					             also contain a static constructor,
 					             but it only contained non-static constructors [
 					               *
 					             ]

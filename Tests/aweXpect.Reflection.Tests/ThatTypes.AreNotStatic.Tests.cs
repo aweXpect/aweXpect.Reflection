@@ -52,7 +52,7 @@ public sealed partial class ThatTypes
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that abstract types in assembly containing type ThatTypes.AreNotStatic
-					             also contain an static type,
+					             also contain a static type,
 					             but it only contained non-static types [
 					               *
 					             ]

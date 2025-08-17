@@ -85,7 +85,7 @@ public static partial class ThatFields
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain an static field");
+			=> stringBuilder.Append("also contain a static field");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{

@@ -45,7 +45,8 @@ public sealed partial class ThatConstructor
 			[Fact]
 			public async Task WhenConstructorIsStatic_ShouldSucceed()
 			{
-				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
+				ConstructorInfo subject = typeof(TestClassWithStaticMembers)
+					.GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
 
 				async Task Act()
 					=> await That(subject).IsStatic();
@@ -70,7 +71,8 @@ public sealed partial class ThatConstructor
 			[Fact]
 			public async Task WhenConstructorIsStatic_ShouldFail()
 			{
-				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
+				ConstructorInfo subject = typeof(TestClassWithStaticMembers)
+					.GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsStatic());

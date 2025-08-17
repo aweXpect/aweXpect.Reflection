@@ -12,7 +12,8 @@ public sealed partial class ThatField
 			[Fact]
 			public async Task WhenFieldIsNotStatic_ShouldFail()
 			{
-				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.NonStaticField))!;
+				FieldInfo subject =
+					typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.NonStaticField))!;
 
 				async Task Act()
 					=> await That(subject).IsStatic();
@@ -44,7 +45,8 @@ public sealed partial class ThatField
 			[Fact]
 			public async Task WhenFieldIsStatic_ShouldSucceed()
 			{
-				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.StaticField))!;
+				FieldInfo subject =
+					typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.StaticField))!;
 
 				async Task Act()
 					=> await That(subject).IsStatic();
@@ -58,7 +60,8 @@ public sealed partial class ThatField
 			[Fact]
 			public async Task WhenFieldIsNotStatic_ShouldSucceed()
 			{
-				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.NonStaticField))!;
+				FieldInfo subject =
+					typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.NonStaticField))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsStatic());
@@ -69,7 +72,8 @@ public sealed partial class ThatField
 			[Fact]
 			public async Task WhenFieldIsStatic_ShouldFail()
 			{
-				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.StaticField))!;
+				FieldInfo subject =
+					typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.StaticField))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsStatic());

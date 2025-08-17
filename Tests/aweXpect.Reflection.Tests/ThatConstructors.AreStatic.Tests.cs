@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using aweXpect.Reflection.Collections;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 
 namespace aweXpect.Reflection.Tests;
@@ -16,7 +14,8 @@ public sealed partial class ThatConstructors
 			public async Task WhenConstructorsContainNonStaticConstructors_ShouldFail()
 			{
 				IEnumerable<ConstructorInfo> subject = typeof(TestClassWithStaticMembers)
-					.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+					.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+					                 BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
 				async Task Act()
 					=> await That(subject).AreStatic();
@@ -50,7 +49,8 @@ public sealed partial class ThatConstructors
 			public async Task WhenConstructorsContainNonStaticConstructors_ShouldSucceed()
 			{
 				IEnumerable<ConstructorInfo> subject = typeof(TestClassWithStaticMembers)
-					.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+					.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance |
+					                 BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(they => they.AreStatic());

@@ -85,7 +85,7 @@ public static partial class ThatProperties
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain an static property");
+			=> stringBuilder.Append("also contain a static property");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{

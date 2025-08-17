@@ -70,7 +70,7 @@ public sealed partial class ThatProperties
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             also contain an static property,
+					             also contain a static property,
 					             but it only contained non-static properties [
 					               *
 					             ]

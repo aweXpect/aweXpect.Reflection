@@ -12,7 +12,9 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsNotStatic_ShouldSucceed()
 			{
-				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))!;
+				PropertyInfo subject =
+					typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))
+					!;
 
 				async Task Act()
 					=> await That(subject).IsNotStatic();
@@ -39,7 +41,8 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsStatic_ShouldFail()
 			{
-				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
+				PropertyInfo subject =
+					typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
 
 				async Task Act()
 					=> await That(subject).IsNotStatic();
@@ -58,7 +61,9 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsNotStatic_ShouldFail()
 			{
-				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))!;
+				PropertyInfo subject =
+					typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))
+					!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());
@@ -74,7 +79,8 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsStatic_ShouldSucceed()
 			{
-				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
+				PropertyInfo subject =
+					typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());

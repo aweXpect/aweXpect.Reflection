@@ -85,7 +85,7 @@ public static partial class ThatConstructors
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain an static constructor");
+			=> stringBuilder.Append("also contain a static constructor");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
