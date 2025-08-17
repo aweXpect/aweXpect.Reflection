@@ -9,8 +9,7 @@
 ///     supports adding a filter for abstract, sealed or static types as well as accessing interfaces or enums.
 /// </remarks>
 public interface ITypeAssemblies
-	: ILimitedAbstractSealedTypeAssemblies<ITypeAssemblies>,
-		ILimitedStaticTypeAssemblies<ITypeAssemblies>
+	: ILimitedAbstractSealedTypeAssemblies<ITypeAssemblies>
 {
 	/// <summary>
 	///     Filters only for abstract types.
