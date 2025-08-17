@@ -23,7 +23,7 @@ public sealed partial class TypeFilters
 				Filtered.Types subject = In.AssemblyContaining<WhichAreNotClasses>().Types()
 					.WhichAreNotClasses();
 
-				await That(subject.GetDescription()).Contains("non-class types");
+				await That(subject.GetDescription()).Contains("types which are not classes in");
 			}
 		}
 	}

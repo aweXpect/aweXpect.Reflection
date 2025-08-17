@@ -10,15 +10,15 @@ public static partial class TypeFilters
 	///     Filters for types that are classes.
 	/// </summary>
 	public static Filtered.Types WhichAreClasses(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => type.IsReallyClass(),
-			"classes "));
+			"which are classes "));
 
 	/// <summary>
 	///     Filters for types that are not classes.
 	/// </summary>
 	public static Filtered.Types WhichAreNotClasses(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => !type.IsReallyClass(),
-			"non-class "));
+			"which are not classes "));
 }

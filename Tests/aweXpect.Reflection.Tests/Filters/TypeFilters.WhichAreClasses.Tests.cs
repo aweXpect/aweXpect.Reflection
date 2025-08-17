@@ -23,7 +23,7 @@ public sealed partial class TypeFilters
 				Filtered.Types subject = In.AssemblyContaining<WhichAreClasses>().Types()
 					.WhichAreClasses();
 
-				await That(subject.GetDescription()).Contains("classes");
+				await That(subject.GetDescription()).Contains("types which are classes in");
 			}
 		}
 	}

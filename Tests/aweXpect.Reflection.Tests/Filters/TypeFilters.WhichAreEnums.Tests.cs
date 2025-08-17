@@ -23,7 +23,7 @@ public sealed partial class TypeFilters
 				Filtered.Types subject = In.AssemblyContaining<WhichAreEnums>().Types()
 					.WhichAreEnums();
 
-				await That(subject.GetDescription()).Contains("enum");
+				await That(subject.GetDescription()).Contains("types which are enums in");
 			}
 		}
 	}

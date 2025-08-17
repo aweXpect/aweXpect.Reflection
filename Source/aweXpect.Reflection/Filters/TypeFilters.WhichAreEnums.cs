@@ -9,15 +9,15 @@ public static partial class TypeFilters
 	///     Filters for types that are enums.
 	/// </summary>
 	public static Filtered.Types WhichAreEnums(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => type?.IsEnum == true,
-			"enum "));
+			"which are enums "));
 
 	/// <summary>
 	///     Filters for types that are not enums.
 	/// </summary>
 	public static Filtered.Types WhichAreNotEnums(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => type?.IsEnum != true,
-			"non-enum "));
+			"which are not enums "));
 }

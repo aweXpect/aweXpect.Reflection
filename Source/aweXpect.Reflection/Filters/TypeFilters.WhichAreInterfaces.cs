@@ -9,15 +9,15 @@ public static partial class TypeFilters
 	///     Filters for types that are interfaces.
 	/// </summary>
 	public static Filtered.Types WhichAreInterfaces(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => type?.IsInterface == true,
-			"interface "));
+			"which are interfaces "));
 
 	/// <summary>
 	///     Filters for types that are not interfaces.
 	/// </summary>
 	public static Filtered.Types WhichAreNotInterfaces(this Filtered.Types @this)
-		=> @this.Which(Filter.Prefix<Type>(
+		=> @this.Which(Filter.Suffix<Type>(
 			type => type?.IsInterface != true,
-			"non-interface "));
+			"which are not interfaces "));
 }

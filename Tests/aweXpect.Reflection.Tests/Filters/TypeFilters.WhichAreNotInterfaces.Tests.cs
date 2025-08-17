@@ -23,7 +23,7 @@ public sealed partial class TypeFilters
 				Filtered.Types subject = In.AssemblyContaining<WhichAreNotInterfaces>().Types()
 					.WhichAreNotInterfaces();
 
-				await That(subject.GetDescription()).Contains("non-interface types");
+				await That(subject.GetDescription()).Contains("types which are not interfaces in");
 			}
 		}
 	}
