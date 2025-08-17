@@ -14,20 +14,18 @@ public sealed partial class FieldFilters
 				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
 					.Fields().WhichAreStatic();
 
-				await That(fields).All().Satisfy(f => f.IsStatic);
+				await That(fields).All().Satisfy(f => f.IsStatic).And.IsNotEmpty();
 				await That(fields.GetDescription())
 					.IsEqualTo("static fields in assembly").AsPrefix();
 			}
 
-			[Fact]
-			public async Task ShouldAllowFilteringForNonStaticFields()
+			private class WithStaticField
 			{
-				Filtered.Fields fields = In.AssemblyContaining<AssemblyFilters>()
-					.Fields().WhichAreNotStatic();
-
-				await That(fields).All().Satisfy(f => !f.IsStatic);
-				await That(fields.GetDescription())
-					.IsEqualTo("non-static fields in assembly").AsPrefix();
+#pragma warning disable CS0169 // Field is never used
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+				public static int Foo;
+#pragma warning restore CS0649
+#pragma warning restore CS0169
 			}
 		}
 	}

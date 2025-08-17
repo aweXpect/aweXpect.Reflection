@@ -15,21 +15,16 @@ public sealed partial class PropertyFilters
 					.Properties().WhichAreStatic();
 
 				await That(properties).All().Satisfy(p => 
-					(p.GetMethod?.IsStatic ?? false) || (p.SetMethod?.IsStatic ?? false));
+					(p.GetMethod?.IsStatic ?? false) || (p.SetMethod?.IsStatic ?? false)).And.IsNotEmpty();
 				await That(properties.GetDescription())
 					.IsEqualTo("static properties in assembly").AsPrefix();
 			}
 
-			[Fact]
-			public async Task ShouldAllowFilteringForNonStaticProperties()
+			// ReSharper disable once UnusedType.Local
+			private static class WithStaticProperty
 			{
-				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
-					.Properties().WhichAreNotStatic();
-
-				await That(properties).All().Satisfy(p => 
-					!(p.GetMethod?.IsStatic ?? false) && !(p.SetMethod?.IsStatic ?? false));
-				await That(properties.GetDescription())
-					.IsEqualTo("non-static properties in assembly").AsPrefix();
+				// ReSharper disable once UnusedMember.Local
+				public static int? Foo { get; set; }
 			}
 		}
 	}

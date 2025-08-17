@@ -14,20 +14,18 @@ public sealed partial class MethodFilters
 				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
 					.Methods().WhichAreStatic();
 
-				await That(methods).All().Satisfy(m => m.IsStatic);
+				await That(methods).All().Satisfy(m => m.IsStatic).And.IsNotEmpty();
 				await That(methods.GetDescription())
 					.IsEqualTo("static methods in assembly").AsPrefix();
 			}
 
-			[Fact]
-			public async Task ShouldAllowFilteringForNonStaticMethods()
+			// ReSharper disable once UnusedType.Local
+			private class WithStaticMethod
 			{
-				Filtered.Methods methods = In.AssemblyContaining<AssemblyFilters>()
-					.Methods().WhichAreNotStatic();
-
-				await That(methods).All().Satisfy(m => !m.IsStatic);
-				await That(methods.GetDescription())
-					.IsEqualTo("non-static methods in assembly").AsPrefix();
+				// ReSharper disable once UnusedMember.Local
+				public static void Foo()
+				{
+				}
 			}
 		}
 	}

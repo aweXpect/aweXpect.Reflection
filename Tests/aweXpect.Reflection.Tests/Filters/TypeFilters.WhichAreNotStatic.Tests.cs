@@ -5,19 +5,19 @@ namespace aweXpect.Reflection.Tests.Filters;
 
 public sealed partial class TypeFilters
 {
-	public sealed class WhichAreStatic
+	public sealed class WhichAreNotStatic
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task ShouldAllowFilteringForStaticTypes()
+			public async Task ShouldAllowFilteringForNonStaticTypes()
 			{
 				Filtered.Types types = In.AssemblyContaining<AssemblyFilters>()
-					.Types().WhichAreStatic();
+					.Types().WhichAreNotStatic();
 
-				await That(types).All().Satisfy(t => t.IsStatic()).And.IsNotEmpty();
+				await That(types).All().Satisfy(t => !t.IsStatic()).And.IsNotEmpty();
 				await That(types.GetDescription())
-					.IsEqualTo("static types in assembly").AsPrefix();
+					.IsEqualTo("non-static types in assembly").AsPrefix();
 			}
 		}
 	}

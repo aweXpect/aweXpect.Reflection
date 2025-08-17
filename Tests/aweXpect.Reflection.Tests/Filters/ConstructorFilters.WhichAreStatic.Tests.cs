@@ -15,21 +15,17 @@ public sealed partial class ConstructorFilters
 				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
 					.Constructors().WhichAreStatic();
 
-				await That(constructors).All().Satisfy(c => c.IsStatic);
+				await That(constructors).All().Satisfy(c => c.IsStatic).And.IsNotEmpty();
 				await That(constructors.GetDescription())
 					.IsEqualTo("static constructors in assembly").AsPrefix();
 			}
 
-			[Fact]
-			public async Task ShouldAllowFilteringForNonStaticConstructors()
+			private class ClassWithStaticConstructor
 			{
-				// Most constructors are non-static
-				Filtered.Constructors constructors = In.AssemblyContaining<AssemblyFilters>()
-					.Constructors().WhichAreNotStatic();
-
-				await That(constructors).All().Satisfy(c => !c.IsStatic);
-				await That(constructors.GetDescription())
-					.IsEqualTo("non-static constructors in assembly").AsPrefix();
+				static ClassWithStaticConstructor()
+				{
+					
+				}
 			}
 		}
 	}
