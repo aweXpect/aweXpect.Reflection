@@ -13,6 +13,8 @@ public sealed partial class ThatProperty
 			[InlineData("InternalProperty")]
 			[InlineData("PublicProperty")]
 			[InlineData("PrivateProperty")]
+			[InlineData("ProtectedInternalProperty")]
+			[InlineData("PrivateProtectedProperty")]
 			public async Task WhenPropertyInfoIsNotProtected_ShouldSucceed(string propertyName)
 			{
 				PropertyInfo? subject = GetProperty(propertyName);
@@ -62,6 +64,8 @@ public sealed partial class ThatProperty
 			[InlineData("InternalProperty")]
 			[InlineData("PublicProperty")]
 			[InlineData("PrivateProperty")]
+			[InlineData("ProtectedInternalProperty")]
+			[InlineData("PrivateProtectedProperty")]
 			public async Task WhenPropertyInfoIsNotProtected_ShouldFail(string propertyName)
 			{
 				PropertyInfo? subject = GetProperty(propertyName);
