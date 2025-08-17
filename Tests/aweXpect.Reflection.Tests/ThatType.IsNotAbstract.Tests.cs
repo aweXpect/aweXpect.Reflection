@@ -26,6 +26,32 @@ public sealed partial class ThatType
 			}
 
 			[Theory]
+			[MemberData(nameof(AbstractTypesForNegated))]
+			public async Task WhenTypeIsAbstract_ShouldSucceedWithNegatedAssertion(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotAbstract());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeIsNotAbstract_ShouldFailWithNegatedAssertion()
+			{
+				Type subject = typeof(PublicClass);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotAbstract());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             is abstract,
+					             but it was non-abstract PublicClass
+					             """);
+			}
+
+			[Theory]
 			[MemberData(nameof(NonAbstractTypes))]
 			public async Task WhenTypeIsNotAbstract_ShouldSucceed(Type subject)
 			{
@@ -50,36 +76,11 @@ public sealed partial class ThatType
 					             but it was <null>
 					             """);
 			}
-		[Theory]
-		[MemberData(nameof(AbstractTypesForNegated))]
-		public async Task WhenTypeIsAbstract_ShouldSucceedWithNegatedAssertion(Type subject)
-		{
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotAbstract());
 
-			await That(Act).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task WhenTypeIsNotAbstract_ShouldFailWithNegatedAssertion()
-		{
-			Type subject = typeof(PublicClass);
-
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotAbstract());
-
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subject
-				             is abstract,
-				             but it was non-abstract PublicClass
-				             """);
-		}
-
-		public static TheoryData<Type> AbstractTypesForNegated() => new()
-		{
-			typeof(PublicAbstractClass),
-		};
+			public static TheoryData<Type> AbstractTypesForNegated() => new()
+			{
+				typeof(PublicAbstractClass),
+			};
 
 			public static TheoryData<Type> NonAbstractTypes()
 				=>

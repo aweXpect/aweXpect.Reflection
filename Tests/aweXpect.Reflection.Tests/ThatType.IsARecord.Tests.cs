@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonRecordTypeForNegated))]
-			public async Task WhenTypeIsNotARecord_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsARecord());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsARecord_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not a record,
 					             but it was record PublicRecord
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonRecordTypeForNegated))]
+			public async Task WhenTypeIsNotARecord_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsARecord());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonRecordTypeForNegated() => new()

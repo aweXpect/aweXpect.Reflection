@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonEnumTypeForNegated))]
-			public async Task WhenTypeIsNotAnEnum_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAnEnum());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAnEnum_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not an enum,
 					             but it was enum PublicEnum
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonEnumTypeForNegated))]
+			public async Task WhenTypeIsNotAnEnum_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAnEnum());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonEnumTypeForNegated() => new()

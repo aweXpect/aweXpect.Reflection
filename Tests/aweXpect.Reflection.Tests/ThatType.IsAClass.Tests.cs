@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonClassTypeForNegated))]
-			public async Task WhenTypeIsNotAClass_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAClass());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAClass_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not a class,
 					             but it was class PublicClass
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonClassTypeForNegated))]
+			public async Task WhenTypeIsNotAClass_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAClass());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonClassTypeForNegated() => new()

@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonRecordStructTypeForNegated))]
-			public async Task WhenTypeIsNotARecordStruct_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsARecordStruct());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsARecordStruct_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not a record struct,
 					             but it was record struct PublicRecordStruct
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonRecordStructTypeForNegated))]
+			public async Task WhenTypeIsNotARecordStruct_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsARecordStruct());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonRecordStructTypeForNegated() => new()

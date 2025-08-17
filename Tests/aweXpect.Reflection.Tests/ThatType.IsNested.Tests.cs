@@ -56,17 +56,6 @@ public sealed partial class ThatType
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenTypeIsNotNested_ShouldSucceed()
-			{
-				Type subject = typeof(Container);
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsNested());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenTypeIsNested_ShouldFail()
 			{
 				Type subject = typeof(Container.PublicNestedClass);
@@ -80,6 +69,17 @@ public sealed partial class ThatType
 					             is not nested,
 					             but it was nested Container.PublicNestedClass
 					             """);
+			}
+
+			[Fact]
+			public async Task WhenTypeIsNotNested_ShouldSucceed()
+			{
+				Type subject = typeof(Container);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNested());
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}

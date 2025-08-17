@@ -209,177 +209,179 @@ public sealed partial class ThatType
 			{
 			}
 		}
-        
-        public sealed class OrHas
-        {
-            public sealed class AttributeTests
-            {
-                [Fact]
-                public async Task WhenTypeHasFirstAttribute_ShouldSucceed()
-                {
-                    Type subject = typeof(FooClass);
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+		public sealed class OrHas
+		{
+			public sealed class AttributeTests
+			{
+				[Fact]
+				public async Task WhenTypeHasBothAttributes_ShouldSucceed()
+				{
+					Type subject = typeof(FooBarClass);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WhenTypeHasSecondAttribute_ShouldSucceed()
-                {
-                    Type subject = typeof(BarClass);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+				[Fact]
+				public async Task WhenTypeHasFirstAttribute_ShouldSucceed()
+				{
+					Type subject = typeof(FooClass);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WhenTypeHasBothAttributes_ShouldSucceed()
-                {
-                    Type subject = typeof(FooBarClass);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+				[Fact]
+				public async Task WhenTypeHasMatchingAttribute_ShouldSucceed()
+				{
+					Type subject = typeof(FooClass2);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 2).OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WhenTypeHasNeitherAttribute_ShouldFail()
-                {
-                    Type subject = typeof(BazClass);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+				[Fact]
+				public async Task WhenTypeHasMatchingSecondAttribute_ShouldSucceed()
+				{
+					Type subject = typeof(BarClass3);
 
-                    await That(Act).Throws<XunitException>()
-                        .WithMessage("""
-                                     Expected that subject
-                                     has ThatType.Has.OrHas.AttributeTests.FooAttribute or ThatType.Has.OrHas.AttributeTests.BarAttribute,
-                                     but it did not in ThatType.Has.OrHas.AttributeTests.BazClass
-                                     """);
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5)
+							.OrHas<BarAttribute>(bar => bar.Name == "test");
 
-                [Fact]
-                public async Task WhenTypeHasMatchingAttribute_ShouldSucceed()
-                {
-                    Type subject = typeof(FooClass2);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>(foo => foo.Value == 2).OrHas<BarAttribute>();
+				[Fact]
+				public async Task WhenTypeHasNeitherAttribute_ShouldFail()
+				{
+					Type subject = typeof(BazClass);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WhenTypeHasMatchingSecondAttribute_ShouldSucceed()
-                {
-                    Type subject = typeof(BarClass3);
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             has ThatType.Has.OrHas.AttributeTests.FooAttribute or ThatType.Has.OrHas.AttributeTests.BarAttribute,
+						             but it did not in ThatType.Has.OrHas.AttributeTests.BazClass
+						             """);
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>(foo => foo.Value == 5).OrHas<BarAttribute>(bar => bar.Name == "test");
+				[Fact]
+				public async Task WhenTypeHasSecondAttribute_ShouldSucceed()
+				{
+					Type subject = typeof(BarClass);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WithPredicate_WhenTypeHasNotMatchingAttribute_ShouldFail()
-                {
-                    Type subject = typeof(FooClass2);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>(foo => foo.Value == 5).OrHas<BarAttribute>(bar => bar.Name == "test");
+				[Fact]
+				public async Task WithInheritance_ShouldWorkCorrectly()
+				{
+					Type subject = typeof(FooChildClass);
 
-                    await That(Act).Throws<XunitException>()
-                        .WithMessage("""
-                                     Expected that subject
-                                     has ThatType.Has.OrHas.AttributeTests.FooAttribute matching foo => foo.Value == 5 or ThatType.Has.OrHas.AttributeTests.BarAttribute matching bar => bar.Name == "test",
-                                     but it did not in ThatType.Has.OrHas.AttributeTests.FooClass2
-                                     """);
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
 
-                [Fact]
-                public async Task WithInheritance_ShouldWorkCorrectly()
-                {
-                    Type subject = typeof(FooChildClass);
+					await That(Act).DoesNotThrow();
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>().OrHas<BarAttribute>();
+				[Fact]
+				public async Task WithInheritanceFalse_ShouldWorkCorrectly()
+				{
+					Type subject = typeof(FooChildClass);
 
-                    await That(Act).DoesNotThrow();
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>(false).OrHas<BarAttribute>(false);
 
-                [Fact]
-                public async Task WithInheritanceFalse_ShouldWorkCorrectly()
-                {
-                    Type subject = typeof(FooChildClass);
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             has direct ThatType.Has.OrHas.AttributeTests.FooAttribute or direct ThatType.Has.OrHas.AttributeTests.BarAttribute,
+						             but it did not in ThatType.Has.OrHas.AttributeTests.FooChildClass
+						             """);
+				}
 
-                    async Task Act()
-                        => await That(subject).Has<FooAttribute>(inherit: false).OrHas<BarAttribute>(inherit: false);
+				[Fact]
+				public async Task WithPredicate_WhenTypeHasNotMatchingAttribute_ShouldFail()
+				{
+					Type subject = typeof(FooClass2);
 
-                    await That(Act).Throws<XunitException>()
-                        .WithMessage("""
-                                     Expected that subject
-                                     has direct ThatType.Has.OrHas.AttributeTests.FooAttribute or direct ThatType.Has.OrHas.AttributeTests.BarAttribute,
-                                     but it did not in ThatType.Has.OrHas.AttributeTests.FooChildClass
-                                     """);
-                }
+					async Task Act()
+						=> await That(subject).Has<FooAttribute>(foo => foo.Value == 5)
+							.OrHas<BarAttribute>(bar => bar.Name == "test");
 
-                [AttributeUsage(AttributeTargets.Class)]
-                private class FooAttribute : Attribute
-                {
-                    public int Value { get; set; }
-                }
+					await That(Act).Throws<XunitException>()
+						.WithMessage("""
+						             Expected that subject
+						             has ThatType.Has.OrHas.AttributeTests.FooAttribute matching foo => foo.Value == 5 or ThatType.Has.OrHas.AttributeTests.BarAttribute matching bar => bar.Name == "test",
+						             but it did not in ThatType.Has.OrHas.AttributeTests.FooClass2
+						             """);
+				}
 
-                [AttributeUsage(AttributeTargets.Class)]
-                private class BarAttribute : Attribute
-                {
-                    public string? Name { get; set; }
-                }
+				[AttributeUsage(AttributeTargets.Class)]
+				private class FooAttribute : Attribute
+				{
+					public int Value { get; set; }
+				}
 
-                [AttributeUsage(AttributeTargets.Class)]
-                private class BazAttribute : Attribute
-                {
-                }
+				[AttributeUsage(AttributeTargets.Class)]
+				private class BarAttribute : Attribute
+				{
+					public string? Name { get; set; }
+				}
 
-                [Foo]
-                private class FooClass
-                {
-                }
+				[AttributeUsage(AttributeTargets.Class)]
+				private class BazAttribute : Attribute
+				{
+				}
 
-                [Foo(Value = 2)]
-                private class FooClass2
-                {
-                }
+				[Foo]
+				private class FooClass
+				{
+				}
 
-                [Bar]
-                private class BarClass
-                {
-                }
+				[Foo(Value = 2)]
+				private class FooClass2
+				{
+				}
 
-                [Bar(Name = "test")]
-                private class BarClass3
-                {
-                }
+				[Bar]
+				private class BarClass
+				{
+				}
 
-                [Foo]
-                [Bar]
-                private class FooBarClass
-                {
-                }
+				[Bar(Name = "test")]
+				private class BarClass3
+				{
+				}
 
-                [Baz]
-                private class BazClass
-                {
-                }
+				[Foo]
+				[Bar]
+				private class FooBarClass
+				{
+				}
 
-                private class FooChildClass : FooClass
-                {
-                }
-            }
-        }
+				[Baz]
+				private class BazClass
+				{
+				}
+
+				private class FooChildClass : FooClass
+				{
+				}
+			}
+		}
 	}
 }

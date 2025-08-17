@@ -55,18 +55,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[InlineData(typeof(ProtectedType), "protected")]
-			[InlineData(typeof(PublicType), "public")]
-			[InlineData(typeof(PrivateType), "private")]
-			public async Task WhenTypeIsNotInternal_ShouldSucceed(Type subject, string expectedAccessModifier)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsInternal());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsInternal_ShouldFail()
 			{
@@ -77,6 +65,18 @@ public sealed partial class ThatType
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("*is not internal*but it was*").AsWildcard();
+			}
+
+			[Theory]
+			[InlineData(typeof(ProtectedType), "protected")]
+			[InlineData(typeof(PublicType), "public")]
+			[InlineData(typeof(PrivateType), "private")]
+			public async Task WhenTypeIsNotInternal_ShouldSucceed(Type subject, string expectedAccessModifier)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsInternal());
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}

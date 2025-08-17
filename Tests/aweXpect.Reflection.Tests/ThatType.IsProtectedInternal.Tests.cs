@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;using Xunit.Sdk;
+﻿using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -8,17 +8,6 @@ public sealed partial class ThatType
 	{
 		public class Tests
 		{
-			[Fact]
-			public async Task WhenTypeIsProtectedInternal_ShouldSucceed()
-			{
-				Type subject = typeof(ProtectedInternalType);
-
-				async Task Act()
-					=> await That(subject).IsProtectedInternal();
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Theory]
 			[InlineData(typeof(ProtectedType), "protected")]
 			[InlineData(typeof(PublicType), "public")]
@@ -36,6 +25,19 @@ public sealed partial class ThatType
 					              """);
 			}
 
+			[Theory]
+			[InlineData(typeof(ProtectedType), "protected")]
+			[InlineData(typeof(PublicType), "public")]
+			[InlineData(typeof(PrivateType), "private")]
+			public async Task WhenTypeIsNotProtectedInternal_ShouldSucceedWithNegatedAssertion(Type? subject,
+				string expectedAccessModifier)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsProtectedInternal());
+
+				await That(Act).DoesNotThrow();
+			}
+
 			[Fact]
 			public async Task WhenTypeIsNull_ShouldFail()
 			{
@@ -51,29 +53,29 @@ public sealed partial class ThatType
 					             but it was <null>
 					             """);
 			}
-		[Theory]
-		[InlineData(typeof(ProtectedType), "protected")]
-		[InlineData(typeof(PublicType), "public")]
-		[InlineData(typeof(PrivateType), "private")]
-		public async Task WhenTypeIsNotProtectedInternal_ShouldSucceedWithNegatedAssertion(Type? subject, string expectedAccessModifier)
-		{
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsProtectedInternal());
 
-			await That(Act).DoesNotThrow();
-		}
+			[Fact]
+			public async Task WhenTypeIsProtectedInternal_ShouldFailWithNegatedAssertion()
+			{
+				Type subject = typeof(ProtectedInternalType);
 
-		[Fact]
-		public async Task WhenTypeIsProtectedInternal_ShouldFailWithNegatedAssertion()
-		{
-			Type subject = typeof(ProtectedInternalType);
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsProtectedInternal());
 
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsProtectedInternal());
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*is not protected internal*but it was*").AsWildcard();
+			}
 
-			await That(Act).Throws<XunitException>()
-				.WithMessage("*is not protected internal*but it was*").AsWildcard();
-		}
+			[Fact]
+			public async Task WhenTypeIsProtectedInternal_ShouldSucceed()
+			{
+				Type subject = typeof(ProtectedInternalType);
+
+				async Task Act()
+					=> await That(subject).IsProtectedInternal();
+
+				await That(Act).DoesNotThrow();
+			}
 
 			protected internal class ProtectedInternalType;
 		}

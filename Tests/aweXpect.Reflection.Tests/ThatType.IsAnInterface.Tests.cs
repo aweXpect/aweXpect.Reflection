@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonInterfaceTypeForNegated))]
-			public async Task WhenTypeIsNotAnInterface_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAnInterface());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAnInterface_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not an interface,
 					             but it was interface IPublicInterface
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonInterfaceTypeForNegated))]
+			public async Task WhenTypeIsNotAnInterface_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAnInterface());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonInterfaceTypeForNegated() => new()

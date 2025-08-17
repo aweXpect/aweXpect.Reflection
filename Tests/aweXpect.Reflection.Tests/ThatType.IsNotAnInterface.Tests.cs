@@ -26,6 +26,32 @@ public sealed partial class ThatType
 			}
 
 			[Theory]
+			[MemberData(nameof(InterfaceTypesForNegated))]
+			public async Task WhenTypeIsAnInterface_ShouldSucceedWithNegatedAssertion(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotAnInterface());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeIsNotAnInterface_ShouldFailWithNegatedAssertion()
+			{
+				Type subject = typeof(PublicClass);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotAnInterface());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             is an interface,
+					             but it was class PublicClass
+					             """);
+			}
+
+			[Theory]
 			[MemberData(nameof(NonInterfaceTypes))]
 			public async Task WhenTypeIsNotAnInterface_ShouldSucceed(Type subject)
 			{
@@ -50,36 +76,11 @@ public sealed partial class ThatType
 					             but it was <null>
 					             """);
 			}
-		[Theory]
-		[MemberData(nameof(InterfaceTypesForNegated))]
-		public async Task WhenTypeIsAnInterface_ShouldSucceedWithNegatedAssertion(Type subject)
-		{
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotAnInterface());
 
-			await That(Act).DoesNotThrow();
-		}
-
-		[Fact]
-		public async Task WhenTypeIsNotAnInterface_ShouldFailWithNegatedAssertion()
-		{
-			Type subject = typeof(PublicClass);
-
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotAnInterface());
-
-			await That(Act).Throws<XunitException>()
-				.WithMessage("""
-				             Expected that subject
-				             is an interface,
-				             but it was class PublicClass
-				             """);
-		}
-
-		public static TheoryData<Type> InterfaceTypesForNegated() => new()
-		{
-			typeof(IPublicInterface),
-		};
+			public static TheoryData<Type> InterfaceTypesForNegated() => new()
+			{
+				typeof(IPublicInterface),
+			};
 
 			public static TheoryData<Type> NonInterfaceTypes()
 				=>

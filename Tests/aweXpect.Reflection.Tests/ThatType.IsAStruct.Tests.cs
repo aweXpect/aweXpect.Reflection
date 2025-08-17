@@ -76,16 +76,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonStructTypeForNegated))]
-			public async Task WhenTypeIsNotAStruct_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAStruct());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAStruct_ShouldFail()
 			{
@@ -100,6 +90,16 @@ public sealed partial class ThatType
 					             is not a struct,
 					             but it was struct PublicStruct
 					             """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonStructTypeForNegated))]
+			public async Task WhenTypeIsNotAStruct_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAStruct());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonStructTypeForNegated() => new()

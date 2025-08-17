@@ -56,17 +56,6 @@ public sealed partial class ThatType
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenTypeIsNotGeneric_ShouldSucceed()
-			{
-				Type subject = typeof(PublicClass);
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsGeneric());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenTypeIsGeneric_ShouldFail()
 			{
 				Type subject = typeof(PublicGenericClass<int>);
@@ -80,6 +69,17 @@ public sealed partial class ThatType
 					             is not generic,
 					             but it was generic PublicGenericClass<int>
 					             """);
+			}
+
+			[Fact]
+			public async Task WhenTypeIsNotGeneric_ShouldSucceed()
+			{
+				Type subject = typeof(PublicClass);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsGeneric());
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}

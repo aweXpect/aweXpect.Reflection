@@ -63,16 +63,6 @@ public sealed partial class ThatType
 
 		public sealed class NegatedTests
 		{
-			[Theory]
-			[MemberData(nameof(NonAbstractTypesForNegated))]
-			public async Task WhenTypeIsNotAbstract_ShouldSucceed(Type subject)
-			{
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAbstract());
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenTypeIsAbstract_ShouldFail()
 			{
@@ -87,6 +77,16 @@ public sealed partial class ThatType
 					              is not abstract,
 					              but it was abstract {Formatter.Format(subject)}
 					              """);
+			}
+
+			[Theory]
+			[MemberData(nameof(NonAbstractTypesForNegated))]
+			public async Task WhenTypeIsNotAbstract_ShouldSucceed(Type subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAbstract());
+
+				await That(Act).DoesNotThrow();
 			}
 
 			public static TheoryData<Type> NonAbstractTypesForNegated() => new()

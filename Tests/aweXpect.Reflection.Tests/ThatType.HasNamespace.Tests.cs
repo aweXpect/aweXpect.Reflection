@@ -87,7 +87,8 @@ public sealed partial class ThatType
 				Type subject = typeof(PublicAbstractClass);
 
 				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.HasNamespace("aweXpect.Reflection.Tests.TestHelpers.Types"));
+					=> await That(subject).DoesNotComplyWith(it
+						=> it.HasNamespace("aweXpect.Reflection.Tests.TestHelpers.Types"));
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("*does not have namespace*aweXpect.Reflection.Tests.TestHelpers.Types*").AsWildcard();

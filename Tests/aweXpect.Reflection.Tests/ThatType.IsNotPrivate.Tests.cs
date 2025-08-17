@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;using Xunit.Sdk;
+﻿using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -8,6 +8,19 @@ public sealed partial class ThatType
 	{
 		public sealed class Tests
 		{
+			[Theory]
+			[InlineData(typeof(ProtectedType))]
+			[InlineData(typeof(PublicType))]
+			[InlineData(typeof(InternalType))]
+			public async Task WhenTypeIsNotPrivate_ShouldFailWithNegatedAssertion(Type? subject)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivate());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*is private*but it was*").AsWildcard();
+			}
+
 			[Theory]
 			[InlineData(typeof(ProtectedType))]
 			[InlineData(typeof(PublicType))]
@@ -51,29 +64,17 @@ public sealed partial class ThatType
 					             but it was
 					             """);
 			}
-		[Fact]
-		public async Task WhenTypeIsPrivate_ShouldSucceedWithNegatedAssertion()
-		{
-			Type? subject = typeof(PrivateType);
 
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivate());
+			[Fact]
+			public async Task WhenTypeIsPrivate_ShouldSucceedWithNegatedAssertion()
+			{
+				Type? subject = typeof(PrivateType);
 
-			await That(Act).DoesNotThrow();
-		}
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivate());
 
-		[Theory]
-		[InlineData(typeof(ProtectedType))]
-		[InlineData(typeof(PublicType))]
-		[InlineData(typeof(InternalType))]
-		public async Task WhenTypeIsNotPrivate_ShouldFailWithNegatedAssertion(Type? subject)
-		{
-			async Task Act()
-				=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivate());
-
-			await That(Act).Throws<XunitException>()
-				.WithMessage("*is private*but it was*").AsWildcard();
-		}
+				await That(Act).DoesNotThrow();
+			}
 		}
 	}
 }
