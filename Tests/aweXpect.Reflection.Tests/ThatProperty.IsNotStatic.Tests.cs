@@ -1,28 +1,23 @@
-﻿using System.Reflection;
+using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 
 namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatProperty
 {
-	public sealed class IsStatic
+	public sealed class IsNotStatic
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenPropertyIsNotStatic_ShouldFail()
+			public async Task WhenPropertyIsNotStatic_ShouldSucceed()
 			{
 				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))!;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
-				await That(Act).ThrowsException()
-					.WithMessage($"""
-					              Expected that subject
-					              is static,
-					              but it was non-static {Formatter.Format(subject)}
-					              """);
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -31,25 +26,30 @@ public sealed partial class ThatProperty
 				PropertyInfo? subject = null;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
+					             is not static,
 					             but it was <null>
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenPropertyIsStatic_ShouldSucceed()
+			public async Task WhenPropertyIsStatic_ShouldFail()
 			{
 				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
-				await That(Act).DoesNotThrow();
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is not static,
+					              but it was static {Formatter.Format(subject)}
+					              """);
 			}
 		}
 	}

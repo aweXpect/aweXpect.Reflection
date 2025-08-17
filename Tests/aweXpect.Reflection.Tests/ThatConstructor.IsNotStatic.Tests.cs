@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 
@@ -6,24 +6,19 @@ namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatConstructor
 {
-	public sealed class IsStatic
+	public sealed class IsNotStatic
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenConstructorIsNotStatic_ShouldFail()
+			public async Task WhenConstructorIsNotStatic_ShouldSucceed()
 			{
 				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors().First(c => !c.IsStatic);
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
-				await That(Act).ThrowsException()
-					.WithMessage($"""
-					              Expected that subject
-					              is static,
-					              but it was non-static {Formatter.Format(subject)}
-					              """);
+				await That(Act).DoesNotThrow();
 			}
 
 			[Fact]
@@ -32,25 +27,30 @@ public sealed partial class ThatConstructor
 				ConstructorInfo? subject = null;
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
 				await That(Act).ThrowsException()
 					.WithMessage("""
 					             Expected that subject
-					             is static,
+					             is not static,
 					             but it was <null>
 					             """);
 			}
 
 			[Fact]
-			public async Task WhenConstructorIsStatic_ShouldSucceed()
+			public async Task WhenConstructorIsStatic_ShouldFail()
 			{
 				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
 
 				async Task Act()
-					=> await That(subject).IsStatic();
+					=> await That(subject).IsNotStatic();
 
-				await That(Act).DoesNotThrow();
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is not static,
+					              but it was static {Formatter.Format(subject)}
+					              """);
 			}
 		}
 	}
