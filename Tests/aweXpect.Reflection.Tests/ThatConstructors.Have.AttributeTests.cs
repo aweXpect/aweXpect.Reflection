@@ -15,7 +15,8 @@ public sealed partial class ThatConstructors
 			{
 				IEnumerable<ConstructorInfo> subject = new[]
 				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor([typeof(int)])!,
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor([typeof(int),])!,
 				};
 
 				async Task Act()
@@ -29,7 +30,8 @@ public sealed partial class ThatConstructors
 			{
 				IEnumerable<ConstructorInfo> subject = new[]
 				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor([typeof(int)])!,
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor([typeof(int),])!,
 				};
 
 				async Task Act()
@@ -43,7 +45,8 @@ public sealed partial class ThatConstructors
 			{
 				IEnumerable<ConstructorInfo> subject = new[]
 				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor(Type.EmptyTypes)!,
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor(Type.EmptyTypes)!,
 				};
 
 				async Task Act()
@@ -64,7 +67,8 @@ public sealed partial class ThatConstructors
 			{
 				IEnumerable<ConstructorInfo> subject = new[]
 				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor([typeof(int)])!,
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor([typeof(int),])!,
 				};
 
 				async Task Act()
@@ -88,6 +92,7 @@ public sealed partial class ThatConstructors
 			}
 
 			// ReSharper disable UnusedMember.Local
+			// ReSharper disable UnusedParameter.Local
 			private class TestClass
 			{
 				public TestClass() { }
@@ -98,6 +103,7 @@ public sealed partial class ThatConstructors
 				[Test(Value = "ConstructorValue2")]
 				public TestClass(int value) { }
 			}
+			// ReSharper restore UnusedParameter.Local
 			// ReSharper restore UnusedMember.Local
 		}
 
@@ -106,43 +112,60 @@ public sealed partial class ThatConstructors
 			public sealed class AttributeTests
 			{
 				[Fact]
-				public async Task WhenConstructorsHaveFirstAttribute_ShouldSucceed()
-				{
-					IEnumerable<ConstructorInfo> subject = new[]
-					{
-						typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor([typeof(int)])!,
-					};
-
-					async Task Act()
-						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
-				public async Task WhenConstructorsHaveSecondAttribute_ShouldSucceed()
-				{
-					IEnumerable<ConstructorInfo> subject = new[]
-					{
-						typeof(TestClass).GetConstructor([typeof(double)])!, typeof(TestClass).GetConstructor([typeof(float)])!,
-					};
-
-					async Task Act()
-						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
 				public async Task WhenConstructorsHaveBothAttributes_ShouldSucceed()
 				{
 					IEnumerable<ConstructorInfo> subject = new[]
 					{
-						typeof(TestClass).GetConstructor([typeof(long)])!,
+						typeof(TestClass).GetConstructor([typeof(long),])!,
 					};
 
 					async Task Act()
 						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenConstructorsHaveFirstAttribute_ShouldSucceed()
+				{
+					IEnumerable<ConstructorInfo> subject = new[]
+					{
+						typeof(TestClass).GetConstructor([typeof(string),])!,
+						typeof(TestClass).GetConstructor([typeof(int),])!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenConstructorsHaveMatchingFirstAttribute_ShouldSucceed()
+				{
+					IEnumerable<ConstructorInfo> subject = new[]
+					{
+						typeof(TestClass).GetConstructor([typeof(string),])!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>(attr => attr.Value == "Constructor1Value")
+							.OrHave<BarAttribute>();
+
+					await That(Act).DoesNotThrow();
+				}
+
+				[Fact]
+				public async Task WhenConstructorsHaveMatchingSecondAttribute_ShouldSucceed()
+				{
+					IEnumerable<ConstructorInfo> subject = new[]
+					{
+						typeof(TestClass).GetConstructor([typeof(double),])!,
+					};
+
+					async Task Act()
+						=> await That(subject).Have<TestAttribute>()
+							.OrHave<BarAttribute>(attr => attr.Name == "bar");
 
 					await That(Act).DoesNotThrow();
 				}
@@ -169,31 +192,16 @@ public sealed partial class ThatConstructors
 				}
 
 				[Fact]
-				public async Task WhenConstructorsHaveMatchingFirstAttribute_ShouldSucceed()
+				public async Task WhenConstructorsHaveSecondAttribute_ShouldSucceed()
 				{
 					IEnumerable<ConstructorInfo> subject = new[]
 					{
-						typeof(TestClass).GetConstructor([typeof(string)])!,
+						typeof(TestClass).GetConstructor([typeof(double),])!,
+						typeof(TestClass).GetConstructor([typeof(float),])!,
 					};
 
 					async Task Act()
-						=> await That(subject).Have<TestAttribute>(attr => attr.Value == "Constructor1Value")
-							.OrHave<BarAttribute>();
-
-					await That(Act).DoesNotThrow();
-				}
-
-				[Fact]
-				public async Task WhenConstructorsHaveMatchingSecondAttribute_ShouldSucceed()
-				{
-					IEnumerable<ConstructorInfo> subject = new[]
-					{
-						typeof(TestClass).GetConstructor([typeof(double)])!,
-					};
-
-					async Task Act()
-						=> await That(subject).Have<TestAttribute>()
-							.OrHave<BarAttribute>(attr => attr.Name == "bar");
+						=> await That(subject).Have<TestAttribute>().OrHave<BarAttribute>();
 
 					await That(Act).DoesNotThrow();
 				}
@@ -203,11 +211,11 @@ public sealed partial class ThatConstructors
 				{
 					IEnumerable<ConstructorInfo> subject = new[]
 					{
-						typeof(TestClass).GetConstructor([typeof(string)])!,
+						typeof(TestClass).GetConstructor([typeof(string),])!,
 					};
 
 					async Task Act()
-						=> await That(subject).Have<TestAttribute>(inherit: false);
+						=> await That(subject).Have<TestAttribute>(false);
 
 					await That(Act).DoesNotThrow();
 				}
@@ -225,22 +233,28 @@ public sealed partial class ThatConstructors
 				}
 
 				// ReSharper disable UnusedMember.Local
+				// ReSharper disable UnusedParameter.Local
 				private class TestClass
 				{
 					public TestClass() { }
 
-					[Test(Value = "Constructor1Value")] public TestClass(string value) { }
+					[Test(Value = "Constructor1Value")]
+					public TestClass(string value) { }
 
-					[Test(Value = "Constructor2Value")] public TestClass(int value) { }
+					[Test(Value = "Constructor2Value")]
+					public TestClass(int value) { }
 
-					[Bar(Name = "bar")] public TestClass(double value) { }
+					[Bar(Name = "bar")]
+					public TestClass(double value) { }
 
-					[Bar(Name = "bar2")] public TestClass(float value) { }
+					[Bar(Name = "bar2")]
+					public TestClass(float value) { }
 
 					[Test(Value = "BothValue")]
 					[Bar(Name = "both")]
 					public TestClass(long value) { }
 				}
+				// ReSharper restore UnusedParameter.Local
 				// ReSharper restore UnusedMember.Local
 			}
 		}
@@ -248,25 +262,12 @@ public sealed partial class ThatConstructors
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenNotAllConstructorsHaveAttribute_ShouldSucceed()
-			{
-				IEnumerable<ConstructorInfo> subject = new[]
-				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor(Type.EmptyTypes)!,
-				};
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.Have<TestAttribute>());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenAllConstructorsHaveAttribute_ShouldFail()
 			{
 				IEnumerable<ConstructorInfo> subject = new[]
 				{
-					typeof(TestClass).GetConstructor([typeof(string)])!, typeof(TestClass).GetConstructor([typeof(int)])!,
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor([typeof(int),])!,
 				};
 
 				async Task Act()
@@ -283,13 +284,30 @@ public sealed partial class ThatConstructors
 					             """);
 			}
 
+			[Fact]
+			public async Task WhenNotAllConstructorsHaveAttribute_ShouldSucceed()
+			{
+				IEnumerable<ConstructorInfo> subject = new[]
+				{
+					typeof(TestClass).GetConstructor([typeof(string),])!,
+					typeof(TestClass).GetConstructor(Type.EmptyTypes)!,
+				};
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Have<TestAttribute>());
+
+				await That(Act).DoesNotThrow();
+			}
+
 			[AttributeUsage(AttributeTargets.Constructor)]
 			private class TestAttribute : Attribute
 			{
+				// ReSharper disable once UnusedAutoPropertyAccessor.Local
 				public string Value { get; set; } = "";
 			}
 
 			// ReSharper disable UnusedMember.Local
+			// ReSharper disable UnusedParameter.Local
 			private class TestClass
 			{
 				public TestClass() { }
@@ -300,6 +318,7 @@ public sealed partial class ThatConstructors
 				[Test(Value = "Constructor2Value")]
 				public TestClass(int value) { }
 			}
+			// ReSharper restore UnusedParameter.Local
 			// ReSharper restore UnusedMember.Local
 		}
 	}

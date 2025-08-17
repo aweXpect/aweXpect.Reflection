@@ -19,7 +19,8 @@ public static partial class ThatConstructor
 	///     The optional parameter <paramref name="inherit" /> (default value <see langword="true" />) specifies, if
 	///     the attribute can be inherited from a base type.
 	/// </remarks>
-	public static HasAttributeResult<ConstructorInfo?> Has<TAttribute>(this IThat<ConstructorInfo?> subject, bool inherit = true)
+	public static HasAttributeResult<ConstructorInfo?> Has<TAttribute>(this IThat<ConstructorInfo?> subject,
+		bool inherit = true)
 		where TAttribute : Attribute
 	{
 		AttributeFilterOptions<ConstructorInfo?> attributeFilterOptions =

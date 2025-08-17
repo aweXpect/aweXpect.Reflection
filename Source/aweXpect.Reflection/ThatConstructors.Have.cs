@@ -85,7 +85,8 @@ public static partial class ThatConstructors
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" contained not matching constructors ");
-			Formatter.Format(stringBuilder, Actual?.Where(constructorInfo => !attributeFilterOptions.Matches(constructorInfo)),
+			Formatter.Format(stringBuilder,
+				Actual?.Where(constructorInfo => !attributeFilterOptions.Matches(constructorInfo)),
 				FormattingOptions.Indented(indentation));
 		}
 
