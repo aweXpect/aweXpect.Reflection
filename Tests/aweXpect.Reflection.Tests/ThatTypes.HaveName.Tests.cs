@@ -80,8 +80,8 @@ public sealed partial class ThatTypes
 
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
-					             Expected that types with name equal to "SomeClassToTestHaveNameForTypes" in assembly containing type ThatTypes.HaveName.Tests
-					             not all have name equal to "SomeClassToTestHaveNameForTypes",
+					             Expected that types with name equal to "SomeClassToTestHaveNameForType…" in assembly containing type ThatTypes.HaveName.Tests
+					             not all have name equal to "SomeClassToTestHaveNameForType…",
 					             but it only contained matching items [
 					               *SomeClassToTestHaveNameForTypes*
 					             ]
