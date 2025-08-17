@@ -16,8 +16,7 @@ public sealed partial class MethodFilters
 					.Methods()
 					.WhichAreNotGeneric();
 
-				await That(subject.WhichSatisfy(m => m.IsGenericMethod))
-					.IsEmpty();
+				await That(subject).All().Satisfy(m => !m.IsGenericMethod).And.IsNotEmpty();
 			}
 
 			[Fact]

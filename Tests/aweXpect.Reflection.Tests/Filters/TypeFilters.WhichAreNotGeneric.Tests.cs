@@ -14,7 +14,7 @@ public sealed partial class TypeFilters
 				Filtered.Types subject = In.AssemblyContaining<WhichAreNotGeneric>().Types()
 					.WhichAreNotGeneric();
 
-				await That(subject).AreNotGeneric();
+				await That(subject).AreNotGeneric().And.IsNotEmpty();
 			}
 
 			[Fact]

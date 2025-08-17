@@ -11,11 +11,11 @@ public sealed partial class ThatMethods
 	public static Filtered.Types GetTypes<T>()
 		=> In.AssemblyContaining<T>().Types().Which(t => t == typeof(T));
 
-	public class DummyBase
+	internal class DummyBase
 	{
 	}
 
-	public class Dummy : DummyBase
+	internal class Dummy : DummyBase
 	{
 	}
 
@@ -33,7 +33,7 @@ public sealed partial class ThatMethods
 	}
 
 	// ReSharper disable UnusedMember.Local
-	public class TestClass
+	internal class TestClass
 	{
 		public string GetString() => "test";
 		public int GetInt() => 42;
