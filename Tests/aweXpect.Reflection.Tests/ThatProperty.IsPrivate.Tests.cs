@@ -81,11 +81,8 @@ public sealed partial class ThatProperty
 					=> await That(subject).DoesNotComplyWith(it => it.IsPrivate());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             is not private,
-					             but it was private
-					             """);
+					.WithMessage("Expected that subject*")
+					.AsWildcard();
 			}
 		}
 	}

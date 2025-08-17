@@ -55,5 +55,35 @@ public sealed partial class ThatProperty
 					             """);
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Theory]
+			[InlineData("ProtectedProperty")]
+			[InlineData("PublicProperty")]
+			[InlineData("InternalProperty")]
+			public async Task WhenPropertyInfoIsNotPrivateProtected_ShouldFail(string propertyName)
+			{
+				PropertyInfo? subject = GetProperty(propertyName);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivateProtected());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("Expected that subject*")
+					.AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenPropertyInfoIsPrivateProtected_ShouldSucceed()
+			{
+				PropertyInfo? subject = GetProperty("PrivateProtectedProperty");
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotPrivateProtected());
+
+				await That(Act).DoesNotThrow();
+			}
+		}
 	}
 }

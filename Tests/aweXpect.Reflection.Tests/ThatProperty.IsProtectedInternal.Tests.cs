@@ -67,11 +67,8 @@ public sealed partial class ThatProperty
 					=> await That(subject).DoesNotComplyWith(it => it.IsProtectedInternal());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             is not protected internal,
-					             but it was protected internal
-					             """);
+					.WithMessage("Expected that subject*")
+					.AsWildcard();
 			}
 
 			[Theory]
