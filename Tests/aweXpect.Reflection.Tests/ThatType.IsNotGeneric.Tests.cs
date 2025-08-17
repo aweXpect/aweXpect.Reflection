@@ -1,4 +1,5 @@
 ﻿using aweXpect.Reflection.Tests.TestHelpers.Types;
+using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -50,6 +51,32 @@ public sealed partial class ThatType
 					             but it was <null>
 					             """);
 			}
+		[Fact]
+		public async Task WhenTypeIsGeneric_ShouldSucceedWithNegatedAssertion()
+		{
+			Type subject = typeof(PublicGenericClass<>);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotGeneric());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenTypeIsNotGeneric_ShouldFailWithNegatedAssertion()
+		{
+			Type subject = typeof(PublicSealedClass);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotGeneric());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("""
+				             Expected that subject
+				             is generic,
+				             but it was class PublicSealedClass
+				             """);
+		}
 		}
 	}
 }
