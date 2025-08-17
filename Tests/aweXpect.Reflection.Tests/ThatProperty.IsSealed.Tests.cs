@@ -1,19 +1,20 @@
+using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
-public sealed partial class ThatMethod
+public sealed partial class ThatProperty
 {
 	public sealed class IsSealed
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenMethodIsSealed_ShouldSucceed()
+			public async Task WhenPropertyIsSealed_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+				PropertyInfo subject = typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -22,9 +23,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsNotSealed_ShouldFail()
+			public async Task WhenPropertyIsNotSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				PropertyInfo subject = typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -38,9 +39,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsNull_ShouldFail()
+			public async Task WhenPropertyIsNull_ShouldFail()
 			{
-				MethodInfo? subject = null;
+				PropertyInfo? subject = null;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -57,9 +58,9 @@ public sealed partial class ThatMethod
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenMethodIsNotSealed_ShouldSucceed()
+			public async Task WhenPropertyIsNotSealed_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				PropertyInfo subject = typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
@@ -68,9 +69,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsSealed_ShouldFail()
+			public async Task WhenPropertyIsSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+				PropertyInfo subject = typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());

@@ -1,19 +1,20 @@
+using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
-public sealed partial class ThatMethod
+public sealed partial class ThatEvent
 {
 	public sealed class IsSealed
 	{
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenMethodIsSealed_ShouldSucceed()
+			public async Task WhenEventIsSealed_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+				EventInfo subject = typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -22,9 +23,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsNotSealed_ShouldFail()
+			public async Task WhenEventIsNotSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				EventInfo subject = typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -38,9 +39,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsNull_ShouldFail()
+			public async Task WhenEventIsNull_ShouldFail()
 			{
-				MethodInfo? subject = null;
+				EventInfo? subject = null;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -57,9 +58,9 @@ public sealed partial class ThatMethod
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenMethodIsNotSealed_ShouldSucceed()
+			public async Task WhenEventIsNotSealed_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				EventInfo subject = typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
@@ -68,9 +69,9 @@ public sealed partial class ThatMethod
 			}
 
 			[Fact]
-			public async Task WhenMethodIsSealed_ShouldFail()
+			public async Task WhenEventIsSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+				EventInfo subject = typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
