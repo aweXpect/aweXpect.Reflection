@@ -221,7 +221,6 @@ public sealed partial class ThatConstructor
 				}
 				// ReSharper restore UnusedParameter.Local
 				// ReSharper restore UnusedMember.Local
-#pragma warning restore CS0067
 			}
 		}
 
