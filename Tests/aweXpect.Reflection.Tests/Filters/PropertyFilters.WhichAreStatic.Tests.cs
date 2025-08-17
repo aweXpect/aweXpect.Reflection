@@ -14,8 +14,9 @@ public sealed partial class PropertyFilters
 				Filtered.Properties properties = In.AssemblyContaining<AssemblyFilters>()
 					.Properties().WhichAreStatic();
 
-				await That(properties).All().Satisfy(p => 
-					(p.GetMethod?.IsStatic ?? false) || (p.SetMethod?.IsStatic ?? false)).And.IsNotEmpty();
+				await That(properties)
+					.All().Satisfy(p => (p.GetMethod?.IsStatic ?? false) || (p.SetMethod?.IsStatic ?? false))
+					.And.IsNotEmpty();
 				await That(properties.GetDescription())
 					.IsEqualTo("static properties in assembly").AsPrefix();
 			}

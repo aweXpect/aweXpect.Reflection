@@ -20,11 +20,12 @@ public sealed partial class ConstructorFilters
 					.IsEqualTo("static constructors in assembly").AsPrefix();
 			}
 
+			// ReSharper disable once UnusedType.Local
 			private class ClassWithStaticConstructor
 			{
+				// ReSharper disable once EmptyConstructor
 				static ClassWithStaticConstructor()
 				{
-					
 				}
 			}
 		}

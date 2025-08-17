@@ -19,8 +19,10 @@ public sealed partial class ConstructorFilters
 					.IsEqualTo("internal constructors in assembly").AsPrefix();
 			}
 
+			// ReSharper disable once UnusedType.Local
 			private sealed class WithInternalConstructor
 			{
+				// ReSharper disable once EmptyConstructor
 				internal WithInternalConstructor()
 				{
 					
