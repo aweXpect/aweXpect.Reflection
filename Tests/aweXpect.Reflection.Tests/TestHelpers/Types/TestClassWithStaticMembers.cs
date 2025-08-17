@@ -2,8 +2,10 @@
 
 public class TestClassWithStaticMembers
 {
+#pragma warning disable CA2211
 	// Static field
 	public static string StaticField = "static";
+#pragma warning restore CA2211
 
 	// Non-static field  
 	public string NonStaticField = "non-static";
@@ -31,8 +33,10 @@ public class TestClassWithStaticMembers
 	{
 	}
 
+#pragma warning disable CA1822
 	// Non-static method
 	public void NonStaticMethod()
 	{
 	}
+#pragma warning restore CA1822
 }
