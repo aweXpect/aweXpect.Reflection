@@ -13,7 +13,8 @@ public sealed partial class ThatMethod
 			[Fact]
 			public async Task WhenMethodIsAbstract_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.AbstractMethod))!;
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.AbstractMethod))!;
 
 				async Task Act()
 					=> await That(subject).IsAbstract();
@@ -24,7 +25,8 @@ public sealed partial class ThatMethod
 			[Fact]
 			public async Task WhenMethodIsNotAbstract_ShouldFail()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
 
 				async Task Act()
 					=> await That(subject).IsAbstract();
@@ -57,26 +59,32 @@ public sealed partial class ThatMethod
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenMethodIsNotAbstract_ShouldSucceed()
-			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsAbstract());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenMethodIsAbstract_ShouldFail()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.AbstractMethod))!;
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.AbstractMethod))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsAbstract());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*Expected that subject*not be abstract*but it was*");
+					.WithMessage("""
+					             Expected that subject
+					             is not abstract,
+					             but it was abstract Void AbstractMethod()
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenMethodIsNotAbstract_ShouldSucceed()
+			{
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsAbstract());
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}

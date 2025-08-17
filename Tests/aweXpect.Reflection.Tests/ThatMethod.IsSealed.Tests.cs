@@ -11,20 +11,10 @@ public sealed partial class ThatMethod
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenMethodIsSealed_ShouldSucceed()
-			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
-
-				async Task Act()
-					=> await That(subject).IsSealed();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenMethodIsNotSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -52,6 +42,18 @@ public sealed partial class ThatMethod
 					             but it was <null>
 					             """);
 			}
+
+			[Fact]
+			public async Task WhenMethodIsSealed_ShouldSucceed()
+			{
+				MethodInfo subject =
+					typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+
+				async Task Act()
+					=> await That(subject).IsSealed();
+
+				await That(Act).DoesNotThrow();
+			}
 		}
 
 		public sealed class NegatedTests
@@ -59,7 +61,8 @@ public sealed partial class ThatMethod
 			[Fact]
 			public async Task WhenMethodIsNotSealed_ShouldSucceed()
 			{
-				MethodInfo subject = typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
+				MethodInfo subject =
+					typeof(AbstractClassWithMembers).GetMethod(nameof(AbstractClassWithMembers.VirtualMethod))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
@@ -70,13 +73,18 @@ public sealed partial class ThatMethod
 			[Fact]
 			public async Task WhenMethodIsSealed_ShouldFail()
 			{
-				MethodInfo subject = typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
+				MethodInfo subject =
+					typeof(ClassWithSealedMembers).GetMethod(nameof(ClassWithSealedMembers.VirtualMethod))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*Expected that subject*not be sealed*but it was*");
+					.WithMessage("""
+					             Expected that subject
+					             is not sealed,
+					             but it was sealed Void VirtualMethod()
+					             """);
 			}
 		}
 	}

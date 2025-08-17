@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 using Xunit.Sdk;
@@ -12,20 +11,10 @@ public sealed partial class ThatProperty
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenPropertyIsSealed_ShouldSucceed()
-			{
-				PropertyInfo subject = typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
-
-				async Task Act()
-					=> await That(subject).IsSealed();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenPropertyIsNotSealed_ShouldFail()
 			{
-				PropertyInfo subject = typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
+				PropertyInfo subject =
+					typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -53,6 +42,18 @@ public sealed partial class ThatProperty
 					             but it was <null>
 					             """);
 			}
+
+			[Fact]
+			public async Task WhenPropertyIsSealed_ShouldSucceed()
+			{
+				PropertyInfo subject =
+					typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
+
+				async Task Act()
+					=> await That(subject).IsSealed();
+
+				await That(Act).DoesNotThrow();
+			}
 		}
 
 		public sealed class NegatedTests
@@ -60,7 +61,8 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsNotSealed_ShouldSucceed()
 			{
-				PropertyInfo subject = typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
+				PropertyInfo subject =
+					typeof(AbstractClassWithMembers).GetProperty(nameof(AbstractClassWithMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
@@ -71,13 +73,18 @@ public sealed partial class ThatProperty
 			[Fact]
 			public async Task WhenPropertyIsSealed_ShouldFail()
 			{
-				PropertyInfo subject = typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
+				PropertyInfo subject =
+					typeof(ClassWithSealedMembers).GetProperty(nameof(ClassWithSealedMembers.VirtualProperty))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*Expected that subject*not be sealed*but it was*");
+					.WithMessage("""
+					             Expected that subject
+					             is not sealed,
+					             but it was sealed System.String VirtualProperty
+					             """);
 			}
 		}
 	}

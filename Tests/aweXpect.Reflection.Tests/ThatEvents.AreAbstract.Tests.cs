@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
-using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -12,19 +11,6 @@ public sealed partial class ThatEvents
 	{
 		public sealed class Tests
 		{
-			[Fact]
-			public async Task WhenFilteringOnlyAbstractEvents_ShouldSucceed()
-			{
-				IEnumerable<EventInfo> subject = typeof(AbstractClassWithMembers)
-					.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-					.Where(e => e.Name == nameof(AbstractClassWithMembers.AbstractEvent));
-
-				async Task Act()
-					=> await That(subject).AreAbstract();
-
-				await That(Act).DoesNotThrow();
-			}
-
 			[Fact]
 			public async Task WhenEventsContainNonAbstractEvents_ShouldFail()
 			{
@@ -43,10 +29,35 @@ public sealed partial class ThatEvents
 					             ]
 					             """).AsWildcard();
 			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyAbstractEvents_ShouldSucceed()
+			{
+				IEnumerable<EventInfo> subject = typeof(AbstractClassWithMembers)
+					.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+					.Where(e => e.Name == nameof(AbstractClassWithMembers.AbstractEvent));
+
+				async Task Act()
+					=> await That(subject).AreAbstract();
+
+				await That(Act).DoesNotThrow();
+			}
 		}
 
 		public sealed class NegatedTests
 		{
+			[Fact]
+			public async Task WhenEventsContainNonAbstractEvents_ShouldSucceed()
+			{
+				IEnumerable<EventInfo> subject = typeof(AbstractClassWithMembers)
+					.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreAbstract());
+
+				await That(Act).DoesNotThrow();
+			}
+
 			[Fact]
 			public async Task WhenFilteringOnlyAbstractEvents_ShouldFail()
 			{
@@ -65,18 +76,6 @@ public sealed partial class ThatEvents
 					               *
 					             ]
 					             """).AsWildcard();
-			}
-
-			[Fact]
-			public async Task WhenEventsContainNonAbstractEvents_ShouldSucceed()
-			{
-				IEnumerable<EventInfo> subject = typeof(AbstractClassWithMembers)
-					.GetEvents(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(they => they.AreAbstract());
-
-				await That(Act).DoesNotThrow();
 			}
 		}
 	}

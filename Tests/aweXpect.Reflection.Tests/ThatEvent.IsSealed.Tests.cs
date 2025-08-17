@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Reflection;
 using aweXpect.Reflection.Tests.TestHelpers.Types;
 using Xunit.Sdk;
@@ -12,20 +11,10 @@ public sealed partial class ThatEvent
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenEventIsSealed_ShouldSucceed()
-			{
-				EventInfo subject = typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
-
-				async Task Act()
-					=> await That(subject).IsSealed();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenEventIsNotSealed_ShouldFail()
 			{
-				EventInfo subject = typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
+				EventInfo subject =
+					typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).IsSealed();
@@ -53,6 +42,18 @@ public sealed partial class ThatEvent
 					             but it was <null>
 					             """);
 			}
+
+			[Fact]
+			public async Task WhenEventIsSealed_ShouldSucceed()
+			{
+				EventInfo subject =
+					typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
+
+				async Task Act()
+					=> await That(subject).IsSealed();
+
+				await That(Act).DoesNotThrow();
+			}
 		}
 
 		public sealed class NegatedTests
@@ -60,7 +61,8 @@ public sealed partial class ThatEvent
 			[Fact]
 			public async Task WhenEventIsNotSealed_ShouldSucceed()
 			{
-				EventInfo subject = typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
+				EventInfo subject =
+					typeof(AbstractClassWithMembers).GetEvent(nameof(AbstractClassWithMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
@@ -71,13 +73,18 @@ public sealed partial class ThatEvent
 			[Fact]
 			public async Task WhenEventIsSealed_ShouldFail()
 			{
-				EventInfo subject = typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
+				EventInfo subject =
+					typeof(ClassWithSealedMembers).GetEvent(nameof(ClassWithSealedMembers.VirtualEvent))!;
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsSealed());
 
 				await That(Act).Throws<XunitException>()
-					.WithMessage("*Expected that subject*not be sealed*but it was*");
+					.WithMessage("""
+					             Expected that subject
+					             is not sealed,
+					             but it was sealed System.EventHandler VirtualEvent
+					             """);
 			}
 		}
 	}
