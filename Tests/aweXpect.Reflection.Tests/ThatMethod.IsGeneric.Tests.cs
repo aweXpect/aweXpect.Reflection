@@ -55,17 +55,6 @@ public sealed partial class ThatMethod
 		public sealed class NegatedTests
 		{
 			[Fact]
-			public async Task WhenMethodIsNotGeneric_ShouldSucceed()
-			{
-				MethodInfo? subject = GetMethod("NonGenericMethod");
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.IsGeneric());
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenMethodIsGeneric_ShouldFail()
 			{
 				MethodInfo? subject = GetMethod("GenericMethod");
@@ -79,6 +68,17 @@ public sealed partial class ThatMethod
 					             is not generic,
 					             but it was generic T GenericMethod[T](T)
 					             """);
+			}
+
+			[Fact]
+			public async Task WhenMethodIsNotGeneric_ShouldSucceed()
+			{
+				MethodInfo? subject = GetMethod("NonGenericMethod");
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsGeneric());
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}
