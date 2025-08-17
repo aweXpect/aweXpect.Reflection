@@ -52,5 +52,32 @@ public sealed partial class ThatType
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Theory]
+			[InlineData(typeof(ProtectedType), "protected")]
+			[InlineData(typeof(InternalType), "internal")]
+			[InlineData(typeof(PrivateType), "private")]
+			public async Task WhenTypeIsNotPublic_ShouldSucceed(Type subject, string expectedAccessModifier)
+			{
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsPublic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeIsPublic_ShouldFail()
+			{
+				Type? subject = typeof(PublicType);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsPublic());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("*is not public*but it was*").AsWildcard();
+			}
+		}
 	}
 }
