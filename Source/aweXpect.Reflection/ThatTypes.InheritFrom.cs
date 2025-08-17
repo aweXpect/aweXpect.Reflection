@@ -101,28 +101,17 @@ public static partial class ThatTypes
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append("all inherit ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" contained types that do not inherit ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
-			stringBuilder.Append(" ");
+			
+			stringBuilder.Append(' ');
 			IEnumerable<Type?>? nonMatchingTypes =
 				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
 			Formatter.Format(stringBuilder, nonMatchingTypes, FormattingOptions.Indented(indentation));
@@ -131,31 +120,29 @@ public static partial class ThatTypes
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append("not all inherit ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" only contained types that inherit ");
+			AppendDirectlyFrom(stringBuilder, forceDirect);
+			Formatter.Format(stringBuilder, baseType);
+			stringBuilder.Append(' ');
+			IEnumerable<Type?>? matchingTypes =
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
+			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
+		}
+
+		private static void AppendDirectlyFrom(StringBuilder stringBuilder, bool forceDirect)
+		{
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
 
 			stringBuilder.Append("from ");
-
-			Formatter.Format(stringBuilder, baseType);
-			stringBuilder.Append(" ");
-			IEnumerable<Type?>? matchingTypes =
-				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
-			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
 		}
 	}
 
@@ -182,28 +169,17 @@ public static partial class ThatTypes
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append("all do not inherit ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" contained types that inherit ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
-			stringBuilder.Append(" ");
+			
+			stringBuilder.Append(' ');
 			IEnumerable<Type?>? nonMatchingTypes =
 				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
 			Formatter.Format(stringBuilder, nonMatchingTypes, FormattingOptions.Indented(indentation));
@@ -212,31 +188,30 @@ public static partial class ThatTypes
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append("at least one inherits ");
-			if (forceDirect)
-			{
-				stringBuilder.Append("directly ");
-			}
-
-			stringBuilder.Append("from ");
-
+			AppendDirectlyFrom(stringBuilder, forceDirect);
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(It).Append(" only contained types that do not inherit ");
+			AppendDirectlyFrom(stringBuilder, forceDirect);
+			Formatter.Format(stringBuilder, baseType);
+			
+			stringBuilder.Append(' ');
+			IEnumerable<Type?>? matchingTypes =
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
+			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
+		}
+
+		private static void AppendDirectlyFrom(StringBuilder stringBuilder, bool forceDirect)
+		{
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
 
 			stringBuilder.Append("from ");
-
-			Formatter.Format(stringBuilder, baseType);
-			stringBuilder.Append(" ");
-			IEnumerable<Type?>? matchingTypes =
-				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
-			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
 		}
 	}
 }
