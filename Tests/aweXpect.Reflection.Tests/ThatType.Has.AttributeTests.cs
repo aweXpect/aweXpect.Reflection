@@ -147,7 +147,69 @@ public sealed partial class ThatType
 			{
 			}
 		}
-		
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenTypeDoesNotHaveAttribute_ShouldSucceed()
+			{
+				Type subject = typeof(FooClass2);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Has<BarAttribute>());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeHasAttribute_ShouldFail()
+			{
+				Type subject = typeof(FooClass2);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Has<FooAttribute>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has no ThatType.Has.NegatedTests.FooAttribute,
+					             but it did in ThatType.Has.NegatedTests.FooClass2
+					             """);
+			}
+
+			[Fact]
+			public async Task WhenTypeHasMatchingAttribute_ShouldFail()
+			{
+				Type subject = typeof(FooClass2);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.Has<FooAttribute>(foo => foo.Value == 2));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             has no ThatType.Has.NegatedTests.FooAttribute matching foo => foo.Value == 2,
+					             but it did in ThatType.Has.NegatedTests.FooClass2
+					             """);
+			}
+
+			[AttributeUsage(AttributeTargets.Class)]
+			private class FooAttribute : Attribute
+			{
+				public int Value { get; set; }
+			}
+
+			[AttributeUsage(AttributeTargets.Class)]
+			private class BarAttribute : Attribute
+			{
+			}
+
+			[Foo(Value = 2)]
+			private class FooClass2
+			{
+			}
+		}
+        
         public sealed class OrHas
         {
             public sealed class AttributeTests
