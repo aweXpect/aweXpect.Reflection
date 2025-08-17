@@ -131,7 +131,7 @@ public sealed partial class ThatProperty
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has no ThatProperty.NegatedTests.TestAttribute,
+					             has no ThatProperty.Has.NegatedTests.TestAttribute,
 					             but it did in System.String TestProperty
 					             """);
 			}

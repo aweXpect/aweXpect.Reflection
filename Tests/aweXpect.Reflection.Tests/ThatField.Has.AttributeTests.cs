@@ -132,7 +132,7 @@ public sealed partial class ThatField
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has no ThatField.NegatedTests.TestAttribute,
+					             has no ThatField.Has.NegatedTests.TestAttribute,
 					             but it did in System.String TestField
 					             """);
 			}

@@ -132,7 +132,7 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             has no ThatMethod.NegatedTests.TestAttribute,
+					             has no ThatMethod.Has.NegatedTests.TestAttribute,
 					             but it did in Void TestMethod()
 					             """);
 			}
