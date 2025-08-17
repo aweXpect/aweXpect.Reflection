@@ -74,7 +74,7 @@ public sealed partial class ThatType
 				.WithMessage("""
 				             Expected that subject
 				             is generic,
-				             but it was class PublicSealedClass
+				             but it was non-generic PublicSealedClass
 				             """);
 		}
 		}

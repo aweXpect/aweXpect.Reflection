@@ -72,7 +72,7 @@ public sealed partial class ThatType
 				=> await That(subject).DoesNotComplyWith(it => it.IsNotPublic());
 
 			await That(Act).Throws<XunitException>()
-				.WithMessage("*is public*");
+				.WithMessage("*is public*but it was*").AsWildcard();
 		}
 		}
 	}

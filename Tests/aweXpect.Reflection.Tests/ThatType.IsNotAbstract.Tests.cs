@@ -72,7 +72,7 @@ public sealed partial class ThatType
 				.WithMessage("""
 				             Expected that subject
 				             is abstract,
-				             but it was class PublicClass
+				             but it was non-abstract PublicClass
 				             """);
 		}
 

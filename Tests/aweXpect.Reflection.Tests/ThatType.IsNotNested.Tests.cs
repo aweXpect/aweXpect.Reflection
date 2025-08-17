@@ -74,7 +74,7 @@ public sealed partial class ThatType
 				.WithMessage("""
 				             Expected that subject
 				             is nested,
-				             but it was Container
+				             but it was non-nested Container
 				             """);
 		}
 		}

@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;
+﻿using Xunit.Sdk;using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -51,6 +51,29 @@ public sealed partial class ThatType
 
 				await That(Act).DoesNotThrow();
 			}
+		[Theory]
+		[InlineData(typeof(PrivateType), "private")]
+		[InlineData(typeof(PublicType), "public")]
+		[InlineData(typeof(InternalType), "internal")]
+		public async Task WhenTypeIsNotProtected_ShouldSucceedWithNegatedAssertion(Type? subject, string expectedAccessModifier)
+		{
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsProtected());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenTypeIsProtected_ShouldFailWithNegatedAssertion()
+		{
+			Type? subject = typeof(ProtectedType);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsProtected());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("*is not protected*but it was*").AsWildcard();
+		}
 		}
 	}
 }

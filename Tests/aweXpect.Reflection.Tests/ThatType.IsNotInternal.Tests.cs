@@ -72,7 +72,7 @@ public sealed partial class ThatType
 				=> await That(subject).DoesNotComplyWith(it => it.IsNotInternal());
 
 			await That(Act).Throws<XunitException>()
-				.WithMessage("*is internal*");
+				.WithMessage("*is internal*but it was*").AsWildcard();
 		}
 		}
 	}

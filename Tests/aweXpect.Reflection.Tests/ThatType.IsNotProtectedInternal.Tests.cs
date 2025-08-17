@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;
+﻿using Xunit.Sdk;using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -51,6 +51,30 @@ public sealed partial class ThatType
 					             but it was
 					             """);
 			}
+		[Fact]
+		public async Task WhenTypeIsProtectedInternal_ShouldSucceedWithNegatedAssertion()
+		{
+			Type? subject = typeof(ProtectedInternalType);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotProtectedInternal());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Theory]
+		[InlineData(typeof(ProtectedType))]
+		[InlineData(typeof(PrivateType))]
+		[InlineData(typeof(PublicType))]
+		[InlineData(typeof(InternalType))]
+		public async Task WhenTypeIsNotProtectedInternal_ShouldFailWithNegatedAssertion(Type? subject)
+		{
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotProtectedInternal());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("*is protected internal*but it was*").AsWildcard();
+		}
 
 			protected internal class ProtectedInternalType;
 		}

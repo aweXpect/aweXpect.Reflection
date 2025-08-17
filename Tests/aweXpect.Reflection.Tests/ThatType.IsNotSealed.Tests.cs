@@ -1,4 +1,5 @@
 ﻿using aweXpect.Reflection.Tests.TestHelpers.Types;
+using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -49,6 +50,36 @@ public sealed partial class ThatType
 					             but it was sealed PublicSealedClass
 					             """);
 			}
+		[Theory]
+		[MemberData(nameof(SealedTypesForNegated))]
+		public async Task WhenTypeIsSealed_ShouldSucceedWithNegatedAssertion(Type subject)
+		{
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotSealed());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenTypeIsNotSealed_ShouldFailWithNegatedAssertion()
+		{
+			Type subject = typeof(PublicAbstractClass);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsNotSealed());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("""
+				             Expected that subject
+				             is sealed,
+				             but it was non-sealed PublicAbstractClass
+				             """);
+		}
+
+		public static TheoryData<Type> SealedTypesForNegated() => new()
+		{
+			typeof(PublicSealedClass),
+		};
 
 			public static TheoryData<Type> NonSealedTypes()
 				=>

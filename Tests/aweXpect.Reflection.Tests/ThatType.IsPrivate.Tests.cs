@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;
+﻿using Xunit.Sdk;using Xunit.Sdk;
 
 namespace aweXpect.Reflection.Tests;
 
@@ -51,6 +51,29 @@ public sealed partial class ThatType
 
 				await That(Act).DoesNotThrow();
 			}
+		[Theory]
+		[InlineData(typeof(ProtectedType), "protected")]
+		[InlineData(typeof(PublicType), "public")]
+		[InlineData(typeof(InternalType), "internal")]
+		public async Task WhenTypeIsNotPrivate_ShouldSucceedWithNegatedAssertion(Type? subject, string expectedAccessModifier)
+		{
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsPrivate());
+
+			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task WhenTypeIsPrivate_ShouldFailWithNegatedAssertion()
+		{
+			Type? subject = typeof(PrivateType);
+
+			async Task Act()
+				=> await That(subject).DoesNotComplyWith(it => it.IsPrivate());
+
+			await That(Act).Throws<XunitException>()
+				.WithMessage("*is not private*but it was*").AsWildcard();
+		}
 		}
 	}
 }
