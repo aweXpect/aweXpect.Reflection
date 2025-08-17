@@ -9,17 +9,6 @@ public sealed partial class ThatMethods
 		public sealed class Tests
 		{
 			[Fact]
-			public async Task WhenMethodsContainNonGenericMethods_ShouldSucceed()
-			{
-				Filtered.Methods subject = GetMethods("NonGenericMethod");
-
-				async Task Act()
-					=> await That(subject).AreNotGeneric();
-
-				await That(Act).DoesNotThrow();
-			}
-
-			[Fact]
 			public async Task WhenFilteringOnlyGenericMethods_ShouldFail()
 			{
 				Filtered.Methods subject = GetMethods("GenericMethod");
@@ -35,6 +24,17 @@ public sealed partial class ThatMethods
 					               *
 					             ]
 					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenMethodsContainNonGenericMethods_ShouldSucceed()
+			{
+				Filtered.Methods subject = GetMethods("NonGenericMethod");
+
+				async Task Act()
+					=> await That(subject).AreNotGeneric();
+
+				await That(Act).DoesNotThrow();
 			}
 		}
 	}

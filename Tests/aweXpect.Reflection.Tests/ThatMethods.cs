@@ -4,7 +4,7 @@ namespace aweXpect.Reflection.Tests;
 
 public sealed partial class ThatMethods
 {
-	public static Filtered.Methods GetMethods(string methodPrefix)
+	public static Filtered.Methods GetMethods(string methodPrefix = "")
 		=> In.AssemblyContaining<ClassWithMethods>().Types().Which(t => t == typeof(ClassWithMethods))
 			.Methods().Which(methodInfo => methodInfo.Name.StartsWith(methodPrefix));
 
@@ -30,7 +30,7 @@ public sealed partial class ThatMethods
 		protected int ProtectedMethod2() => 0;
 		private int PrivateMethod1() => 0;
 		private int PrivateMethod2() => 0;
-		
+
 		public T GenericMethod1<T>(T value) => value;
 		public U GenericMethod2<T, U>(T first, U second) => second;
 		public int NonGenericMethod1() => 1;
