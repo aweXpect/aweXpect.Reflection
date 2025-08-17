@@ -14,7 +14,7 @@ public sealed partial class TypeFilters
 				Filtered.Types types = In.AssemblyContaining<AssemblyFilters>()
 					.Types().WhichAreNotNested();
 
-				await That(types).AreNotNested();
+				await That(types).AreNotNested().And.IsNotEmpty();
 				await That(types.GetDescription())
 					.IsEqualTo("non-nested types in assembly").AsPrefix();
 			}
