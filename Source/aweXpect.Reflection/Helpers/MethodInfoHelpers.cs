@@ -116,20 +116,4 @@ internal static class MethodInfoHelpers
 
 		return false;
 	}
-
-	/// <summary>
-	///     Checks if the <paramref name="methodInfo" /> is abstract.
-	/// </summary>
-	/// <param name="methodInfo">The <see cref="MethodInfo" /> to check.</param>
-	/// <returns><see langword="true" /> if the method is abstract; otherwise, <see langword="false" />.</returns>
-	public static bool IsReallyAbstract(this MethodInfo? methodInfo)
-		=> methodInfo?.IsAbstract == true;
-
-	/// <summary>
-	///     Checks if the <paramref name="methodInfo" /> is sealed (final).
-	/// </summary>
-	/// <param name="methodInfo">The <see cref="MethodInfo" /> to check.</param>
-	/// <returns><see langword="true" /> if the method is sealed; otherwise, <see langword="false" />.</returns>
-	public static bool IsReallySealed(this MethodInfo? methodInfo)
-		=> methodInfo?.IsFinal == true;
 }

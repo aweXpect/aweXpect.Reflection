@@ -16,4 +16,21 @@ public sealed partial class MethodFilters
 		}
 #pragma warning restore CA1822
 	}
+
+	private abstract class AbstractMethodClass
+	{
+		public abstract void AbstractMethod();
+		public virtual void VirtualMethod() { }
+	}
+
+	private class ConcreteMethodClass
+	{
+		public virtual void VirtualMethod() { }
+		public void ConcreteMethod() { }
+	}
+
+	private class SealedMethodClass : ConcreteMethodClass
+	{
+		public sealed override string ToString() => "SealedMethodClass";
+	}
 }

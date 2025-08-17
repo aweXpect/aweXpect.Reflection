@@ -1,6 +1,5 @@
 using System.Reflection;
 using aweXpect.Reflection.Collections;
-using aweXpect.Reflection.Helpers;
 
 namespace aweXpect.Reflection;
 
@@ -11,7 +10,7 @@ public static partial class MethodFilters
 	/// </summary>
 	public static Filtered.Methods WhichAreAbstract(this Filtered.Methods @this)
 		=> @this.Which(Filter.Prefix<MethodInfo>(
-			method => method.IsReallyAbstract(),
+			method => method.IsAbstract,
 			"abstract "));
 
 	/// <summary>
@@ -19,6 +18,6 @@ public static partial class MethodFilters
 	/// </summary>
 	public static Filtered.Methods WhichAreNotAbstract(this Filtered.Methods @this)
 		=> @this.Which(Filter.Prefix<MethodInfo>(
-			method => !method.IsReallyAbstract(),
+			method => !method.IsAbstract,
 			"non-abstract "));
 }
