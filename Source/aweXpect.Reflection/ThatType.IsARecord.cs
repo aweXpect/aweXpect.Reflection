@@ -10,36 +10,36 @@ namespace aweXpect.Reflection;
 public static partial class ThatType
 {
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is a class.
+	///     Verifies that the <see cref="Type" /> is a record.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsAClass(
+	public static AndOrResult<Type?, IThat<Type?>> IsARecord(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsAClassConstraint(it, grammars)),
+				=> new IsARecordConstraint(it, grammars)),
 			subject);
 
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is not a class.
+	///     Verifies that the <see cref="Type" /> is not a record.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsNotAClass(
+	public static AndOrResult<Type?, IThat<Type?>> IsNotARecord(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsAClassConstraint(it, grammars).Invert()),
+				=> new IsARecordConstraint(it, grammars).Invert()),
 			subject);
 
-	private sealed class IsAClassConstraint(string it, ExpectationGrammars grammars)
+	private sealed class IsARecordConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithNotNullValue<Type?>(it, grammars),
 			IValueConstraint<Type?>
 	{
 		public ConstraintResult IsMetBy(Type? actual)
 		{
 			Actual = actual;
-			Outcome = actual.IsReallyClass() ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.IsRecordClass() ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is a class");
+			=> stringBuilder.Append("is a record");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -48,7 +48,7 @@ public static partial class ThatType
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is not a class");
+			=> stringBuilder.Append("is not a record");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 			=> AppendNormalResult(stringBuilder, indentation);

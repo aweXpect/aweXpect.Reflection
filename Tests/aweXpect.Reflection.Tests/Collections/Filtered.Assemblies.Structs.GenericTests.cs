@@ -6,28 +6,28 @@ public sealed partial class Filtered
 {
 	public sealed partial class Assemblies
 	{
-		public sealed partial class Classes
+		public sealed partial class Structs
 		{
 			public sealed class GenericTests
 			{
 				[Fact]
 				public async Task ShouldApplyFilterForGenericTypes()
 				{
-					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Generic.Classes();
+					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Generic.Structs();
 
-					await That(types).All().Satisfy(t => t is { IsClass: true, IsGenericType: true, }).And.IsNotEmpty();
+					await That(types).All().Satisfy(t => t is { IsClass: false, IsEnum: false, IsValueType: true, IsGenericType: true, }).And.IsNotEmpty();
 				}
 
 				[Fact]
 				public async Task ShouldIncludeNestedInformationInErrorMessage()
 				{
 					async Task Act()
-						=> await That(In.AllLoadedAssemblies().Generic.Classes())
+						=> await That(In.AllLoadedAssemblies().Generic.Structs())
 							.AreNotGeneric();
 
 					await That(Act).ThrowsException()
 						.WithMessage("""
-						             Expected that generic classes in all loaded assemblies
+						             Expected that generic structs in all loaded assemblies
 						             are all not generic,
 						             but it contained generic types [
 						               *
@@ -42,12 +42,12 @@ public sealed partial class Filtered
 					AccessModifiers accessModifier, string expectedString)
 				{
 					async Task Act()
-						=> await That(In.AllLoadedAssemblies().Generic.Classes(accessModifier))
+						=> await That(In.AllLoadedAssemblies().Generic.Structs(accessModifier))
 							.AreNotGeneric();
 
 					await That(Act).ThrowsException()
 						.WithMessage($"""
-						              Expected that {expectedString}generic classes in all loaded assemblies
+						              Expected that {expectedString}generic structs in all loaded assemblies
 						              are all not generic,
 						              but it contained generic types [
 						                *
