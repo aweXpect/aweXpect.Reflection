@@ -95,8 +95,8 @@ public sealed partial class ThatTypes
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that types matching type => type == typeof(GrandChildClass) in assembly containing type ThatTypes.InheritFrom.GenericTests
-					             all inherit from directly ThatTypes.BaseClass,
-					             but it contained types that do not inherit from directly ThatTypes.BaseClass [
+					             all inherit directly from ThatTypes.BaseClass,
+					             but it contained types that do not inherit directly from ThatTypes.BaseClass [
 					               ThatTypes.GrandChildClass
 					             ]
 					             """);
@@ -187,8 +187,8 @@ public sealed partial class ThatTypes
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             all inherit from directly ThatTypes.BaseClass,
-					             but it contained types that do not inherit from directly ThatTypes.BaseClass [
+					             all inherit directly from ThatTypes.BaseClass,
+					             but it contained types that do not inherit directly from ThatTypes.BaseClass [
 					               ThatTypes.GrandChildClass
 					             ]
 					             """);

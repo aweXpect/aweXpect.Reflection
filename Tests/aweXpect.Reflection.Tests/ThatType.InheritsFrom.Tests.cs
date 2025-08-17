@@ -79,8 +79,8 @@ public sealed partial class ThatType
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             inherits from directly ThatType.BaseClass,
-					             but it did not inherit from directly ThatType.BaseClass, but was ThatType.GrandChildClass
+					             inherits directly from ThatType.BaseClass,
+					             but it did not inherit directly from ThatType.BaseClass, but was ThatType.GrandChildClass
 					             """);
 			}
 
@@ -168,8 +168,8 @@ public sealed partial class ThatType
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             inherits from directly ThatType.BaseClass,
-					             but it did not inherit from directly ThatType.BaseClass, but was ThatType.GrandChildClass
+					             inherits directly from ThatType.BaseClass,
+					             but it did not inherit directly from ThatType.BaseClass, but was ThatType.GrandChildClass
 					             """);
 			}
 		}
@@ -185,6 +185,22 @@ public sealed partial class ThatType
 					=> await That(subject).DoesNotComplyWith(it => it.InheritsFrom<BaseClass>());
 
 				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenTypeImplementsInterface_ShouldFail()
+			{
+				Type subject = typeof(ClassWithInterface);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.InheritsFrom<ITestInterface>());
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that subject
+					             does not inherit from ThatType.ITestInterface,
+					             but it did inherit from ThatType.ITestInterface
+					             """);
 			}
 
 			[Fact]
@@ -216,22 +232,6 @@ public sealed partial class ThatType
 					             Expected that subject
 					             does not inherit from ThatType.BaseClass,
 					             but it did inherit from ThatType.BaseClass
-					             """);
-			}
-
-			[Fact]
-			public async Task WhenTypeImplementsInterface_ShouldFail()
-			{
-				Type subject = typeof(ClassWithInterface);
-
-				async Task Act()
-					=> await That(subject).DoesNotComplyWith(it => it.InheritsFrom<ITestInterface>());
-
-				await That(Act).Throws<XunitException>()
-					.WithMessage("""
-					             Expected that subject
-					             does not inherit from ThatType.ITestInterface,
-					             but it did inherit from ThatType.ITestInterface
 					             """);
 			}
 		}

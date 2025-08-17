@@ -90,22 +90,26 @@ public static partial class ThatType
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("inherits from ");
+			stringBuilder.Append("inherits ");
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
+
+			stringBuilder.Append("from ");
 
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(It).Append(" did not inherit from ");
+			stringBuilder.Append(It).Append(" did not inherit ");
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
+
+			stringBuilder.Append("from ");
 
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(", but was ");
@@ -114,22 +118,26 @@ public static partial class ThatType
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append("does not inherit from ");
+			stringBuilder.Append("does not inherit ");
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
+
+			stringBuilder.Append("from ");
 
 			Formatter.Format(stringBuilder, baseType);
 		}
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(It).Append(" did inherit from ");
+			stringBuilder.Append(It).Append(" did inherit ");
 			if (forceDirect)
 			{
 				stringBuilder.Append("directly ");
 			}
+
+			stringBuilder.Append("from ");
 
 			Formatter.Format(stringBuilder, baseType);
 		}
