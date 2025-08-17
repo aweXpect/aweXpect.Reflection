@@ -68,10 +68,10 @@ public sealed partial class ThatType
 			}
 
 			[Theory]
-			[InlineData(typeof(ProtectedType), "protected")]
-			[InlineData(typeof(PublicType), "public")]
-			[InlineData(typeof(PrivateType), "private")]
-			public async Task WhenTypeIsNotInternal_ShouldSucceed(Type subject, string expectedAccessModifier)
+			[InlineData(typeof(ProtectedType))]
+			[InlineData(typeof(PublicType))]
+			[InlineData(typeof(PrivateType))]
+			public async Task WhenTypeIsNotInternal_ShouldSucceed(Type subject)
 			{
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsInternal());

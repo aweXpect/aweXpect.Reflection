@@ -44,7 +44,7 @@ public sealed partial class ThatType
 			[Fact]
 			public async Task WhenTypeIsPublic_ShouldSucceed()
 			{
-				Type? subject = typeof(PublicType);
+				Type subject = typeof(PublicType);
 
 				async Task Act()
 					=> await That(subject).IsPublic();
@@ -56,10 +56,10 @@ public sealed partial class ThatType
 		public sealed class NegatedTests
 		{
 			[Theory]
-			[InlineData(typeof(ProtectedType), "protected")]
-			[InlineData(typeof(InternalType), "internal")]
-			[InlineData(typeof(PrivateType), "private")]
-			public async Task WhenTypeIsNotPublic_ShouldSucceed(Type subject, string expectedAccessModifier)
+			[InlineData(typeof(ProtectedType))]
+			[InlineData(typeof(InternalType))]
+			[InlineData(typeof(PrivateType))]
+			public async Task WhenTypeIsNotPublic_ShouldSucceed(Type subject)
 			{
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsPublic());
@@ -70,7 +70,7 @@ public sealed partial class ThatType
 			[Fact]
 			public async Task WhenTypeIsPublic_ShouldFail()
 			{
-				Type? subject = typeof(PublicType);
+				Type subject = typeof(PublicType);
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsPublic());

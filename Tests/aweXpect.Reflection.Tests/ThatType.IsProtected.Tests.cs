@@ -26,11 +26,10 @@ public sealed partial class ThatType
 			}
 
 			[Theory]
-			[InlineData(typeof(PrivateType), "private")]
-			[InlineData(typeof(PublicType), "public")]
-			[InlineData(typeof(InternalType), "internal")]
-			public async Task WhenTypeIsNotProtected_ShouldSucceedWithNegatedAssertion(Type? subject,
-				string expectedAccessModifier)
+			[InlineData(typeof(PrivateType))]
+			[InlineData(typeof(PublicType))]
+			[InlineData(typeof(InternalType))]
+			public async Task WhenTypeIsNotProtected_ShouldSucceedWithNegatedAssertion(Type? subject)
 			{
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsProtected());
@@ -57,7 +56,7 @@ public sealed partial class ThatType
 			[Fact]
 			public async Task WhenTypeIsProtected_ShouldFailWithNegatedAssertion()
 			{
-				Type? subject = typeof(ProtectedType);
+				Type subject = typeof(ProtectedType);
 
 				async Task Act()
 					=> await That(subject).DoesNotComplyWith(it => it.IsProtected());
@@ -69,7 +68,7 @@ public sealed partial class ThatType
 			[Fact]
 			public async Task WhenTypeIsProtected_ShouldSucceed()
 			{
-				Type? subject = typeof(ProtectedType);
+				Type subject = typeof(ProtectedType);
 
 				async Task Act()
 					=> await That(subject).IsProtected();
