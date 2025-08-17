@@ -53,13 +53,13 @@ internal static class FieldInfoHelpers
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.PrivateProtected) &&
-		    fieldInfo is { IsPrivate: true, IsFamily: true, })
+		    fieldInfo.IsFamilyAndAssembly)
 		{
 			return true;
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.ProtectedInternal) &&
-		    fieldInfo is { IsFamily: true, IsAssembly: true, })
+		    fieldInfo.IsFamilyOrAssembly)
 		{
 			return true;
 		}

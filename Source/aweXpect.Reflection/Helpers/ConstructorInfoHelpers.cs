@@ -48,13 +48,13 @@ internal static class ConstructorInfoHelpers
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.PrivateProtected) &&
-		    constructorInfo is { IsPrivate: true, IsFamily: true })
+		    constructorInfo.IsFamilyAndAssembly)
 		{
 			return true;
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.ProtectedInternal) &&
-		    constructorInfo is { IsFamily: true, IsAssembly: true })
+		    constructorInfo.IsFamilyOrAssembly)
 		{
 			return true;
 		}

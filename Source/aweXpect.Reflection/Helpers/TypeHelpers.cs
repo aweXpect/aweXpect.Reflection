@@ -396,13 +396,13 @@ internal static class TypeHelpers
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.PrivateProtected) &&
-		    type is { IsNestedPrivate: true, IsNestedFamily: true })
+		    type.IsNestedFamANDAssem)
 		{
 			return true;
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.ProtectedInternal) &&
-		    type is { IsNestedFamily: true, IsNestedAssembly: true })
+		    type.IsNestedFamORAssem)
 		{
 			return true;
 		}

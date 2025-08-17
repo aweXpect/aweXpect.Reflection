@@ -53,13 +53,13 @@ internal static class MethodInfoHelpers
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.PrivateProtected) &&
-		    methodInfo is { IsPrivate: true, IsFamily: true })
+		    methodInfo.IsFamilyAndAssembly)
 		{
 			return true;
 		}
 
 		if (accessModifiers.HasFlag(AccessModifiers.ProtectedInternal) &&
-		    methodInfo is { IsFamily: true, IsAssembly: true })
+		    methodInfo.IsFamilyOrAssembly)
 		{
 			return true;
 		}
