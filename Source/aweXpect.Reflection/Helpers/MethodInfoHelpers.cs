@@ -118,13 +118,6 @@ internal static class MethodInfoHelpers
 	}
 
 	/// <summary>
-	///     Gets a value indicating whether the <see cref="MethodInfo" /> is abstract.
-	/// </summary>
-	/// <param name="methodInfo">The <see cref="MethodInfo" />.</param>
-	public static bool IsReallyAbstract(this MethodInfo? methodInfo)
-		=> methodInfo?.IsAbstract == true;
-
-	/// <summary>
 	///     Gets a value indicating whether the <see cref="MethodInfo" /> is sealed (virtual and final).
 	/// </summary>
 	/// <param name="methodInfo">The <see cref="MethodInfo" />.</param>

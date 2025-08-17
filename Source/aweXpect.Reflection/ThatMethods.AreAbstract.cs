@@ -38,7 +38,7 @@ public static partial class ThatMethods
 		public ConstraintResult IsMetBy(IEnumerable<MethodInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(method => method.IsReallyAbstract()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(method => method?.IsAbstract == true) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -48,7 +48,7 @@ public static partial class ThatMethods
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained non-abstract methods ");
-			Formatter.Format(stringBuilder, Actual?.Where(method => !method.IsReallyAbstract()),
+			Formatter.Format(stringBuilder, Actual?.Where(method => method?.IsAbstract == false),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -58,7 +58,7 @@ public static partial class ThatMethods
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained abstract methods ");
-			Formatter.Format(stringBuilder, Actual?.Where(method => method.IsReallyAbstract()),
+			Formatter.Format(stringBuilder, Actual?.Where(method => method?.IsAbstract == true),
 				FormattingOptions.Indented(indentation));
 		}
 	}
@@ -70,7 +70,7 @@ public static partial class ThatMethods
 		public ConstraintResult IsMetBy(IEnumerable<MethodInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(method => !method.IsReallyAbstract()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(method => method?.IsAbstract == false) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -80,7 +80,7 @@ public static partial class ThatMethods
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained abstract methods ");
-			Formatter.Format(stringBuilder, Actual?.Where(method => method.IsReallyAbstract()),
+			Formatter.Format(stringBuilder, Actual?.Where(method => method?.IsAbstract == true),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -90,7 +90,7 @@ public static partial class ThatMethods
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained non-abstract methods ");
-			Formatter.Format(stringBuilder, Actual?.Where(method => !method.IsReallyAbstract()),
+			Formatter.Format(stringBuilder, Actual?.Where(method => method?.IsAbstract == false),
 				FormattingOptions.Indented(indentation));
 		}
 	}

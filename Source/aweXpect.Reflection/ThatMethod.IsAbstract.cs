@@ -34,7 +34,7 @@ public static partial class ThatMethod
 		public ConstraintResult IsMetBy(MethodInfo? actual)
 		{
 			Actual = actual;
-			Outcome = actual?.IsReallyAbstract() == true ? Outcome.Success : Outcome.Failure;
+			Outcome = actual?.IsAbstract == true ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
