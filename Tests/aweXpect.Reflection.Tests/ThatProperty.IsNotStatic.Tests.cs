@@ -52,5 +52,35 @@ public sealed partial class ThatProperty
 					              """);
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenPropertyIsNotStatic_ShouldFail()
+			{
+				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.NonStaticProperty))!;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is static,
+					              but it was non-static {Formatter.Format(subject)}
+					              """);
+			}
+
+			[Fact]
+			public async Task WhenPropertyIsStatic_ShouldSucceed()
+			{
+				PropertyInfo subject = typeof(TestClassWithStaticMembers).GetProperty(nameof(TestClassWithStaticMembers.StaticProperty))!;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+		}
 	}
 }

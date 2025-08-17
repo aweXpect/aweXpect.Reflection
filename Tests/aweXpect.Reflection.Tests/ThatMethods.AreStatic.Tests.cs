@@ -43,6 +43,40 @@ public sealed partial class ThatMethods
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenMethodsContainNonStaticMethods_ShouldSucceed()
+			{
+				IEnumerable<MethodInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyStaticMethods_ShouldFail()
+			{
+				IEnumerable<MethodInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             are not all static,
+					             but it only contained static methods [
+					               *
+					             ]
+					             """).AsWildcard();
+			}
+		}
 	}
 
 	public sealed class AreNotStatic
@@ -78,6 +112,40 @@ public sealed partial class ThatMethods
 					=> await That(subject).AreNotStatic();
 
 				await That(Act).DoesNotThrow();
+			}
+		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenMethodsContainStaticMethods_ShouldSucceed()
+			{
+				IEnumerable<MethodInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyNonStaticMethods_ShouldFail()
+			{
+				IEnumerable<MethodInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             also contain an static method,
+					             but it only contained non-static methods [
+					               *
+					             ]
+					             """).AsWildcard();
 			}
 		}
 	}

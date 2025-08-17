@@ -53,5 +53,35 @@ public sealed partial class ThatConstructor
 					              """);
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenConstructorIsNotStatic_ShouldFail()
+			{
+				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors().First(c => !c.IsStatic);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is static,
+					              but it was non-static {Formatter.Format(subject)}
+					              """);
+			}
+
+			[Fact]
+			public async Task WhenConstructorIsStatic_ShouldSucceed()
+			{
+				ConstructorInfo subject = typeof(TestClassWithStaticMembers).GetConstructors(BindingFlags.Static | BindingFlags.NonPublic).First();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsNotStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+		}
 	}
 }

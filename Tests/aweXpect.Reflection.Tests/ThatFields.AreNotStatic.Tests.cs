@@ -43,5 +43,39 @@ public sealed partial class ThatFields
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenFieldsContainStaticFields_ShouldSucceed()
+			{
+				IEnumerable<FieldInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyNonStaticFields_ShouldFail()
+			{
+				IEnumerable<FieldInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             also contain an static field,
+					             but it only contained non-static fields [
+					               *
+					             ]
+					             """).AsWildcard();
+			}
+		}
 	}
 }

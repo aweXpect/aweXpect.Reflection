@@ -52,5 +52,35 @@ public sealed partial class ThatField
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenFieldIsNotStatic_ShouldSucceed()
+			{
+				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.NonStaticField))!;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFieldIsStatic_ShouldFail()
+			{
+				FieldInfo subject = typeof(TestClassWithStaticMembers).GetField(nameof(TestClassWithStaticMembers.StaticField))!;
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(it => it.IsStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage($"""
+					              Expected that subject
+					              is not static,
+					              but it was static {Formatter.Format(subject)}
+					              """);
+			}
+		}
 	}
 }

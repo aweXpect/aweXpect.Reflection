@@ -43,5 +43,39 @@ public sealed partial class ThatProperties
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenPropertiesContainNonStaticProperties_ShouldSucceed()
+			{
+				IEnumerable<PropertyInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyStaticProperties_ShouldFail()
+			{
+				IEnumerable<PropertyInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetProperties(BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             are not all static,
+					             but it only contained static properties [
+					               *
+					             ]
+					             """).AsWildcard();
+			}
+		}
 	}
 }

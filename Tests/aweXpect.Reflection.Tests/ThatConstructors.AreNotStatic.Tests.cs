@@ -43,5 +43,39 @@ public sealed partial class ThatConstructors
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenConstructorsContainStaticConstructors_ShouldSucceed()
+			{
+				IEnumerable<ConstructorInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetConstructors(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).DoesNotThrow();
+			}
+
+			[Fact]
+			public async Task WhenFilteringOnlyNonStaticConstructors_ShouldFail()
+			{
+				IEnumerable<ConstructorInfo> subject = typeof(TestClassWithStaticMembers)
+					.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.AreNotStatic());
+
+				await That(Act).ThrowsException()
+					.WithMessage("""
+					             Expected that subject
+					             also contain an static constructor,
+					             but it only contained non-static constructors [
+					               *
+					             ]
+					             """).AsWildcard();
+			}
+		}
 	}
 }
