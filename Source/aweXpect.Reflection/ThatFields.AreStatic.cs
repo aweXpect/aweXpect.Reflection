@@ -38,7 +38,7 @@ public static partial class ThatFields
 		public ConstraintResult IsMetBy(IEnumerable<FieldInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(field => field.IsReallyStatic()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(field => field?.IsStatic == true) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -48,7 +48,7 @@ public static partial class ThatFields
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained non-static fields ");
-			Formatter.Format(stringBuilder, Actual?.Where(field => !field.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(field => field?.IsStatic == false),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -58,7 +58,7 @@ public static partial class ThatFields
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained static fields ");
-			Formatter.Format(stringBuilder, Actual?.Where(field => field.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(field => field?.IsStatic == true),
 				FormattingOptions.Indented(indentation));
 		}
 	}
@@ -70,7 +70,7 @@ public static partial class ThatFields
 		public ConstraintResult IsMetBy(IEnumerable<FieldInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(field => !field.IsReallyStatic()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(field => field?.IsStatic == false) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -80,7 +80,7 @@ public static partial class ThatFields
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained static fields ");
-			Formatter.Format(stringBuilder, Actual?.Where(field => field.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(field => field?.IsStatic == true),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -90,7 +90,7 @@ public static partial class ThatFields
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained non-static fields ");
-			Formatter.Format(stringBuilder, Actual?.Where(field => !field.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(field => field?.IsStatic == false),
 				FormattingOptions.Indented(indentation));
 		}
 	}

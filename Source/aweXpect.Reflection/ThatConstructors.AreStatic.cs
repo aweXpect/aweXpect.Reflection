@@ -38,7 +38,7 @@ public static partial class ThatConstructors
 		public ConstraintResult IsMetBy(IEnumerable<ConstructorInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(constructor => constructor.IsReallyStatic()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(constructor => constructor?.IsStatic == true) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -48,7 +48,7 @@ public static partial class ThatConstructors
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained non-static constructors ");
-			Formatter.Format(stringBuilder, Actual?.Where(constructor => !constructor.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor?.IsStatic == false),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -58,7 +58,7 @@ public static partial class ThatConstructors
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained static constructors ");
-			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor?.IsStatic == true),
 				FormattingOptions.Indented(indentation));
 		}
 	}
@@ -70,7 +70,7 @@ public static partial class ThatConstructors
 		public ConstraintResult IsMetBy(IEnumerable<ConstructorInfo?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(constructor => !constructor.IsReallyStatic()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(constructor => constructor?.IsStatic == false) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
@@ -80,7 +80,7 @@ public static partial class ThatConstructors
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained static constructors ");
-			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor?.IsStatic == true),
 				FormattingOptions.Indented(indentation));
 		}
 
@@ -90,7 +90,7 @@ public static partial class ThatConstructors
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" only contained non-static constructors ");
-			Formatter.Format(stringBuilder, Actual?.Where(constructor => !constructor.IsReallyStatic()),
+			Formatter.Format(stringBuilder, Actual?.Where(constructor => constructor?.IsStatic == false),
 				FormattingOptions.Indented(indentation));
 		}
 	}

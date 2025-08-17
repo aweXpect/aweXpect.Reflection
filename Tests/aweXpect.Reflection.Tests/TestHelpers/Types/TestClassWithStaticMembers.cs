@@ -8,12 +8,6 @@ public class TestClassWithStaticMembers
 	// Non-static field  
 	public string NonStaticField = "non-static";
 
-	// Static property
-	public static string StaticProperty { get; set; } = "static";
-
-	// Non-static property
-	public string NonStaticProperty { get; set; } = "non-static";
-
 	// Static constructor
 	static TestClassWithStaticMembers()
 	{
@@ -25,6 +19,12 @@ public class TestClassWithStaticMembers
 	{
 		NonStaticProperty = "initialized";
 	}
+
+	// Static property
+	public static string StaticProperty { get; set; }
+
+	// Non-static property
+	public string NonStaticProperty { get; set; }
 
 	// Static method
 	public static void StaticMethod()
