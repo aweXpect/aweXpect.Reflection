@@ -67,5 +67,40 @@ public sealed partial class ThatTypes
 				await That(Act).DoesNotThrow();
 			}
 		}
+
+		public sealed class NegatedTests
+		{
+			[Fact]
+			public async Task WhenTypesHaveNamespace_ShouldFail()
+			{
+				Filtered.Types subject = In.AssemblyContaining<Tests>()
+					.Types().WithNamespace("ToVerifyingTheNamespaceOfIt").AsSuffix();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they
+						=> they.HaveNamespace("aweXpect.Reflection.Tests.TestHelpers.Types.ToVerifyingTheNamespaceOfIt"));
+
+				await That(Act).Throws<XunitException>()
+					.WithMessage("""
+					             Expected that types with namespace ending with "ToVerifyingTheNamespaceOfIt" in assembly containing type ThatTypes.HaveNamespace.Tests
+					             all have namespace not equal to "aweXpect.Reflection.Tests.TestHelpers.Types.ToVerifyingTheNamespaceOfIt",
+					             but it only contained matching types [
+					               *SomeClassToVerifyTheNamespaceOfIt*
+					             ]
+					             """).AsWildcard();
+			}
+
+			[Fact]
+			public async Task WhenTypesContainTypeWithDifferentNamespace_ShouldSucceed()
+			{
+				Filtered.Types subject = In.AssemblyContaining<Tests>()
+					.Types().WithNamespace("ToVerifyingTheNamespaceOfIt").AsSuffix();
+
+				async Task Act()
+					=> await That(subject).DoesNotComplyWith(they => they.HaveNamespace("aweXpect.Reflection"));
+
+				await That(Act).DoesNotThrow();
+			}
+		}
 	}
 }
