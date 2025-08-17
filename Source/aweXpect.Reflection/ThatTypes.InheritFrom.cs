@@ -205,7 +205,7 @@ public static partial class ThatTypes
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(" ");
 			IEnumerable<Type?>? nonMatchingTypes =
-				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != false);
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == true);
 			Formatter.Format(stringBuilder, nonMatchingTypes, FormattingOptions.Indented(indentation));
 		}
 
@@ -235,7 +235,7 @@ public static partial class ThatTypes
 			Formatter.Format(stringBuilder, baseType);
 			stringBuilder.Append(" ");
 			IEnumerable<Type?>? matchingTypes =
-				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) == false);
+				Actual?.Where(type => type?.InheritsFrom(baseType, forceDirect) != true);
 			Formatter.Format(stringBuilder, matchingTypes, FormattingOptions.Indented(indentation));
 		}
 	}
