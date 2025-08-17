@@ -109,7 +109,7 @@ public sealed partial class ThatMethod
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "PublicMethod",
+					             has name not equal to "PublicMethod",
 					             but it was "PublicMethod"
 					             """);
 			}

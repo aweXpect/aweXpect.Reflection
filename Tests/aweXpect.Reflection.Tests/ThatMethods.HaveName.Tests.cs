@@ -85,7 +85,7 @@ public sealed partial class ThatMethods
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that methods in types matching t => t == typeof(T) in assembly containing type ThatMethod.ClassWithSingleMethod
-					             all have name not equal to "MyMethod",
+					             not all have name equal to "MyMethod",
 					             but it only contained matching items *
 					             """).AsWildcard();
 			}

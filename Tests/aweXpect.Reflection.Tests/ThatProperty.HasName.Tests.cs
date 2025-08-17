@@ -109,7 +109,7 @@ public sealed partial class ThatProperty
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "PublicProperty",
+					             has name not equal to "PublicProperty",
 					             but it was "PublicProperty"
 					             """);
 			}

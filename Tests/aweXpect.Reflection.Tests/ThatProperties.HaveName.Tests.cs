@@ -85,7 +85,7 @@ public sealed partial class ThatProperties
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that properties in types matching t => t == typeof(T) in assembly containing type ThatProperty.ClassWithSingleProperty
-					             all have name not equal to "MyProperty",
+					             not all have name equal to "MyProperty",
 					             but it only contained matching items *
 					             """).AsWildcard();
 			}

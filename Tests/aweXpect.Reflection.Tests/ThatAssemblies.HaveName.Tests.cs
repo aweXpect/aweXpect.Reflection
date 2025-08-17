@@ -86,7 +86,7 @@ public sealed partial class ThatAssemblies
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that in assembly containing type PublicAbstractClass
-					             all have name not equal to "aweXpect.Reflection.Tests",
+					             not all have name equal to "aweXpect.Reflection.Tests",
 					             but it only contained matching types *
 					             """).AsWildcard();
 			}

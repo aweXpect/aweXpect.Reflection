@@ -109,7 +109,7 @@ public sealed partial class ThatEvent
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "PublicEvent",
+					             has name not equal to "PublicEvent",
 					             but it was "PublicEvent"
 					             """);
 			}

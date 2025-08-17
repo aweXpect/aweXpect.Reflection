@@ -85,7 +85,7 @@ public sealed partial class ThatEvents
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that events in types matching t => t == typeof(T) in assembly containing type ThatEvent.ClassWithSingleEvent
-					             all have name not equal to "MyEvent",
+					             not all have name equal to "MyEvent",
 					             but it only contained matching items *
 					             """).AsWildcard();
 			}

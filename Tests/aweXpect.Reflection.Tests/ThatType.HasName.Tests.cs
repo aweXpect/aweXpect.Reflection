@@ -103,7 +103,7 @@ public sealed partial class ThatType
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "PublicAbstractClass",
+					             has name not equal to "PublicAbstractClass",
 					             but it was "PublicAbstractClass"
 					             """);
 			}

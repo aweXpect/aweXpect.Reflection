@@ -109,7 +109,7 @@ public sealed partial class ThatField
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "PublicField",
+					             has name not equal to "PublicField",
 					             but it was "PublicField"
 					             """);
 			}

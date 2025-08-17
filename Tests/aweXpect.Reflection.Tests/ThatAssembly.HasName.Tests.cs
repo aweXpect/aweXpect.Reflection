@@ -104,7 +104,7 @@ public sealed partial class ThatAssembly
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that subject
-					             does not have name not equal to "aweXpect.Reflection.Tests",
+					             has name not equal to "aweXpect.Reflection.Tests",
 					             but it was "aweXpect.Reflection.Tests"
 					             """);
 			}

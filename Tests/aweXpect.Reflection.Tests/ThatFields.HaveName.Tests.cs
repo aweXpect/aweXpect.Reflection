@@ -85,7 +85,7 @@ public sealed partial class ThatFields
 				await That(Act).Throws<XunitException>()
 					.WithMessage("""
 					             Expected that fields in types matching t => t == typeof(T) in assembly containing type ThatField.ClassWithSingleField
-					             all have name not equal to "MyField",
+					             not all have name equal to "MyField",
 					             but it only contained matching items *
 					             """).AsWildcard();
 			}
