@@ -1,5 +1,6 @@
 using System.Reflection;
 using aweXpect.Reflection.Collections;
+using aweXpect.Reflection.Helpers;
 
 namespace aweXpect.Reflection;
 
@@ -10,7 +11,7 @@ public static partial class PropertyFilters
 	/// </summary>
 	public static Filtered.Properties WhichAreStatic(this Filtered.Properties @this)
 		=> @this.Which(Filter.Prefix<PropertyInfo>(
-			property => (property.GetMethod?.IsStatic ?? false) || (property.SetMethod?.IsStatic ?? false),
+			property => property.IsReallyStatic(),
 			"static "));
 
 	/// <summary>
@@ -18,6 +19,6 @@ public static partial class PropertyFilters
 	/// </summary>
 	public static Filtered.Properties WhichAreNotStatic(this Filtered.Properties @this)
 		=> @this.Which(Filter.Prefix<PropertyInfo>(
-			property => !(property.GetMethod?.IsStatic ?? false) && !(property.SetMethod?.IsStatic ?? false),
+			property => !property.IsReallyStatic(),
 			"non-static "));
 }
