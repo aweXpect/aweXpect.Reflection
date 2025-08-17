@@ -13,7 +13,7 @@ public sealed partial class ThatMethod
 			[InlineData("ProtectedMethod")]
 			[InlineData("PublicMethod")]
 			[InlineData("PrivateMethod")]
-			[InlineData("ProtectedMethod")]
+			[InlineData("InternalMethod")]
 			[InlineData("PrivateProtectedMethod")]
 			public async Task WhenMethodInfoIsNotProtectedInternal_ShouldSucceed(string methodName)
 			{
@@ -64,7 +64,7 @@ public sealed partial class ThatMethod
 			[InlineData("ProtectedMethod", "protected")]
 			[InlineData("PublicMethod", "public")]
 			[InlineData("PrivateMethod", "private")]
-			[InlineData("ProtectedMethod", "protected")]
+			[InlineData("InternalMethod", "internal")]
 			[InlineData("PrivateProtectedMethod", "private protected")]
 			public async Task WhenMethodInfoIsNotProtectedInternal_ShouldFail(string methodName,
 				string expectedAccessModifier)
