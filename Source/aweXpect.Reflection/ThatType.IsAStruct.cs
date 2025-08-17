@@ -10,36 +10,36 @@ namespace aweXpect.Reflection;
 public static partial class ThatType
 {
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is a class.
+	///     Verifies that the <see cref="Type" /> is a struct.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsAClass(
+	public static AndOrResult<Type?, IThat<Type?>> IsAStruct(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsAClassConstraint(it, grammars)),
+				=> new IsAStructConstraint(it, grammars)),
 			subject);
 
 	/// <summary>
-	///     Verifies that the <see cref="Type" /> is not a class.
+	///     Verifies that the <see cref="Type" /> is not a struct.
 	/// </summary>
-	public static AndOrResult<Type?, IThat<Type?>> IsNotAClass(
+	public static AndOrResult<Type?, IThat<Type?>> IsNotAStruct(
 		this IThat<Type?> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new IsAClassConstraint(it, grammars).Invert()),
+				=> new IsAStructConstraint(it, grammars).Invert()),
 			subject);
 
-	private sealed class IsAClassConstraint(string it, ExpectationGrammars grammars)
+	private sealed class IsAStructConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithNotNullValue<Type?>(it, grammars),
 			IValueConstraint<Type?>
 	{
 		public ConstraintResult IsMetBy(Type? actual)
 		{
 			Actual = actual;
-			Outcome = actual.IsReallyClass() ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.IsReallyStruct() ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is a class");
+			=> stringBuilder.Append("is a struct");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
@@ -48,7 +48,7 @@ public static partial class ThatType
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("is not a class");
+			=> stringBuilder.Append("is not a struct");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 			=> AppendNormalResult(stringBuilder, indentation);

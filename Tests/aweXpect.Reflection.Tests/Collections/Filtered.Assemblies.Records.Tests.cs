@@ -6,14 +6,14 @@ public sealed partial class Filtered
 {
 	public sealed partial class Assemblies
 	{
-		public sealed partial class Classes
+		public sealed partial class Records
 		{
 			public sealed class Tests
 			{
 				[Fact]
-				public async Task ShouldApplyFilterForClasses()
+				public async Task ShouldApplyFilterForRecords()
 				{
-					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Classes();
+					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies().Records();
 
 					await That(types).All().Satisfy(t => t.IsClass).And.IsNotEmpty();
 				}
@@ -23,7 +23,7 @@ public sealed partial class Filtered
 				public async Task ShouldConsiderAccessModifier(AccessModifiers accessModifier, Func<Type, bool> check)
 				{
 					Reflection.Collections.Filtered.Types types = In.AllLoadedAssemblies()
-						.Classes(accessModifier);
+						.Records(accessModifier);
 
 					await That(types).All().Satisfy(type => type.IsClass && check(type)).And.IsNotEmpty();
 				}
@@ -32,12 +32,12 @@ public sealed partial class Filtered
 				public async Task ShouldIncludeAbstractInformationInErrorMessage()
 				{
 					async Task Act()
-						=> await That(In.AllLoadedAssemblies().Classes())
+						=> await That(In.AllLoadedAssemblies().Records())
 							.AreAbstract();
 
 					await That(Act).ThrowsException()
 						.WithMessage("""
-						             Expected that classes in all loaded assemblies
+						             Expected that records in all loaded assemblies
 						             are all abstract,
 						             but it contained non-abstract types [
 						               *

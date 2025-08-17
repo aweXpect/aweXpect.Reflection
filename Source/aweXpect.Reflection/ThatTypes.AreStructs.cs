@@ -14,83 +14,83 @@ namespace aweXpect.Reflection;
 public static partial class ThatTypes
 {
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> are classes.
+	///     Verifies that all items in the filtered collection of <see cref="Type" /> are structs.
 	/// </summary>
-	public static AndOrResult<IEnumerable<Type?>, IThat<IEnumerable<Type?>>> AreClasses(
+	public static AndOrResult<IEnumerable<Type?>, IThat<IEnumerable<Type?>>> AreStructs(
 		this IThat<IEnumerable<Type?>> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new AreClassesConstraint(it, grammars)),
+				=> new AreStructsConstraint(it, grammars)),
 			subject);
 
 	/// <summary>
-	///     Verifies that all items in the filtered collection of <see cref="Type" /> are not classes.
+	///     Verifies that all items in the filtered collection of <see cref="Type" /> are not structs.
 	/// </summary>
-	public static AndOrResult<IEnumerable<Type?>, IThat<IEnumerable<Type?>>> AreNotClasses(
+	public static AndOrResult<IEnumerable<Type?>, IThat<IEnumerable<Type?>>> AreNotStructs(
 		this IThat<IEnumerable<Type?>> subject)
 		=> new(subject.Get().ExpectationBuilder.AddConstraint((it, grammars)
-				=> new AreNotClassesConstraint(it, grammars)),
+				=> new AreNotStructsConstraint(it, grammars)),
 			subject);
 
-	private sealed class AreClassesConstraint(string it, ExpectationGrammars grammars)
+	private sealed class AreStructsConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithValue<IEnumerable<Type?>>(grammars),
 			IValueConstraint<IEnumerable<Type?>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<Type?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => type.IsReallyClass()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => type.IsReallyStruct()) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are all classes");
+			=> stringBuilder.Append("are all structs");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
 			stringBuilder.Append(it).Append(" contained other types ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallyClass()),
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallyStruct()),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are not all classes");
+			=> stringBuilder.Append("are not all structs");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained classes ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallyClass()),
+			stringBuilder.Append(it).Append(" only contained structs ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallyStruct()),
 				FormattingOptions.Indented(indentation));
 		}
 	}
 
-	private sealed class AreNotClassesConstraint(string it, ExpectationGrammars grammars)
+	private sealed class AreNotStructsConstraint(string it, ExpectationGrammars grammars)
 		: ConstraintResult.WithValue<IEnumerable<Type?>>(grammars),
 			IValueConstraint<IEnumerable<Type?>>
 	{
 		public ConstraintResult IsMetBy(IEnumerable<Type?> actual)
 		{
 			Actual = actual;
-			Outcome = actual.All(type => !type.IsReallyClass()) ? Outcome.Success : Outcome.Failure;
+			Outcome = actual.All(type => type.IsReallyStruct()) ? Outcome.Success : Outcome.Failure;
 			return this;
 		}
 
 		protected override void AppendNormalExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("are all not classes");
+			=> stringBuilder.Append("are all not structs");
 
 		protected override void AppendNormalResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" contained classes ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallyClass()),
+			stringBuilder.Append(it).Append(" contained structs ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => type.IsReallyStruct()),
 				FormattingOptions.Indented(indentation));
 		}
 
 		protected override void AppendNegatedExpectation(StringBuilder stringBuilder, string? indentation = null)
-			=> stringBuilder.Append("also contain a class");
+			=> stringBuilder.Append("also contain a struct");
 
 		protected override void AppendNegatedResult(StringBuilder stringBuilder, string? indentation = null)
 		{
-			stringBuilder.Append(it).Append(" only contained not classes ");
-			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallyClass()),
+			stringBuilder.Append(it).Append(" only contained not structs ");
+			Formatter.Format(stringBuilder, Actual?.Where(type => !type.IsReallyStruct()),
 				FormattingOptions.Indented(indentation));
 		}
 	}
