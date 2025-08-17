@@ -116,4 +116,11 @@ internal static class FieldInfoHelpers
 
 		return false;
 	}
+
+	/// <summary>
+	///     Checks if the <paramref name="fieldInfo" /> is static.
+	/// </summary>
+	/// <param name="fieldInfo">The <see cref="FieldInfo" /> to check.</param>
+	public static bool IsReallyStatic(this FieldInfo? fieldInfo)
+		=> fieldInfo?.IsStatic == true;
 }

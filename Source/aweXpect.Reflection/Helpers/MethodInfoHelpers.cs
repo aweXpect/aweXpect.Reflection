@@ -116,4 +116,11 @@ internal static class MethodInfoHelpers
 
 		return false;
 	}
+
+	/// <summary>
+	///     Checks if the <paramref name="methodInfo" /> is static.
+	/// </summary>
+	/// <param name="methodInfo">The <see cref="MethodInfo" /> to check.</param>
+	public static bool IsReallyStatic(this MethodInfo? methodInfo)
+		=> methodInfo?.IsStatic == true;
 }

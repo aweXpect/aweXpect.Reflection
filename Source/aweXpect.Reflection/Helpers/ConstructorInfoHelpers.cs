@@ -75,4 +75,11 @@ internal static class ConstructorInfoHelpers
 
 		return false;
 	}
+
+	/// <summary>
+	///     Checks if the <paramref name="constructorInfo" /> is static.
+	/// </summary>
+	/// <param name="constructorInfo">The <see cref="ConstructorInfo" /> to check.</param>
+	public static bool IsReallyStatic(this ConstructorInfo? constructorInfo)
+		=> constructorInfo?.IsStatic == true;
 }
