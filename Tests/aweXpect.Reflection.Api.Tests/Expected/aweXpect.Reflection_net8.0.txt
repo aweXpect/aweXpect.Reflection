@@ -599,7 +599,9 @@ namespace aweXpect.Reflection.Collections
         Protected = 2,
         Private = 4,
         Public = 8,
-        Any = 15,
+        ProtectedInternal = 16,
+        PrivateProtected = 32,
+        Any = 63,
     }
     public static class Filtered
     {
@@ -617,16 +619,16 @@ namespace aweXpect.Reflection.Collections
             public aweXpect.Reflection.Collections.ITypeAssemblies Public { get; }
             public aweXpect.Reflection.Collections.ILimitedTypeAssemblies<aweXpect.Reflection.Collections.ILimitedTypeAssemblies> Sealed { get; }
             public aweXpect.Reflection.Collections.ILimitedTypeAssemblies<aweXpect.Reflection.Collections.ILimitedTypeAssemblies> Static { get; }
-            public aweXpect.Reflection.Collections.Filtered.Types Classes(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+            public aweXpect.Reflection.Collections.Filtered.Types Classes(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63) { }
             public aweXpect.Reflection.Collections.Filtered.Constructors Constructors() { }
-            public aweXpect.Reflection.Collections.Filtered.Types Enums(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+            public aweXpect.Reflection.Collections.Filtered.Types Enums(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63) { }
             public aweXpect.Reflection.Collections.Filtered.Events Events() { }
             public aweXpect.Reflection.Collections.Filtered.Fields Fields() { }
             public string GetDescription() { }
-            public aweXpect.Reflection.Collections.Filtered.Types Interfaces(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+            public aweXpect.Reflection.Collections.Filtered.Types Interfaces(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63) { }
             public aweXpect.Reflection.Collections.Filtered.Methods Methods() { }
             public aweXpect.Reflection.Collections.Filtered.Properties Properties() { }
-            public aweXpect.Reflection.Collections.Filtered.Types Types(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15) { }
+            public aweXpect.Reflection.Collections.Filtered.Types Types(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63) { }
             public class StringEqualityResult : aweXpect.Reflection.Collections.Filtered.Assemblies
             {
                 public aweXpect.Reflection.Collections.Filtered.Assemblies.StringEqualityResult IgnoringCase(bool ignoreCase = true) { }
@@ -781,8 +783,8 @@ namespace aweXpect.Reflection.Collections
     }
     public interface ILimitedTypeAssemblies
     {
-        aweXpect.Reflection.Collections.Filtered.Types Classes(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15);
-        aweXpect.Reflection.Collections.Filtered.Types Types(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15);
+        aweXpect.Reflection.Collections.Filtered.Types Classes(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63);
+        aweXpect.Reflection.Collections.Filtered.Types Types(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63);
     }
     public interface ILimitedTypeAssemblies<out TLimitedTypeAssemblies> : aweXpect.Reflection.Collections.ILimitedTypeAssemblies
         where out TLimitedTypeAssemblies : aweXpect.Reflection.Collections.ILimitedTypeAssemblies
@@ -796,10 +798,10 @@ namespace aweXpect.Reflection.Collections
         aweXpect.Reflection.Collections.ILimitedTypeAssemblies<aweXpect.Reflection.Collections.ILimitedTypeAssemblies> Sealed { get; }
         aweXpect.Reflection.Collections.ILimitedTypeAssemblies<aweXpect.Reflection.Collections.ILimitedTypeAssemblies> Static { get; }
         aweXpect.Reflection.Collections.Filtered.Constructors Constructors();
-        aweXpect.Reflection.Collections.Filtered.Types Enums(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15);
+        aweXpect.Reflection.Collections.Filtered.Types Enums(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63);
         aweXpect.Reflection.Collections.Filtered.Events Events();
         aweXpect.Reflection.Collections.Filtered.Fields Fields();
-        aweXpect.Reflection.Collections.Filtered.Types Interfaces(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 15);
+        aweXpect.Reflection.Collections.Filtered.Types Interfaces(aweXpect.Reflection.Collections.AccessModifiers accessModifier = 63);
         aweXpect.Reflection.Collections.Filtered.Methods Methods();
         aweXpect.Reflection.Collections.Filtered.Properties Properties();
         public interface IPrivate : aweXpect.Reflection.Collections.ILimitedTypeAssemblies, aweXpect.Reflection.Collections.ILimitedTypeAssemblies<aweXpect.Reflection.Collections.ITypeAssemblies>, aweXpect.Reflection.Collections.ITypeAssemblies

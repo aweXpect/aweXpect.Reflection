@@ -395,6 +395,18 @@ internal static class TypeHelpers
 			return true;
 		}
 
+		if (accessModifiers.HasFlag(AccessModifiers.PrivateProtected) &&
+		    type is { IsNestedPrivate: true, IsNestedFamily: true })
+		{
+			return true;
+		}
+
+		if (accessModifiers.HasFlag(AccessModifiers.ProtectedInternal) &&
+		    type is { IsNestedFamily: true, IsNestedAssembly: true })
+		{
+			return true;
+		}
+
 		return false;
 	}
 
@@ -413,7 +425,12 @@ internal static class TypeHelpers
 			return true;
 		}
 
-		return accessModifiers.HasFlag(AccessModifiers.Private) &&
-		       type.IsNotPublic;
+		if (accessModifiers.HasFlag(AccessModifiers.Private) &&
+		    type.IsNotPublic)
+		{
+			return true;
+		}
+
+		return false;
 	}
 }
