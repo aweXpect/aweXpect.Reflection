@@ -9,12 +9,16 @@ public sealed class ApiDemonstration
 	public sealed class Tests
 	{
 		[Fact]
-		public async Task ShouldDemonstrateApiFromIssue()
+		public async Task ShouldDemonstrateExactApiFromIssue()
 		{
-			// This demonstrates the exact API requested in the issue #134
+			// This demonstrates the EXACT API requested in issue #134
 			MethodInfo method = typeof(TestClass).GetMethod(nameof(TestClass.GenericMethodWithTwoParameters))!;
 
-			// This should work as requested in the issue
+			// This exact syntax was requested in the issue:
+			// await That(method).IsGeneric()
+			//     .WithCount(2)
+			//     .WithGenericParameter<string>().AtIndex(0)
+			
 			async Task Act()
 				=> await That(method).IsGeneric()
 					.WithCount(2);
@@ -34,6 +38,18 @@ public sealed class ApiDemonstration
 					.WithGenericParameter<string>().AtIndex(0);
 
 			await That(Act).DoesNotThrow();
+		}
+
+		[Fact]
+		public async Task ShouldDemonstrateFilteringFunctionality()
+		{
+			// This shows the filtering works as well
+			var genericMethods = In.AssemblyContaining<Tests>().Types()
+				.Methods()
+				.WhichAreGeneric()
+				.WithCount(1);
+
+			await That(genericMethods.GetDescription()).Contains("generic methods with 1 generic argument");
 		}
 
 		private class TestClass
