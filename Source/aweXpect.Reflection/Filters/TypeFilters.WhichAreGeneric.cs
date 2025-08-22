@@ -163,7 +163,7 @@ public static partial class TypeFilters
 			/// </summary>
 			public GenericTypesWithArgumentAtIndex AtIndex(int index)
 			{
-				collectionIndexOptions.SetMatch(new HasParameterAtIndexMatch(index));
+				collectionIndexOptions.SetMatch(new AtIndexMatch(index));
 				return new GenericTypesWithArgumentAtIndex(this, collectionIndexOptions);
 			}
 		}

@@ -131,7 +131,7 @@ public static partial class ConstructorFilters
 		/// </summary>
 		public ConstructorsWithParameterAtIndex<T> AtIndex(int index)
 		{
-			collectionIndexOptions.SetMatch(new HasParameterAtIndexMatch(index));
+			collectionIndexOptions.SetMatch(new AtIndexMatch(index));
 			return new ConstructorsWithParameterAtIndex<T>(this, collectionIndexOptions);
 		}
 

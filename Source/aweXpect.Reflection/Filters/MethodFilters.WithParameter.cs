@@ -131,7 +131,7 @@ public static partial class MethodFilters
 		/// </summary>
 		public MethodsWithParameterAtIndex<T> AtIndex(int index)
 		{
-			collectionIndexOptions.SetMatch(new HasParameterAtIndexMatch(index));
+			collectionIndexOptions.SetMatch(new AtIndexMatch(index));
 			return new MethodsWithParameterAtIndex<T>(this, collectionIndexOptions);
 		}
 

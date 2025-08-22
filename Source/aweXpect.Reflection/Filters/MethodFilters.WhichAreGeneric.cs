@@ -165,7 +165,7 @@ public static partial class MethodFilters
 		/// </summary>
 		public GenericMethodsWithArgumentAtIndex AtIndex(int index)
 		{
-			collectionIndexOptions.SetMatch(new HasParameterAtIndexMatch(index));
+			collectionIndexOptions.SetMatch(new AtIndexMatch(index));
 			return new GenericMethodsWithArgumentAtIndex(this, collectionIndexOptions);
 		}
 	}
