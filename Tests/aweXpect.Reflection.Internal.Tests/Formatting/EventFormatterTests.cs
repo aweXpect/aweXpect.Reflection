@@ -33,14 +33,12 @@ public class EventFormatterTests
 	{
 		public delegate void MyEventHandler(object? sender, MyEventArgs e);
 
+		public event EventHandler PublicEvent = delegate { };
+		public event MyEventHandler MyEvent = delegate { };
+
 		public class MyEventArgs : EventArgs
 		{
 			public int MyValue { get; set; }
 		}
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-		public event EventHandler PublicEvent;
-		public event MyEventHandler MyEvent;
-#pragma warning restore CS8618
 	}
 }
