@@ -3,7 +3,7 @@ using aweXpect.Core.Initialization;
 
 namespace aweXpect.Reflection.Formatting;
 
-internal class FormatterRegistration : IAweXpectInitializer, IDisposable
+internal sealed class FormatterRegistration : IAweXpectInitializer, IDisposable
 {
 	private static FormatterRegistration? _instance;
 	private IDisposable[] _disposables = [];
@@ -12,10 +12,13 @@ internal class FormatterRegistration : IAweXpectInitializer, IDisposable
 	{
 		if (_instance != null)
 		{
-			throw new InvalidOperationException("A FormatterRegistration instance is already initialized. Dispose the existing instance before creating a new one.");
+			throw new InvalidOperationException(
+				"A FormatterRegistration instance is already initialized. Dispose the existing instance before creating a new one.");
 		}
 
+#pragma warning disable S3010
 		_instance = this;
+#pragma warning restore S3010
 	}
 
 	internal static FormatterRegistration Instance
@@ -23,7 +26,7 @@ internal class FormatterRegistration : IAweXpectInitializer, IDisposable
 
 	public void Initialize() => _disposables =
 	[
-		ValueFormatter.Register(new ConstructorFormatter()),
+		ValueFormatter.Register(new ConstructorFormatter())
 	];
 
 	public void Dispose()
@@ -33,6 +36,8 @@ internal class FormatterRegistration : IAweXpectInitializer, IDisposable
 			disposable.Dispose();
 		}
 
+#pragma warning disable S2696
 		_instance = null;
+#pragma warning restore S2696
 	}
 }
