@@ -26,7 +26,8 @@ public class PropertyFormatterTests
 
 		string result = formatter.GetString(propertyInfo);
 
-		await That(result).IsEqualTo("internal string PropertyFormatterTests.MyTestClass.PropertyWithOnlyGetter { get; }");
+		await That(result)
+			.IsEqualTo("internal string PropertyFormatterTests.MyTestClass.PropertyWithOnlyGetter { get; }");
 	}
 
 	[Fact]
@@ -75,13 +76,16 @@ public class PropertyFormatterTests
 		return new TheoryData<PropertyInfo?, string>
 		{
 			{
-				GetProperty("MyProperty"), "public int PropertyFormatterTests.MyTestClass.MyProperty { get; private set; }"
+				GetProperty("MyProperty"),
+				"public int PropertyFormatterTests.MyTestClass.MyProperty { get; private set; }"
 			},
 			{
-				GetProperty("InternalProperty"), "internal int PropertyFormatterTests.MyTestClass.InternalProperty { get; private set; }"
+				GetProperty("InternalProperty"),
+				"internal int PropertyFormatterTests.MyTestClass.InternalProperty { get; private set; }"
 			},
 			{
-				GetProperty("ProtectedProperty"), "protected int PropertyFormatterTests.MyTestClass.ProtectedProperty { get; private protected set; }"
+				GetProperty("ProtectedProperty"),
+				"protected int PropertyFormatterTests.MyTestClass.ProtectedProperty { get; private protected set; }"
 			},
 			{
 				GetProperty("ProtectedInternalProperty"),
@@ -92,11 +96,13 @@ public class PropertyFormatterTests
 				"private protected int PropertyFormatterTests.MyTestClass.PrivateProtectedProperty { get; private set; }"
 			},
 			{
-				GetProperty("PrivateProperty"), "private int PropertyFormatterTests.MyTestClass.PrivateProperty { get; set; }"
+				GetProperty("PrivateProperty"),
+				"private int PropertyFormatterTests.MyTestClass.PrivateProperty { get; set; }"
 			}
 		};
 	}
 
+	// ReSharper disable UnusedMember.Local
 	private class MyTestClass
 	{
 		public int MyProperty { get; private set; }
@@ -105,7 +111,10 @@ public class PropertyFormatterTests
 		protected internal int ProtectedInternalProperty { get; internal set; }
 		private protected int PrivateProtectedProperty { get; private set; }
 		private int PrivateProperty { get; set; }
-		internal string PropertyWithOnlyGetter { get; }
+		// ReSharper disable once UnassignedGetOnlyAutoProperty
+#pragma warning disable CS8618
+		internal string? PropertyWithOnlyGetter { get; }
+#pragma warning restore CS8618
 
 		public int PropertyWithOnlySetter
 		{
@@ -116,4 +125,5 @@ public class PropertyFormatterTests
 
 		public int PropertyWithPrivateGetter { private get; set; }
 	}
+	// ReSharper restore UnusedMember.Local
 }
