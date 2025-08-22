@@ -12,7 +12,7 @@ internal class FormatterRegistration : IAweXpectInitializer, IDisposable
 	{
 		if (_instance != null)
 		{
-			throw new InvalidOperationException("You have to first dispose the static instance");
+			throw new InvalidOperationException("A FormatterRegistration instance is already initialized. Dispose the existing instance before creating a new one.");
 		}
 
 		_instance = this;
