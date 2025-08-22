@@ -34,7 +34,8 @@ public static partial class ConstructorFilters
 						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
 						_ => false,
 					};
-					return isIndexInRange == true && parameterFilterOptions.Matches(p);
+					return isIndexInRange == true &&
+					       parameterFilterOptions.Matches(p);
 				}).Any();
 			},
 			()
@@ -67,8 +68,8 @@ public static partial class ConstructorFilters
 						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
 						_ => false,
 					};
-					return isIndexInRange != false && p.ParameterType == parameterType &&
-					       stringEqualityOptions.AreConsideredEqual(p.Name, expected);
+					return isIndexInRange == true &&
+					       parameterFilterOptions.Matches(p);
 				}).Any();
 			},
 			()
@@ -98,7 +99,8 @@ public static partial class ConstructorFilters
 						CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, parameters.Length),
 						_ => false,
 					};
-					return isIndexInRange != false && stringEqualityOptions.AreConsideredEqual(p.Name, expected);
+					return isIndexInRange == true &&
+					       parameterFilterOptions.Matches(p);
 				}).Any();
 			},
 			()
