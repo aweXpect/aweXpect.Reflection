@@ -411,11 +411,11 @@ public sealed partial class MethodFilters
 			// ReSharper disable UnusedTypeParameter
 			private class MyTestClass
 			{
-				public void GenericMethodWithString<TFoo>()
+				public static void GenericMethodWithString<TFoo>()
 				{
 				}
 
-				public void GenericMethodWithString<T1, T2>()
+				public static void GenericMethodWithString<T1, T2>()
 					where T2 : ThatMethod.BaseClass
 				{
 				}
