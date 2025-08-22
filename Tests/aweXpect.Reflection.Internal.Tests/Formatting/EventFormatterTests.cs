@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using aweXpect.Formatting;
 using aweXpect.Reflection.Formatting;
 using aweXpect.Reflection.Internal.Tests.TestHelpers;
 
@@ -15,7 +14,8 @@ public class EventFormatterTests
 
 		string result = formatter.GetString(eventInfo);
 
-		await That(result).IsEqualTo("event EventFormatterTests.MyTestClass.MyEventHandler EventFormatterTests.MyTestClass.MyEvent");
+		await That(result)
+			.IsEqualTo("event EventFormatterTests.MyTestClass.MyEventHandler EventFormatterTests.MyTestClass.MyEvent");
 	}
 
 	[Fact]
@@ -33,12 +33,14 @@ public class EventFormatterTests
 	{
 		public delegate void MyEventHandler(object? sender, MyEventArgs e);
 
-		public event EventHandler PublicEvent;
-		public event MyEventHandler MyEvent;
-
 		public class MyEventArgs : EventArgs
 		{
 			public int MyValue { get; set; }
 		}
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+		public event EventHandler PublicEvent;
+		public event MyEventHandler MyEvent;
+#pragma warning restore CS8618
 	}
 }
