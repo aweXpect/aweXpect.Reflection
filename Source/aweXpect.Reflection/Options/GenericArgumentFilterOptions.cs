@@ -70,7 +70,7 @@ public class GenericArgumentsFilterOptions
 	/// <summary>
 	///     Verifies that the generic type arguments of the <paramref name="type" /> matches all predicates.
 	/// </summary>
-	public bool Matches(Type type) => Matches(type.GetGenericArguments(),
+	public bool Matches(Type type) => MatchesPredicatesAndFilters(type.GetGenericArguments(),
 		type.IsGenericTypeDefinition
 			? null
 			: type.GetGenericTypeDefinition().GetGenericArguments().Select(x => x.Name).ToArray());
@@ -78,46 +78,49 @@ public class GenericArgumentsFilterOptions
 	/// <summary>
 	///     Verifies that the generic type arguments of the <paramref name="method" /> matches all predicates.
 	/// </summary>
-	public bool Matches(MethodInfo method) => Matches(method.GetGenericArguments(), null);
+	public bool Matches(MethodInfo method) => MatchesPredicatesAndFilters(method.GetGenericArguments(), null);
 
-	private bool Matches(Type[] arguments, string[]? genericTypeNames)
+	private bool MatchesPredicatesAndFilters(Type[] arguments, string[]? genericTypeNames)
 	{
 		if (_predicates.Count == 0 && _filters.Count == 0)
 		{
 			return true;
 		}
 
-		if (_predicates.All(predicate => predicate(arguments)))
-		{
-#if NET8_0_OR_GREATER
-			foreach (var (filter, collectionIndexOptions) in _filters)
-			{
-#else
-			foreach (KeyValuePair<GenericArgumentFilterOptions, CollectionIndexOptions> keyItem in _filters)
-			{
-				GenericArgumentFilterOptions filter = keyItem.Key;
-				CollectionIndexOptions collectionIndexOptions = keyItem.Value;
-#endif
-				if (!arguments.Where((p, i) =>
-				    {
-					    bool? isIndexInRange = collectionIndexOptions.Match switch
-					    {
-						    CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
-						    CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, arguments.Length),
-						    _ => false,
-					    };
-					    return isIndexInRange == true &&
-					           filter.Matches(p, genericTypeNames?.Length > i ? genericTypeNames[i] : null);
-				    }).Any())
-				{
-					return false;
-				}
-			}
+		return MatchesPredicates(arguments) && MatchesFilters(arguments, genericTypeNames);
+	}
 
-			return true;
+	private bool MatchesPredicates(Type[] arguments)
+		=> _predicates.All(predicate => predicate(arguments));
+
+	private bool MatchesFilters(Type[] arguments, string[]? genericTypeNames)
+	{
+#if NET8_0_OR_GREATER
+		foreach (var (filter, collectionIndexOptions) in _filters)
+		{
+#else
+		foreach (KeyValuePair<GenericArgumentFilterOptions, CollectionIndexOptions> keyItem in _filters)
+		{
+			GenericArgumentFilterOptions filter = keyItem.Key;
+			CollectionIndexOptions collectionIndexOptions = keyItem.Value;
+#endif
+			if (!arguments.Where((p, i) =>
+			    {
+				    bool? isIndexInRange = collectionIndexOptions.Match switch
+				    {
+					    CollectionIndexOptions.IMatchFromBeginning fromBeginning => fromBeginning.MatchesIndex(i),
+					    CollectionIndexOptions.IMatchFromEnd fromEnd => fromEnd.MatchesIndex(i, arguments.Length),
+					    _ => false,
+				    };
+				    return isIndexInRange == true &&
+				           filter.Matches(p, genericTypeNames?.Length > i ? genericTypeNames[i] : null);
+			    }).Any())
+			{
+				return false;
+			}
 		}
 
-		return false;
+		return true;
 	}
 
 	/// <summary>
