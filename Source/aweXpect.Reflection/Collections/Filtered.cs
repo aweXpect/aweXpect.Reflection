@@ -24,7 +24,8 @@ public static partial class Filtered;
 public abstract class Filtered<T, TFiltered>(IAsyncEnumerable<T> source, List<IFilter<T>>? filters = null)
 	: IAsyncEnumerable<T>
 #else
-public abstract class Filtered<T, TFiltered>(IEnumerable<T> source, List<IFilter<T>>? filters = null) : IEnumerable<T>
+public abstract class Filtered<T, TFiltered>(IEnumerable<T> source, List<IFilter<T>>? filters = null)
+	: IEnumerable<T>
 #endif
 	where TFiltered : Filtered<T, TFiltered>
 {
