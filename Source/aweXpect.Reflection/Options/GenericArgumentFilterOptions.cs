@@ -107,7 +107,7 @@ public class GenericArgumentsFilterOptions
 						    _ => false,
 					    };
 					    return isIndexInRange == true &&
-					           filter.Matches(p, genericTypeNames?.Length >= i ? genericTypeNames[i] : null);
+					           filter.Matches(p, genericTypeNames?.Length > i ? genericTypeNames[i] : null);
 				    }).Any())
 				{
 					return false;
