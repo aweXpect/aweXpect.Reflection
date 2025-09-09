@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace aweXpect.Reflection.Helpers;
+// ReSharper disable once CheckNamespace
+namespace System.Linq;
 
 internal static class LinqAsyncHelpers
 {
@@ -69,7 +69,7 @@ internal static class LinqAsyncHelpers
 
 		return false;
 	}
-	
+
 #if NET8_0_OR_GREATER
 	public static async Task<(TSource[], TSource[])> SplitAsync<TSource>(
 		this IEnumerable<TSource> source,
@@ -96,7 +96,7 @@ internal static class LinqAsyncHelpers
 
 		return (matching.ToArray(), unmatching.ToArray());
 	}
-	
+
 #if NET8_0_OR_GREATER
 	public static async Task<(TSource[], TSource[])> SplitWhereAnyAsync<TSource, TTarget>(
 		this IEnumerable<TSource> source,
@@ -113,7 +113,7 @@ internal static class LinqAsyncHelpers
 		List<TSource> unmatching = [];
 		foreach (TSource item in source)
 		{
-			var generated = generator(item);
+			IEnumerable<TTarget>? generated = generator(item);
 			if (generated is not null && await generated.AnyAsync(predicate))
 			{
 				matching.Add(item);
@@ -126,4 +126,100 @@ internal static class LinqAsyncHelpers
 
 		return (matching.ToArray(), unmatching.ToArray());
 	}
+
+#if NET8_0_OR_GREATER
+	public static async IAsyncEnumerable<TSource> Where<TSource>(
+		this IAsyncEnumerable<TSource> source,
+		Func<TSource, bool> predicate)
+	{
+		await foreach (TSource item in source)
+		{
+			if (predicate(item))
+			{
+				yield return item;
+			}
+		}
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	public static async IAsyncEnumerable<TSource> WhereNotNull<TSource>(
+		this IAsyncEnumerable<TSource?> source)
+	{
+		await foreach (TSource? item in source)
+		{
+			if (item is not null)
+			{
+				yield return item;
+			}
+		}
+	}
+
+	public static async IAsyncEnumerable<TSource> WhereNotNull<TSource>(
+		this IEnumerable<TSource?> source)
+	{
+		await Task.Yield();
+		foreach (TSource? item in source)
+		{
+			if (item is not null)
+			{
+				yield return item;
+			}
+		}
+	}
+#else
+	public static IEnumerable<TSource> WhereNotNull<TSource>(
+		this IEnumerable<TSource?> source)
+	{
+		foreach (TSource? item in source)
+		{
+			if (item is not null)
+			{
+				yield return item;
+			}
+		}
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	public static async IAsyncEnumerable<TResult> Select<TSource, TResult>(
+		this IAsyncEnumerable<TSource> source,
+		Func<TSource, TResult> selector)
+	{
+		await foreach (TSource item in source)
+		{
+			yield return selector(item);
+		}
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	public static async IAsyncEnumerable<TResult> SelectMany<TSource, TResult>(
+		this IAsyncEnumerable<TSource> source,
+		Func<TSource, IEnumerable<TResult>> selector)
+	{
+		await foreach (TSource item in source)
+		{
+			foreach (TResult result in selector(item))
+			{
+				yield return result;
+			}
+		}
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	public static async IAsyncEnumerable<TSource> Distinct<TSource>(
+		this IAsyncEnumerable<TSource> source)
+	{
+		HashSet<TSource> hashSet = new();
+		await foreach (TSource item in source)
+		{
+			if (hashSet.Add(item))
+			{
+				yield return item;
+			}
+		}
+	}
+#endif
 }
