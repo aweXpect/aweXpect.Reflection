@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 // ReSharper disable once CheckNamespace
 namespace System.Linq;
 
+#pragma warning disable S3267
 internal static class LinqAsyncHelpers
 {
 #if NET8_0_OR_GREATER
@@ -139,6 +140,7 @@ internal static class LinqAsyncHelpers
 
 		return (matching.ToArray(), unmatching.ToArray());
 	}
+
 	public static async ValueTask<(TSource[], TSource[])> SplitAsync<TSource>(
 		this IAsyncEnumerable<TSource> source,
 		Func<TSource, ValueTask<bool>> predicate)
@@ -287,3 +289,4 @@ internal static class LinqAsyncHelpers
 	}
 #endif
 }
+#pragma warning restore S3267

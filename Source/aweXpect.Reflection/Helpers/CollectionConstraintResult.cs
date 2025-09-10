@@ -80,29 +80,6 @@ internal abstract class CollectionConstraintResult<T>(ExpectationGrammars gramma
 	///     Splits the <paramref name="elements" /> according to the <paramref name="predicate" /> into <see cref="Matching" />
 	///     and <see cref="NotMatching" />.
 	/// </summary>
-	protected async Task<ConstraintResult> SetAsyncValue(IAsyncEnumerable<T> elements, Func<T, bool> predicate)
-	{
-		_asyncElements = elements;
-		(Matching, NotMatching) = await elements.SplitAsync(predicate);
-		Outcome = NotMatching.Length == 0 ? Outcome.Success : Outcome.Failure;
-		return this;
-	}
-	/// <summary>
-	///     Splits the <paramref name="elements" /> according to the <paramref name="predicate" /> into <see cref="Matching" />
-	///     and <see cref="NotMatching" />.
-	/// </summary>
-	protected async Task<ConstraintResult> SetAsyncValue(IAsyncEnumerable<T> elements, Func<T, ValueTask<bool>> predicate)
-	{
-		_asyncElements = elements;
-		(Matching, NotMatching) = await elements.SplitAsync(predicate);
-		Outcome = NotMatching.Length == 0 ? Outcome.Success : Outcome.Failure;
-		return this;
-	}
-
-	/// <summary>
-	///     Splits the <paramref name="elements" /> according to the <paramref name="predicate" /> into <see cref="Matching" />
-	///     and <see cref="NotMatching" />.
-	/// </summary>
 	protected async Task<ConstraintResult> SetValue(IEnumerable<T> elements, Func<T, ValueTask<bool>> predicate)
 	{
 		_elements = elements;
@@ -118,6 +95,35 @@ internal abstract class CollectionConstraintResult<T>(ExpectationGrammars gramma
 	protected async Task<ConstraintResult> SetValue(IEnumerable<T> elements, Func<T, Task<bool>> predicate)
 	{
 		_elements = elements;
+		(Matching, NotMatching) = await elements.SplitAsync(predicate);
+		Outcome = NotMatching.Length == 0 ? Outcome.Success : Outcome.Failure;
+		return this;
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	/// <summary>
+	///     Splits the <paramref name="elements" /> according to the <paramref name="predicate" /> into <see cref="Matching" />
+	///     and <see cref="NotMatching" />.
+	/// </summary>
+	protected async Task<ConstraintResult> SetAsyncValue(IAsyncEnumerable<T> elements, Func<T, bool> predicate)
+	{
+		_asyncElements = elements;
+		(Matching, NotMatching) = await elements.SplitAsync(predicate);
+		Outcome = NotMatching.Length == 0 ? Outcome.Success : Outcome.Failure;
+		return this;
+	}
+#endif
+
+#if NET8_0_OR_GREATER
+	/// <summary>
+	///     Splits the <paramref name="elements" /> according to the <paramref name="predicate" /> into <see cref="Matching" />
+	///     and <see cref="NotMatching" />.
+	/// </summary>
+	protected async Task<ConstraintResult> SetAsyncValue(IAsyncEnumerable<T> elements,
+		Func<T, ValueTask<bool>> predicate)
+	{
+		_asyncElements = elements;
 		(Matching, NotMatching) = await elements.SplitAsync(predicate);
 		Outcome = NotMatching.Length == 0 ? Outcome.Success : Outcome.Failure;
 		return this;
