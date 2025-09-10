@@ -41,7 +41,7 @@ public static partial class ThatMethods
 		GenericArgumentsFilterOptions genericFilterOptions = new();
 		return new GenericArgumentCollectionResult<IAsyncEnumerable<MethodInfo?>>(
 			subject.Get().ExpectationBuilder
-				.AddConstraint<IEnumerable<MethodInfo?>>((it, grammars)
+				.AddConstraint<IAsyncEnumerable<MethodInfo?>>((it, grammars)
 					=> new AreGenericConstraint(it, grammars, genericFilterOptions)),
 			subject,
 			genericFilterOptions);
