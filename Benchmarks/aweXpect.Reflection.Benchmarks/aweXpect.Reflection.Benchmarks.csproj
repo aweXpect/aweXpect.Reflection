@@ -14,6 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+  	<PackageReference Include="aweXpect.Core" VersionOverride="2.24.0" />
 		<ProjectReference Include="..\..\Source\aweXpect.Reflection\aweXpect.Reflection.csproj"/>
 	</ItemGroup>
 
